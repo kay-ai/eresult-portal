@@ -18,13 +18,6 @@ return new class extends Migration
             $table->string('logo');
             $table->string('state');
             $table->string('pob');
-            $table->string('department');
-            $table->string('exam_officer');
-            $table->string('email');
-            $table->string('password');
-            $table->string('reset_token');
-            $table->string('security_question');
-            $table->string('security_question_ans');
             $table->timestamps();
         });
     }
