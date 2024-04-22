@@ -10,12 +10,26 @@
         @csrf
         <div class="row">
             <div class="col-md-12 mb-3">
-                <p class="mb-1 input-label">{{ __('Username') }}</p>
+                <p class="mb-1 input-label">{{ __('First_name') }}</p>
 
                 <div class="d-block">
-                    <input id="username" type="text" class="form-control @error('username') is-invalid @enderror" name="username" value="{{ old('username') }}" required placeholder="Enter your username" autocomplete="username" autofocus>
+                    <input id="first-name" type="text" class="form-control @error('first_name') is-invalid @enderror" name="first_name" value="{{ old('first_name') }}" required placeholder="Enter your first name" autocomplete="first_name" autofocus>
 
-                    @error('email')
+                    @error('first_name')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="col-md-12 mb-3">
+                <p class="mb-1 input-label">{{ __('Last_name') }}</p>
+
+                <div class="d-block">
+                    <input id="last-name" type="text" class="form-control @error('last_name') is-invalid @enderror" name="last_name" value="{{ old('last_name') }}" required placeholder="Enter your last name" autocomplete="last_name" autofocus>
+
+                    @error('last_name')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
                         </span>
