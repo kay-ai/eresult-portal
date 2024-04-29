@@ -6,5 +6,47 @@ use Illuminate\Http\Request;
 
 class AcademicSessionController extends Controller
 {
-    //
+    public function index()
+    {
+
+    }
+
+    public function store(Request $request)
+    {
+
+        $title = $request->input('title');
+        $hod = $request->input('hod_name');
+
+        if ($request->hasFile('signature')) {
+            $file = $request->file('signature');
+            $fileSize = $file->getSize();
+
+            if ($fileSize > 100000) {
+                return response()->json(['status' => 'File is more than 100kb!']);
+            }
+
+            $fileExtension = $file->getClientOriginalExtension();
+            $rand = rand();
+            $directory = 'assets/app-contents/hod_signature';
+            $fileName = "hod-{$rand}.{$fileExtension}";
+
+            $file->move($directory, $fileName);
+
+            $session = new AcademicSession();
+            $session->title = $title;
+            $session->hod = $hod;
+            $session->signature = $fileName;
+
+            try {
+                $session->save();
+
+                return redirect()->back()->with('success', 'Academic session created successfully!');
+            } catch (\Exception $e) {
+                return redirect()->back()->with('error', 'Failed to create academic session.');
+            }
+        } else {
+            return redirect()->back()->with('error', 'No file selected!');
+        }
+
+    }
 }
