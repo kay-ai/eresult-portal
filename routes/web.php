@@ -8,6 +8,7 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\AcademicSessionController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\LevelController;
+use App\Http\Controllers\GradeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,14 +21,14 @@ use App\Http\Controllers\LevelController;
 |
 */
 
-    Route::get('/', function () {
-        return view('auth.login');
-    });
-    Route::get('/forgot-password', function () {
-        return view('auth.forgot-password');
-    })->name('forgot.password');
+Route::get('/', function () {
+    return view('auth.login');
+});
+Route::get('/forgot-password', function () {
+    return view('auth.forgot-password');
+})->name('forgot.password');
 
-    Auth::routes();
+Auth::routes();
 
 Route::group(['middleware' => 'auth'], function () {
     Route::controller(HomeController::class)->group(function () {
@@ -49,6 +50,12 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/create-level', 'store')->name('createLevel');
         Route::post('/update', 'update')->name('updateLevel');
         Route::delete('/delete-level/{id}', 'destroy')->name('deleteLevel');
+    });
+    Route::controller(GradeController::class)->group(function () {
+        Route::get('/grades', 'index')->name('grades');
+        Route::get('/create-grade', 'store')->name('createGrade');
+        Route::post('/update', 'update')->name('updateGrade');
+        Route::delete('/delete-grade/{id}', 'destroy')->name('deleteGrade');
     });
     Route::controller(CourseController::class)->group(function () {
         Route::get('/courses', 'index')->name('viewCourses');
