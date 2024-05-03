@@ -8,7 +8,8 @@ class LevelController extends Controller
 {
     public function index()
     {
-
+        $levels = Level::latest()->get();
+        return view('levels', compact('levels'));
     }
 
     public function store(Request $request)
@@ -38,9 +39,15 @@ class LevelController extends Controller
 
     }
 
-    public function update()
+    public function update(Request $request)
     {
-
+        $id = $request->id;
+        $level = Level::find($id);
+        if($level){
+            $level->name = $request->name;
+            $level->save();
+            return redirect()->back()->with('success', 'Level updated');
+        }
     }
 
     public function destroy()

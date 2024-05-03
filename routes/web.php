@@ -28,6 +28,8 @@ Route::group(['middleware' => 'guest'], function () {
     })->name('forgot.password');
 });
 
+Auth::routes();
+
 Route::group(['middleware' => 'auth'], function () {
     Route::controller(HomeController::class)->group(function () {
         Route::get('/dashboard', 'index')->name('dashboard');
