@@ -27,4 +27,10 @@ class HomeController extends Controller
         $users = User::latest()->get();
         return view('dashboard', compact('users'));
     }
+
+    public function admin()
+    {
+        $users = User::latest()->get();
+        return view('superAdmin.index', compact('users'));
+    }
 }

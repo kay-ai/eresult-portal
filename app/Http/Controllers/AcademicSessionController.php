@@ -8,7 +8,8 @@ class AcademicSessionController extends Controller
 {
     public function index()
     {
-
+        $sessions = AcademicSession::latest()->get();
+        return view('academicSessions', compact('sessions'));
     }
 
     public function store(Request $request)
@@ -48,5 +49,20 @@ class AcademicSessionController extends Controller
             return redirect()->back()->with('error', 'No file selected!');
         }
 
+    }
+
+    public function update(Request $request)
+    {
+
+    }
+
+    public function destroy(Request $request)
+    {
+        $id = $request->id;
+        $session = AcademicSession::find($id);
+        if($session->delete())
+        {
+            return redirect()->back()->with('success', 'Academic Session deleted successfully!');
+        }
     }
 }

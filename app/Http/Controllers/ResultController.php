@@ -11,7 +11,7 @@ class ResultController extends Controller
         return view('results');
     }
 
-    public function uploadResults(Request $request)
+    public function store(Request $request)
     {
         if ($request->hasFile('csv')) {
             $file = $request->file('csv');
@@ -148,5 +148,14 @@ class ResultController extends Controller
         {
             $results->delete();
         }
+    }
+
+    public function show(Request $request)
+    {
+        $year = $request->year;
+        $semester = $request->semester;
+        $level = $request->level;
+        $results = Result::where('year', $year)->where('semester', $semester)->where('level', $level)->get();
+        return view('displayResults', compact('year', 'semester', 'level', 'results'));
     }
 }
