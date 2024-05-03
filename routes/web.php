@@ -19,14 +19,15 @@ use App\Http\Controllers\LevelController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::group(['middleware' => 'guest'], function () {
+
     Route::get('/', function () {
         return view('auth.login');
     });
     Route::get('/forgot-password', function () {
         return view('auth.forgot-password');
     })->name('forgot.password');
-});
+
+    Auth::routes();
 
 Auth::routes();
 
