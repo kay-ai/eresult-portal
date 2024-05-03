@@ -32,18 +32,19 @@
 				    </tr>
 				</thead>
 				<tbody>
-					<?php
-					if($data):
-						foreach($data as $key => $val):
-							echo '<tr>
-								<td>'.($key+1).'</td>
-								<td>'.$val['name'].'</td>
-								<td>'.$val['created_at'].'</td>
-								<td><button><i class="fa fa-eye"></i></button></td>
-							</tr>';
-						endforeach;
-					endif;
-					?>
+					
+					@if($data)
+						@foreach($levels as $key => $val)
+							<tr>
+								<td>{{($key+1)}}</td>
+								<td>{{$val['name']}}</td>
+								<td>{{$val['created_at']}}</td>
+								<td>
+									<button><i class="fa fa-eye"></i></button>
+								</td>
+							</tr>
+						@endforeach;
+					@endif
 				</tbody>
 			</table>
 
