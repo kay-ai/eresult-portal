@@ -26,9 +26,6 @@ use App\Http\Controllers\LevelController;
     Route::get('/forgot-password', function () {
         return view('auth.forgot-password');
     })->name('forgot.password');
-
-    Auth::routes();
-
 Auth::routes();
 
 Route::group(['middleware' => 'auth'], function () {
