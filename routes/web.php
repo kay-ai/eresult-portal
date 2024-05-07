@@ -13,7 +13,6 @@ use App\Http\Controllers\ExamOfficerController;
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\LevelController;
-use App\Http\Controllers\GradeController;
 
 /*
 |--------------------------------------------------------------------------
