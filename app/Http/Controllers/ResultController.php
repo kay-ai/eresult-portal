@@ -2,11 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Course;
+use App\Models\Result;
 use Illuminate\Http\Request;
 
 class ResultController extends Controller
 {
     public function index()
+    {
+        return view('results');
+    }
+
+    public function resultStats()
+    {
+        return view('results');
+    }
+
+    public function courseStats()
     {
         return view('results');
     }
@@ -137,7 +149,7 @@ class ResultController extends Controller
         }
     }
 
-    public function destroy(Reqest $request)
+    public function destroy(Request $request)
     {
         $year = $request->year;
         $semester = $request->semester;

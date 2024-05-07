@@ -7,7 +7,15 @@ use App\Models\Student;
 
 class StudentController extends Controller
 {
-    public function index(Request $request)
+    public function index(){
+        //
+    }
+
+    public function enrollStudents(){
+        //
+    }
+
+    public function fetchStudents(Request $request)
     {
 
         $output = "";
