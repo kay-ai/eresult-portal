@@ -9,7 +9,7 @@ $(document).ready(function() {
         if (toggle.length && nav.length && bodyPd.length && headerPd.length) {
             toggle.click(function() {
                 // show navbar
-                nav.toggleClass('show');
+                nav.toggleClass('sidebar-show');
                 // change icon
                 toggle.toggleClass('bx-x');
                 // add padding to body
@@ -21,16 +21,4 @@ $(document).ready(function() {
     }
 
     showNavbar('header-toggle', 'nav-bar', 'body-pd', 'header');
-
-    /*===== LINK ACTIVE =====*/
-    const linkColor = $('.nav_link');
-
-    function colorLink() {
-        if (linkColor.length) {
-            linkColor.removeClass('active');
-            $(this).addClass('active');
-        }
-    }
-
-    linkColor.click(colorLink);
 });

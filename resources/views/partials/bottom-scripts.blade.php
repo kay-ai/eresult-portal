@@ -21,4 +21,15 @@
 <script src="{{asset('js/script.js')}}"></script>
 <script src="{{asset('js/charts.js')}}"></script>
 
+<script>
+    $(document).ready(function() {
+        $('.datatable-benpoly').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'copy', 'csv', 'excel', 'pdf', 'print'
+            ]
+        });
+    });
+</script>
+
 @stack('js')
