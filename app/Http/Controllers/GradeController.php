@@ -11,6 +11,7 @@ class GradeController extends Controller
     public function index()
     {
         //
+        return view('grades');
     }
 
     public function store(Request $request)
