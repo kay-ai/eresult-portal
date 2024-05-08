@@ -1,45 +1,50 @@
-<div class="container-fluid py-4">
-    <div class="row">
-    	<div class="col-md-4 p-3 m-auto text-center">
-		    <a href="<?=url('assets/app-contents/docs/studentsListCsvSample.csv');?>" download><button class="w3-btn w3-blue w3-text-white">Download CSV Template</button></a>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-6 m-auto">
-		    <h2 class="text-center">Upload Students' List</h2>
-			<form method="post" action="" enctype="multipart/form-data">
-			    <div class="tgt-form-group">
-			        <label>Select CSV File</label>
-			        <input type="file" name="csv" required="required" class="form-control">
-			    </div>
+@extends('layouts.app', [($activePage = 'enroll-students')])
 
-			    <div class="form-group">
-			        <label>Level</label>
-			        <select name="level" class="form-select" required="required">
-			            <option></option>
-			            <?php
-			            if($levels):
-			            	foreach($levels as $rec):
-			            		echo '<option value="'.$rec['id'].'">'.$rec['name'].'</option>';
-			            	endforeach;
-			            endif;
-			            ?>
-			        </select>
-			    </div>
+@section('content')
+    <div class="me-2">
+        <a href="{{asset('docs/studentsListCsvSample.csv')}}" download>
+            <button class="btn btn-info">Download CSV Template</button>
+        </a>
+        <div class="row mt-4">
 
-			    <div class="form-group">
-			        <label>Semester</label>
-			        <select name="semester" class="form-select" required="required">
-			            <option value="First">First Semester</option>
-			            <option value="Second">Second Semester</option>
-			        </select>
-			    </div>
+            <div class="col-md-12">
+                <h3>Query Students List</h3>
+                <div class="card border-0 shadow p-3 mb-4">
+                    <form method="post" action="" enctype="multipart/form-data">
+                        @csrf
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label for="csv" class="form-label">Select CSV File</label>
+                                <input type="file" name="csv" required="required" class="form-control">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="level" class="form-label">Level</label>
+                                <select name="level" class="form-control" required="required">
+                                    <option></option>
+                                    @if ($levels)
+                                        @foreach ($levels as $rec):
+                                           <option value="{{$rec->id}}">{{$rec['name']}}</option>
+                                        @endforeach;
+                                    @endif
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="semester" class="form-label">Semester</label>
+                                <select name="semester" class="form-control" required="required">
+                                    <option value="First">First Semester</option>
+                                    <option value="Second">Second Semester</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="submit" class="btn d-block btn-second" onclick="fetchStudents();" style="width: 100%; margin-top:30px">
+                                    {{ __('Fetch Students') }}
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 
-			    <div class="tgt-form-group mt-3">
-			        <input type="submit" name="uploadCsvList" value="Upload List" class="tgt-full-width w3-btn w3-green w3-text-white">
-			    </div>
-
-			</form>
-		</div>
-	</div>
-</div>
+    </div>
+@endsection

@@ -39,12 +39,11 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/dashboard', 'index')->name('dashboard');
         Route::get('/admin', 'admin')->name('adminDashboard');
     });
-    Route::controller(StudentController::class)->group(function () {
-        Route::get('/students', 'index')->name('viewStudents');
-        Route::post('/upload-students', 'store')->name('uploadStudents');
-    });
     Route::controller(AccountController::class)->group(function () {
         Route::get('/account', 'index')->name('account.index');
+    });
+    Route::controller(FacultyController::class)->group(function () {
+        Route::get('/faculties', 'index')->name('faculty.index');
     });
     Route::controller(AcademicSessionController::class)->group(function () {
         Route::get('/academic-session', 'index')->name('sessions.index');
@@ -62,16 +61,13 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/faculty', 'index')->name('faculty.index');
     });
     Route::controller(DepartmentController::class)->group(function () {
-        Route::get('/department', 'index')->name('departments.index');
+        Route::get('/departments', 'index')->name('departments.index');
     });
     Route::controller(ExamOfficerController::class)->group(function () {
         Route::get('/exam-officer', 'index')->name('exam-officers.index');
     });
     Route::controller(GradeController::class)->group(function () {
-        Route::get('/grade', 'index')->name('grades.index');
-    });
-    Route::controller(GradeController::class)->group(function () {
-        Route::get('/grades', 'index')->name('grades');
+        Route::get('/grades', 'index')->name('grades.index');
         Route::get('/create-grade', 'store')->name('createGrade');
         Route::post('/update', 'update')->name('updateGrade');
         Route::delete('/delete-grade/{id}', 'destroy')->name('deleteGrade');
@@ -85,14 +81,16 @@ Route::group(['middleware' => 'auth'], function () {
     });
     Route::controller(ResultController::class)->group(function () {
         Route::get('/results', 'index')->name('results.index');
-        Route::post('/upload-results', 'store')->name('results.upload');
+        Route::get('/upload-results', 'uploadResults')->name('results.upload');
+        Route::post('/upload-results', 'store');
         Route::post('/drop', 'destroy')->name('results.drop');
-        Route::get('/view-results', 'show')->name('results.view');
+        Route::post('/view-results', 'show')->name('results.view');
         Route::get('/results-stats', 'resultStats')->name('results.stats');
         Route::get('/results-courses-stats', 'courseStats')->name('results.courses.stats');
     });
     Route::controller(StudentController::class)->group(function () {
-        Route::get('/students', 'index')->name('students.index');
-        Route::get('/enroll-students', 'index')->name('students.enroll');
+        Route::get('/enroll-students', 'index')->name('students.index');
+        Route::get('/all-students', 'view')->name('students.view');
+        Route::post('/upload-students', 'store')->name('students.enroll');
     });
 });

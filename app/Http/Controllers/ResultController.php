@@ -4,13 +4,27 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\Result;
+use App\Models\Level;
+use App\Models\Department;
+use App\Models\AcademicSession;
 use Illuminate\Http\Request;
 
 class ResultController extends Controller
 {
     public function index()
     {
-        return view('results');
+        $levels = Level::all();
+        $departments = Department::all();
+        $sessions = AcademicSession::all();
+        return view('results', compact('levels', 'departments', 'sessions'));
+    }
+
+    public function uploadResults(Request $request)
+    {
+        $levels = Level::all();
+        $departments = Department::all();
+        $sessions = AcademicSession::all();
+        return view('uploads', compact('levels', 'departments', 'sessions'));
     }
 
     public function resultStats()

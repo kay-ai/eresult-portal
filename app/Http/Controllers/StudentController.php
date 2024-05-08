@@ -4,15 +4,26 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Student;
+use App\Models\Level;
+use App\Models\Department;
+use App\Models\AcademicSession;
 
 class StudentController extends Controller
 {
     public function index(){
-        //
+        $levels = Level::all();
+        return view('enrollStudents', compact('levels'));
     }
 
     public function enrollStudents(){
         //
+    }
+
+    public function view(){
+        $levels = Level::all();
+        $departments = Department::all();
+        $sessions = AcademicSession::all();
+        return view('studentList', compact('levels', 'departments', 'sessions'));
     }
 
     public function fetchStudents(Request $request)

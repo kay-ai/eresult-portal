@@ -1,11 +1,11 @@
-@extends('layouts.app', [($activePage = 'Account Setup')])
+@extends('layouts.app', [($activePage = 'Create Faculties')])
 
 @section('content')
     <div class="me-2">
         <div class="row mt-4">
 
             <div class="col-md-4">
-                <h4 class="text-center">Create Session</h4>
+                <h4 class="text-center">Create Faculty</h4>
                 <form method="post" action="" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group">
@@ -33,7 +33,7 @@
 
             <div class="col-md-8">
 
-                <h4 class="text-center">All Sessions</h4>
+                <h4 class="text-center">All Faculties</h4>
 
                 <table class="table table-sm table-stripped" style="font-size: 12px">
                     <thead>
@@ -46,8 +46,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @if ($sessions)
-                            @foreach ($sessions as $key => $val)
+                        @if ($faculties)
+                            @foreach ($faculties as $key => $val)
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
                                     <td>{{ $val->title }}</td>
