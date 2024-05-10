@@ -14,7 +14,7 @@
                         <div class="card">
                             <div class="card-header">School Logo/Badge</div>
                             <div class="card-body text-center">
-                                <img src="{{asset('logo/' . $account->logo ?? null)}}" alt="logo"
+                                <img src="{{asset('storage/'.$account->logo ?? null)}}" alt="logo"
                                     class="img-fluid round" id="schl-logo" style="height:100px;object-fit: cover;">
                             </div>
                             <div class="card-footer">
