@@ -3,19 +3,21 @@
 @section('content')
     <div class="me-2">
         <div class="row mt-4">
-
+            <div class="container text-center mb-4">
+                <h4>School Info</h4>
+            </div>
             <form method="post" id="schlDetailsForm" action="" enctype="multipart/form-data">
                 <div class="row">
                     <div class="col-md-4">
                         <div class="card">
                             <div class="card-header">School Logo/Badge</div>
                             <div class="card-body text-center">
-                                <img src="{{asset('logo/' . $account ? $account->logo : null)}}" alt="logo"
+                                <img src="{{asset('logo/' . $account->logo ?? null)}}" alt="logo"
                                     class="img-fluid round" id="schl-logo" style="height:100px;object-fit: cover;">
                             </div>
                             <div class="card-footer">
                                 <div class="input-group">
-                                    <input type="file" onchange="imgPreview('schl-logo','school-logo');"
+                                    <input type="file" onchange="imgPreview('schl-logo', 'school-logo');"
                                         class="form-control" id="school-logo" aria-label="Upload">
                                 </div>
                             </div>
@@ -46,7 +48,7 @@
                             <div class="col">
                                 <div class="form-group">
                                     <label>State</label>
-                                    <select class="form-select" id="schl-state">
+                                    <select class="form-select form-control" id="schl-state">
                                         <option value="{{$account ?? $account->state}}" selected="selected"></option>
                                         <option value="Abia">Abia</option>
                                         <option value="Adamawa">Adamawa</option>
@@ -96,14 +98,14 @@
                             <div class="col">
                                 <div class="form-group">
                                     <label>School P.O.Box</label>
-                                    <input type="text" id="schl-pobox" value="{{$account ?? $account->pob}}"
+                                    <input type="text" id="schl-pobox" value="{{$account->pob ?? null}}"
                                         class="form-control" required="required">
                                 </div>
                             </div>
                             <div class="col">
                                 <div class="form-group">
                                     <label>School Motto</label>
-                                    <input type="text" id="schl-motto" value="{{$account ?? $account->motto}}"
+                                    <input type="text" id="schl-motto" value="{{$account->motto ?? null}}"
                                         class="form-control" required="required">
                                 </div>
                             </div>
@@ -116,7 +118,7 @@
                                     <label>Official Email</label>
                                     <div class="input-group">
                                         <div class="input-group-text">@</div>
-                                        <input type="text" id="email" value="{{$account ?? $account->email}}"
+                                        <input type="text" id="email" value="{{$account->email ?? null}}"
                                             class="form-control" required="required" readonly="readonly">
                                     </div>
                                 </div>

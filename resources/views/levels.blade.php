@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app', [($activePage = 'Levels')])
 
 @section('content')
 <div class="container-fluid py-4">
@@ -13,7 +13,7 @@
 			    </div>
 
 			    <div class="form-group mt-3">
-			        <input type="submit" name="addLevel" value="Create" class="tgt-full-width w3-btn w3-green w3-text-white">
+			        <input type="submit" name="addLevel" value="Create" class="btn btn-secondary">
 			    </div>
 
 			</form>
@@ -32,7 +32,7 @@
 				    </tr>
 				</thead>
 				<tbody>
-					
+
 					@if($data)
 						@foreach($levels as $key => $val)
 							<tr>

@@ -34,7 +34,10 @@ class ResultController extends Controller
 
     public function courseStats()
     {
-        return view('results');
+        $levels = Level::all();
+        $departments = Department::all();
+        $sessions = AcademicSession::all();
+        return view('resultStats', compact('levels', 'departments', 'sessions'));
     }
 
     public function store(Request $request)

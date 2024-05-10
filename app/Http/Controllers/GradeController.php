@@ -10,8 +10,8 @@ class GradeController extends Controller
 
     public function index()
     {
-        //
-        return view('grades');
+        $grades = Grade::all();
+        return view('grades', compact('grades'));
     }
 
     public function store(Request $request)
