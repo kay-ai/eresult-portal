@@ -43,7 +43,7 @@
                                 <div class="form-group">
                                     <label>State</label>
                                     <select class="form-select form-control" name="state" id="schl-state">
-                                        <option value="{{$account ?? $account->state}}" selected="selected"></option>
+                                        <option value="{{$account->state ?? null}}" selected="selected">{{$account->state ?? null}}</option>
                                         <option value="Abia">Abia</option>
                                         <option value="Adamawa">Adamawa</option>
                                         <option value="AkwaIbom">AkwaIbom</option>
@@ -88,7 +88,7 @@
                             <div class="col">
                                 <div class="form-group">
                                     <label>Address</label>
-                                    <input type="text" class="form-control" name="address" id="schl-address">
+                                    <input type="text" class="form-control" name="address" id="schl-address" value="{{$account->address ?? null}}">
                                 </div>
                             </div>
 
