@@ -7,6 +7,8 @@
                 <h4>School Info</h4>
             </div>
             <form method="post" id="schlDetailsForm" action="" enctype="multipart/form-data">
+                @csrf
+                <input type="hidden" name="id" value="{{$account->id}}">
                 <div class="row">
                     <div class="col-md-4">
                         <div class="card">
@@ -17,7 +19,7 @@
                             </div>
                             <div class="card-footer">
                                 <div class="input-group">
-                                    <input type="file" onchange="imgPreview('schl-logo', 'school-logo');"
+                                    <input type="file" name="logo" onchange="imgPreview('schl-logo', 'school-logo');"
                                         class="form-control" id="school-logo" aria-label="Upload">
                                 </div>
                             </div>
@@ -29,7 +31,7 @@
                             <div class="col">
                                 <div class="form-group">
                                     <label>School Name</label>
-                                    <input type="text" id="schl-name" value="{{$account->school ?? null}}"
+                                    <input type="text" name="school" id="schl-name" value="{{$account->school ?? null}}"
                                         class="form-control" required="required">
                                 </div>
                             </div>
@@ -39,16 +41,8 @@
 
                             <div class="col">
                                 <div class="form-group">
-                                    <label>Country</label>
-                                    <select class="form-control" id="schl-country">
-                                        <option value="Nigeria">Nigeria</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="form-group">
                                     <label>State</label>
-                                    <select class="form-select form-control" id="schl-state">
+                                    <select class="form-select form-control" name="state" id="schl-state">
                                         <option value="{{$account ?? $account->state}}" selected="selected"></option>
                                         <option value="Abia">Abia</option>
                                         <option value="Adamawa">Adamawa</option>
@@ -91,6 +85,13 @@
                                 </div>
                             </div>
 
+                            <div class="col">
+                                <div class="form-group">
+                                    <label>Address</label>
+                                    <input type="text" class="form-control" name="address" id="schl-address">
+                                </div>
+                            </div>
+
                         </div>
 
                         <div class="row g-3 mb-2">
@@ -98,14 +99,14 @@
                             <div class="col">
                                 <div class="form-group">
                                     <label>School P.O.Box</label>
-                                    <input type="text" id="schl-pobox" value="{{$account->pob ?? null}}"
+                                    <input type="text" name="pob" id="schl-pobox" value="{{$account->pob ?? null}}"
                                         class="form-control" required="required">
                                 </div>
                             </div>
                             <div class="col">
                                 <div class="form-group">
                                     <label>School Motto</label>
-                                    <input type="text" id="schl-motto" value="{{$account->motto ?? null}}"
+                                    <input type="text" name="motto" id="schl-motto" value="{{$account->motto ?? null}}"
                                         class="form-control" required="required">
                                 </div>
                             </div>
@@ -118,15 +119,26 @@
                                     <label>Official Email</label>
                                     <div class="input-group">
                                         <div class="input-group-text">@</div>
-                                        <input type="text" id="email" value="{{$account->email ?? null}}"
-                                            class="form-control" required="required" readonly="readonly">
+                                        <input type="email" name="email" id="email" value="{{$account->email ?? null}}"
+                                            class="form-control" required="required">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="form-group">
+                                    <label>Official Phone</label>
+                                    <div class="input-group">
+                                        <div class="input-group-text"><i class="fa fa-telephone"></i></div>
+                                        <input type="tel" name="phone" id="phone" value="{{$account->phone ?? null}}"
+                                            class="form-control" required="required">
                                     </div>
                                 </div>
                             </div>
 
                         </div>
                         <div class="row text-center p-2">
-                            <button type="button" id="saveSetUpBtn" onclick="saveSetup();" class="btn btn-primary">Save
+                            <button type="submit" id="saveSetUpBtn" class="btn btn-primary">Save
                                 Changes</button>
                         </div>
                     </div>

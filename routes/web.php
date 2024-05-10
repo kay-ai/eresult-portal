@@ -41,6 +41,7 @@ Route::group(['middleware' => 'auth'], function () {
     });
     Route::controller(AccountController::class)->group(function () {
         Route::get('/account', 'index')->name('account.index');
+        Route::post('/account', 'update');
     });
     Route::controller(FacultyController::class)->group(function () {
         Route::get('/faculties', 'index')->name('faculty.index');
