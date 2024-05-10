@@ -4,16 +4,17 @@
 <div class="container-fluid py-4">
     <div class="row">
 
-		<div class="col-md-4">
+		<div class="col-md-4 mb-3">
 		    <h2 class="text-center">Add Level</h2>
-			<form method="post" action="">
+			<form method="post" action="{{route('levels.create')}}">
+                @csrf
 			    <div class="form-group">
 			        <label>Name</label>
 			        <input type="text" name="name" required="required" class="form-control">
 			    </div>
 
 			    <div class="form-group mt-3">
-			        <input type="submit" name="addLevel" value="Create" class="btn btn-secondary">
+			        <input type="submit" value="Create" class="btn btn-secondary">
 			    </div>
 
 			</form>
@@ -33,17 +34,17 @@
 				</thead>
 				<tbody>
 
-					@if($data)
+					@if($levels)
 						@foreach($levels as $key => $val)
 							<tr>
 								<td>{{($key+1)}}</td>
 								<td>{{$val['name']}}</td>
 								<td>{{$val['created_at']}}</td>
 								<td>
-									<button><i class="fa fa-eye"></i></button>
+									<button class="btn btn-sm btn-info"><i class="fa fa-eye"></i></button>
 								</td>
 							</tr>
-						@endforeach;
+						@endforeach
 					@endif
 				</tbody>
 			</table>

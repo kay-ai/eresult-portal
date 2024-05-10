@@ -18,14 +18,14 @@ class CourseController extends Controller
     public function store(Request $request)
     {
         $course = new Course();
-        $course->name = $request->name;
+        $course->title = $request->title;
 		$course->unit = $request->unit;
 		$course->code = $request->code;
 		$course->type = $request->type;
 		$course->level_id = $request->level;
 		$course->semester = $request->semester;
 
-        $check = Course::where('title', $request->name)->count();
+        $check = Course::where('title', $request->title)->count();
 
 		if($check > 1){
 			return redirect()->back()->with('error', 'Course already exists!');

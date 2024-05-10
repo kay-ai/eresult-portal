@@ -54,15 +54,19 @@ Route::group(['middleware' => 'auth'], function () {
     });
     Route::controller(LevelController::class)->group(function () {
         Route::get('/levels', 'index')->name('levels.index');
-        Route::get('/create-level', 'store')->name('levels.create');
+        Route::post('/create-level', 'store')->name('levels.create');
         Route::post('/update', 'update')->name('levels.update');
         Route::delete('/delete-level/{id}', 'destroy')->name('level.delete');
     });
     Route::controller(FacultyController::class)->group(function () {
         Route::get('/faculty', 'index')->name('faculty.index');
+        Route::post('/create-faculty', 'store')->name('faculty.create');
     });
     Route::controller(DepartmentController::class)->group(function () {
         Route::get('/departments', 'index')->name('departments.index');
+        Route::post('/create-department', 'store')->name('departments.create');
+        Route::get('/edit-department', 'edit')->name('departments.edit');
+        Route::post('/update-department', 'update')->name('departments.update');
     });
     Route::controller(ExamOfficerController::class)->group(function () {
         Route::get('/exam-officer', 'index')->name('exam-officers.index');
@@ -75,10 +79,10 @@ Route::group(['middleware' => 'auth'], function () {
     });
     Route::controller(CourseController::class)->group(function () {
         Route::get('/courses', 'index')->name('courses.index');
-        Route::get('/create-course', 'store')->name('createCourse');
-        Route::get('/edit-course/{id}', 'edit')->name('vieweditCourse');
-        Route::post('/update', 'update')->name('updateCourse');
-        Route::delete('/delete-course/{id}', 'destroy')->name('deleteCourse');
+        Route::post('/create-course', 'store')->name('course.create');
+        Route::get('/edit-course/{id}', 'edit')->name('course.edit');
+        Route::post('/update', 'update')->name('update.course');
+        Route::delete('/delete-course/{id}', 'destroy')->name('delete.course');
     });
     Route::controller(ResultController::class)->group(function () {
         Route::get('/results', 'index')->name('results.index');

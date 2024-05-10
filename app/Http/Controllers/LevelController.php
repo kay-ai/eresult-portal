@@ -23,7 +23,6 @@ class LevelController extends Controller
         } else {
             $level = new Level();
             $level->name = $name;
-            $level->created_at = now();
 
             try {
                 $level->save();

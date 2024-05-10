@@ -6,12 +6,12 @@
 
 		<div class="col-md-12">
 		    <h2 class="text-center">Add Course</h2>
-			<form method="post" action="">
+			<form method="post" action="{{route('course.create')}}">
                 @csrf
                 <div class="row">
                     <div class="col-md-2">
                         <label>Title</label>
-                        <input type="text" name="name" required="required" class="form-control">
+                        <input type="text" name="title" required="required" class="form-control">
                     </div>
 
                     <div class="col-md-2">
@@ -61,7 +61,7 @@
 
                     <div class="col-md-2">
                         <div class="form-group mt-4">
-                            <input type="submit" name="addCourse" value="Register" class="btn btn-info">
+                            <input type="submit" value="Register" class="btn btn-info">
                         </div>
                     </div>
 
@@ -97,7 +97,7 @@
 								<td>{{$val->unit}}</td>
 								<td>{{$val->type}}</td>
 								<td>{{$val->semester}}</td>
-								<td>{{$val->name}}</td>
+								<td>{{$val->level->name}}</td>
 								<td>{{$val->created_at}}</td>
 								<td><button class="btn btn-sm btn-info"><i class="fa fa-eye"></i></button></td>
 							</tr>

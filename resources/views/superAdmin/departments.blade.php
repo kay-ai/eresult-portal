@@ -6,16 +6,28 @@
 
             <div class="col-md-4">
                 <h4 class="text-center">Create Department</h4>
-                <form method="post" action="" enctype="multipart/form-data">
+                <form method="post" action="{{route('departments.create')}}" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group">
                         <label>Title</label>
-                        <input type="text" name="title" required="required" class="form-control">
+                        <input type="text" name="name" required="required" class="form-control">
                     </div>
 
                     <div class="form-group">
                         <label>HOD</label>
-                        <input type="text" name="hod_name" required="required" class="form-control">
+                        <input type="text" name="hod" required="required" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Faculty</label>
+                        <select name="faculty_id" class="form-control" required="required">
+                            <option></option>
+                            @if($faculties)
+                                @foreach($faculties as $faculty)
+                                <option value="{{$faculty->id}}">{{$faculty->name}}</option>
+                                @endforeach
+                            @endif
+                        </select>
                     </div>
 
                     <div class="form-group">
@@ -50,10 +62,10 @@
                             @foreach ($departments as $key => $val)
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
-                                    <td>{{ $val->title }}</td>
+                                    <td>{{ $val->name }}</td>
                                     <td>{{ $val->hod }}</td>
                                     <td>{{ $val->created_at }}</td>
-                                    <td><button><i class="fa fa-eye"></i></button></td>
+                                    <td><button class="btn btn-info"><i class="fa fa-eye"></i></button></td>
                                 </tr>
                             @endforeach
                         @endif
