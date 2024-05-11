@@ -46,7 +46,7 @@
 
             <tr>
                 <th scope="col">{{ $key + 1 }}</th>
-                <th scope="col">{{ $session }}</th>
+                <th scope="col">{name}</th>
                 <th scope="col">{{ $r->mat_num }}</th>
                 <th scope="col">
 
