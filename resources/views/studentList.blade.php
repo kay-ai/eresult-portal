@@ -76,7 +76,21 @@
                             </tr>
                         </thead>
                         <tbody id="viewStudents">
-                            {{--  --}}
+                            @if($students)
+                                @foreach($students as $key => $student)
+                                <tr>
+                                    <td>{{($key+1)}}</td>
+                                    <td>{{$student->mat_num}}</td>
+                                    <td>{{$student->fname}}</td>
+                                    <td>{{$student->mname}}</td>
+                                    <td>{{$student->lname}}</td>
+                                    <td>{{$student->gender}}</td>
+                                    <td>{{$student->level->name}}</td>
+                                    <td>{{$student->academicSession->title}}</td>
+                                    <td><button class="btn btn-sm btn-info"><i class="fa fa-eye"></i></button></td>
+                                </tr>
+                                @endforeach
+                            @endif
                         </tbody>
                         <tfoot>
                             <tr>
