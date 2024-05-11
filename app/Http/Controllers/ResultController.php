@@ -93,7 +93,7 @@ class ResultController extends Controller
                             }
                         }
 
-                        $rset[] = ['cc'.$y => $cc, 'cu'.$y => $cu1, 'score'.$y => $tot1, 'grade'.$y => $g1, 'rmk'.$y => $r1];
+                        $rset[] = ['cc'.$y => $cc, 'cu'.$y => $cu1, 'score'.$y => $tot, 'grade'.$y => $g1, 'rmk'.$y => $r1];
                         $y++;
                     }
 
@@ -119,7 +119,8 @@ class ResultController extends Controller
                     $gpa = round($gpa, 2);
 
                     $result = Result::updateOrCreate(
-                        ['mat_num' => $mat_num, 'level_id' => $level, 'academic_session_id' => $academic_session_id, 'semester' => $semester],
+                        ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'semester' => $semester],
+                        $rset,
                         [
                             'tce' => $tceSum,
                             'tcu' => $tcuSum,
@@ -242,6 +243,6 @@ class ResultController extends Controller
         $session = $this->getSession($session_id);
 
         $results = Result::where('academic_session_id', $session_id)->where('semester', $semester)->where('level_id', $level_id)->get();
-        return view('displayResults', compact('session', 'semester', 'level', 'results'));
+        return view('results.displayResults', compact('session', 'semester', 'level', 'results'));
     }
 }
