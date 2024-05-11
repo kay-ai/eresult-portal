@@ -1,6 +1,6 @@
 <div class="row" style="height: 100vh;">
     <div class="col-md-6 position-relative">
-        <img src="{{asset('storage/'.auth()->user()->account->logo ?? null)}}" class="position-absolute login-logo" alt="">
+        <img src="{{asset('/images/benpoly-logo.png')}}" class="position-absolute login-logo" alt="">
         <div class="row h-100 justify-content-center align-items-center p-5">
             <div class="col-md-9">
                @yield('content')

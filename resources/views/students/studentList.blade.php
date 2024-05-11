@@ -91,7 +91,11 @@
                                     <td>{{$student->gender}}</td>
                                     <td>{{$student->level->name}}</td>
                                     <td>{{$student->academicSession->title}}</td>
-                                    <td><button class="btn btn-sm btn-info"><i class="fa fa-eye"></i></button></td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group" aria-label="">
+                                            <button class="btn btn-sm btn-kdis"><i class='bx bx-show-alt'></i></button>
+                                        </div>
+                                    </td>
                                 </tr>
                                 @endforeach
                             @endif
