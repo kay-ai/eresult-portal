@@ -157,6 +157,26 @@ class ResultController extends Controller
         return null;
     }
 
+    private function getSession($session_id)
+    {
+        $session = AcademicSession::where('id', $session_id)->first();
+        if($session)
+        {
+            return $session->title;
+        }
+        return null;
+    }
+
+    private function getLevel($level_id)
+    {
+        $level = Level::where('id', $level_id)->first();
+        if($level)
+        {
+            return $level->name;
+        }
+        return null;
+    }
+
     private function gradeP($tot)
     {
         if ($tot <= 39.9) {
@@ -209,10 +229,14 @@ class ResultController extends Controller
 
     public function show(Request $request)
     {
-        $year = $request->year;
+        $session_id = $request->session_id;
         $semester = $request->semester;
-        $level = $request->level;
-        $results = Result::where('year', $year)->where('semester', $semester)->where('level', $level)->get();
-        return view('displayResults', compact('year', 'semester', 'level', 'results'));
+        $level_id = $request->level_id;
+
+        $level = $this->getLevel($level_id);
+        $session = $this->getSession($session_id);
+
+        $results = Result::where('academic_session_id', $session_id)->where('semester', $semester)->where('level_id', $level_id)->get();
+        return view('displayResults', compact('session', 'semester', 'level', 'results'));
     }
 }
