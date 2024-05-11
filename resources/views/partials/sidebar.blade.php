@@ -53,8 +53,8 @@
                         <span class="nav_name">Students</span>
                     </a>
                     <div class="dropdown {{in_array($activePage, $studentLinks) ? 'open' : '' }}">
-                        <a href="{{route('students.enroll')}}" class="dropdown-link {{$activePage == 'Enroll Students' ? 'active' : '' }}">Enroll Students</a>
-                        <a href="{{route('students.index')}}" class="dropdown-link {{$activePage == 'All Students' ? 'active' : '' }}">All Students</a>
+                        <a href="{{route('students.index')}}" class="dropdown-link {{$activePage == 'Enroll Students' ? 'active' : '' }}">Enroll Students</a>
+                        <a href="{{route('students.view')}}" class="dropdown-link {{$activePage == 'All Students' ? 'active' : '' }}">All Students</a>
                     </div>
                 </div>
                 <div class="has-dropdown">

@@ -1,16 +1,21 @@
-@extends('layouts.app', [($activePage = 'Academic Sessions')])
+@extends('layouts.app', [($activePage = 'Create Faculties')])
 
 @section('content')
     <div class="me-2">
         <div class="row mt-4">
 
             <div class="col-md-4">
-                <h4 class="text-center">Create Session</h4>
-                <form method="post" action="{{route('sessions.create')}}" enctype="multipart/form-data">
+                <h4 class="text-center">Create Faculty</h4>
+                <form method="post" action="{{route('faculty.create')}}" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group">
-                        <label>Title</label>
-                        <input type="text" name="title" required="required" class="form-control">
+                        <label>Name</label>
+                        <input type="text" name="name" required="required" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Dean</label>
+                        <input type="text" name="dean" required="required" class="form-control">
                     </div>
 
                     <div class="form-group mt-3">
@@ -23,23 +28,25 @@
 
             <div class="col-md-8">
 
-                <h4 class="text-center">All Sessions</h4>
+                <h4 class="text-center">All Faculties</h4>
 
                 <table class="table table-sm table-stripped" style="font-size: 12px">
                     <thead>
                         <tr>
                             <th>#</th>
                             <th>Name</th>
+                            <th>Dean</th>
                             <th>Date Added</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @if ($sessions)
-                            @foreach ($sessions as $key => $val)
+                        @if ($faculties)
+                            @foreach ($faculties as $key => $val)
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
-                                    <td>{{ $val->title }}</td>
+                                    <td>{{ $val->name }}</td>
+                                    <td>{{ $val->dean }}</td>
                                     <td>{{ $val->created_at }}</td>
                                     <td><button class="btn btn-sm btn-info"><i class="fa fa-eye"></i></button></td>
                                 </tr>
@@ -50,6 +57,7 @@
                         <tr>
                             <th>#</th>
                             <th>Name</th>
+                            <th>Dean</th>
                             <th>Date Added</th>
                             <th>Action</th>
                         </tr>

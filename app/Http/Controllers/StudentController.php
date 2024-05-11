@@ -4,15 +4,27 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Student;
+use App\Models\Level;
+use App\Models\Department;
+use App\Models\AcademicSession;
 
 class StudentController extends Controller
 {
     public function index(){
-        //
+        $levels = Level::all();
+        return view('enrollStudents', compact('levels'));
     }
 
     public function enrollStudents(){
         //
+    }
+
+    public function view(){
+        $levels = Level::all();
+        $departments = Department::all();
+        $sessions = AcademicSession::all();
+        $students = Student::orderBy('mat_num', 'asc')->get();
+        return view('studentList', compact('levels', 'departments', 'sessions', 'students'));
     }
 
     public function fetchStudents(Request $request)
@@ -23,15 +35,9 @@ class StudentController extends Controller
         $session_id = $request->input('session');
         $level_id = $request->input('level');
 
-        $students = Student::select('students.fname', 'students.lname', 'students.mname', 'students.mat_num', 'students.created_at', 'levels.name as level_name', 'academic_sessions.title')
-            ->join('academic_sessions', 'students.session_id', '=', 'academic_sessions.id')
-            ->join('levels', 'students.level_id', '=', 'levels.id')
-            ->where('students.session_id', $session_id)
-            ->where('students.semester', $semester)
-            ->where('students.level_id', $level_id)
-            ->get();
+        $students = Student::where('semester', $semester)->where('academic_session_id', $session_id)->where('level_id', $level_id)->get();
 
-        if ($students->count() > 0) {
+        if ($students) {
             foreach ($students as $key => $val) {
                 $output .= '<tr>
                     <td>'.($key+1).'</td>
@@ -39,14 +45,15 @@ class StudentController extends Controller
                     <td>'.$val->fname.'</td>
                     <td>'.$val->mname.'</td>
                     <td>'.$val->lname.'</td>
-                    <td>'.$val->level_name.'</td>
-                    <td>'.$val->title.'</td>
+                    <td>'.$val->gender.'</td>
+                    <td>'.$val->level->name.'</td>
+                    <td>'.$val->academicSession->title.'</td>
                     <td></td>
                 </tr>';
             }
         } else {
             $output .= '<tr>
-                <td colspan="9" class="text-center">No records found...</td>
+                <td colspan="10" class="text-center">No records found...</td>
             </tr>';
         }
 
@@ -58,7 +65,6 @@ class StudentController extends Controller
     {
 
         $file = $request->file('csv');
-        $today = now();
 
         $file_name = $file->getClientOriginalName();
         $file_extension = $file->getClientOriginalExtension();
@@ -76,10 +82,11 @@ class StudentController extends Controller
                     $fn = ucfirst(trim($data[1]));
                     $mn = ucfirst(trim($data[2]));
                     $ln = ucfirst(trim($data[3]));
-                    $mat_num = ucfirst(trim($data[4]));
-                    $level = trim($data[5]);
-                    $semester = ucfirst(trim($data[6]));
-                    $session = ucfirst(trim($data[7]));
+                    $gender = ucfirst(trim($data[4]));
+                    $mat_num = ucfirst(trim($data[5]));
+                    $level = trim($data[6]);
+                    $semester = ucfirst(trim($data[7]));
+                    $session = ucfirst(trim($data[8]));
 
                     $session_id = $this->getSessionId($session);
                     $level_id = $this->getLevelId($level);
@@ -88,25 +95,54 @@ class StudentController extends Controller
                     $student->fname = $fn;
                     $student->lname = $ln;
                     $student->mname = $mn;
+                    $student->gender = $gender;
                     $student->level_id = $level_id;
                     $student->semester = $semester;
-                    $student->session_id = $session_id;
+                    $student->academic_session_id = $session_id;
                     $student->mat_num = $mat_num;
+                    $student->status = 1;
 
-                    try {
-                        $student->save();
-                        print "<p>Data was uploaded successfully for: ".$mat_num."</p>";
-                    } catch (\Exception $e) {
-                        echo "Sorry, upload failed!";
-                        print $e->getMessage();
-                        break;
+                    $existing_student = Student::where('mat_num', $mat_num)->where('level_id', $level_id)->where('academic_session_id', $session_id)->count();
+                    if($existing_student > 0)
+                    {
+
+                    }else{
+                        try {
+                            $student->save();
+                            print "<p>Data uploaded successfully for: ".$mat_num."</p>";
+                        } catch (\Exception $e) {
+                            echo "Sorry, upload failed!";
+                            print $e->getMessage();
+                            break;
+                        }
                     }
+
                 }
                 fclose($handle);
             }
         } else {
             echo "Please select a CSV file extension!!!";
         }
+    }
+
+    private function getSessionId($session)
+    {
+        $session = AcademicSession::where('title', $session)->first();
+        if($session)
+        {
+            return $session->id;
+        }
+        return null;
+    }
+
+    private function getLevelId($level)
+    {
+        $level = Level::where('name', $level)->first();
+        if($level)
+        {
+            return $level->id;
+        }
+        return null;
     }
 
     public function destroy(Request $request)

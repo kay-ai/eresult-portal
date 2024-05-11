@@ -1,70 +1,114 @@
-<div class="row">
+@extends('layouts.app', [($activePage = 'Dashboard')])
 
-	<div class="col-md-4">
-	    <h2 class="text-center">Query Students</h2>
-		<form method="post" action="" onsubmit="event.preventDefault();">
-		    <div class="form-group">
-		        <label>Session</label>
-		        <select name="session" id="session" required="required" class="form-control">
-		            <option></option>
-		            <?php
-		            if($sessions):
-		            	foreach($sessions as $rec):
-		            		echo '<option value="'.$rec['id'].'">'.$rec['title'].'</option>';
-		            	endforeach;
-		            endif;
-		            ?>
-		        </select>
-		    </div>
+@section('content')
+    <div class="me-2">
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card border-0 shadow p-3 mb-4">
+                    <form method="post" action="" onsubmit="event.preventDefault();">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label for="session" class="form-label">Academic Session: </label>
+                                <select name="session" class="form-control @error('session') is-invalid @enderror" id=""required autocomplete="session" autofocus>
+                                    <option>- Select an Option -</option>
+                                    <option value=""></option>
+                                </select>
 
-		    <div class="form-group">
-		        <label>Semester Offered</label>
-		        <select name="semester" id="semester" class="form-select" required="required">
-		            <option value="First">First Semester</option>
-		            <option value="Second">Second Semester</option>
-		        </select>
-		    </div>
+                                @error('session')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            <div class="col-md-3">
+                                <label for="semester" class="form-label">Semester: </label>
+                                <select name="semester" class="form-control @error('semester') is-invalid @enderror" id=""required autocomplete="semester" autofocus>
+                                    <option>- Select an Option -</option>
+                                    <option value="first">First Semester</option>
+                                    <option value="second">Second Semester</option>
+                                </select>
 
-		    <div class="form-group">
-		    	<label>Level</label>
-		    	<select name="level" id="level" class="form-select">
-		    		<option></option>
-		            <?php
-		            if($levels):
-		            	foreach($levels as $rec):
-		            		echo '<option value="'.$rec['id'].'">'.$rec['name'].'</option>';
-		            	endforeach;
-		            endif;
-		            ?>
-		    	</select>
-		    </div>
+                                @error('semester')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            <div class="col-md-3">
+                                <label for="level" class="form-label">Level: </label>
+                                <select name="level" class="form-control @error('level') is-invalid @enderror" id="" required autocomplete="level" autofocus>
+                                    <option>- Select an Option -</option>
+                                    <option value="first">First level</option>
+                                    <option value="second">Second level</option>
+                                </select>
 
-		    <div class="form-group mt-3">
-		        <input type="submit" name="viewStd" id="viewStdBtn" onclick="fetchStudents();" value="View List" class="tgt-full-width w3-btn w3-green w3-text-white">
-		    </div>
+                                @error('level')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            <div class="col-md-3">
+                                <button type="submit" class="btn d-block btn-second" onclick="fetchStudents();" style="width: 100%; margin-top:30px">
+                                    {{ __('Fetch Students') }}
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
-		</form>
-	</div>
+            <div class="col-md-12">
+                <div class="card border-0 shadow p-3">
+                    <h5 class="text-kdis-2">Students</h5>
+                    <table class="table datatable-benpoly" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Mat.&nbsp;Number</th>
+                                <th>First&nbsp;Name</th>
+                                <th>Middle&nbsp;Name</th>
+                                <th>Last&nbsp;Name</th>
+                                <th>Gender</th>
+                                <th>Level</th>
+                                <th>Session</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="viewStudents">
+                            @if($students)
+                                @foreach($students as $key => $student)
+                                <tr>
+                                    <td>{{($key+1)}}</td>
+                                    <td>{{$student->mat_num}}</td>
+                                    <td>{{$student->fname}}</td>
+                                    <td>{{$student->mname}}</td>
+                                    <td>{{$student->lname}}</td>
+                                    <td>{{$student->gender}}</td>
+                                    <td>{{$student->level->name}}</td>
+                                    <td>{{$student->academicSession->title}}</td>
+                                    <td><button class="btn btn-sm btn-info"><i class="fa fa-eye"></i></button></td>
+                                </tr>
+                                @endforeach
+                            @endif
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>#</th>
+                                <th>Mat.&nbsp;Number</th>
+                                <th>First&nbsp;Name</th>
+                                <th>Middle&nbsp;Name</th>
+                                <th>Last&nbsp;Name</th>
+                                <th>Gender</th>
+                                <th>Level</th>
+                                <th>Session</th>
+                                <th>Action</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
 
-	<div class="col-md-8">
-	    <h2 class="text-center">Students List</h2>
-		<table class="table table-stripped table-responsive" style="font-size: 12px">
-			<thead>
-			    <tr>
-			        <th>#</th>
-			        <th>Mat.&nbsp;Number</th>
-			        <th>First&nbsp;Name</th>
-			        <th>Middle&nbsp;Name</th>
-			        <th>Last&nbsp;Name</th>
-			        <th>Level</th>
-			        <th>Session</th>
-			        <th>Action</th>
-			    </tr>
-			</thead>
-			<tbody id="viewStudents">
-
-			</tbody>
-		</table>
-	</div>
-
-</div>
+        </div>
+    </div>
+@endsection
