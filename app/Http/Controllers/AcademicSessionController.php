@@ -10,7 +10,7 @@ class AcademicSessionController extends Controller
     public function index()
     {
         $sessions = AcademicSession::latest()->get();
-        return view('academicSessions', compact('sessions'));
+        return view('superAdmin.academicSessions', compact('sessions'));
     }
 
     public function store(Request $request)
