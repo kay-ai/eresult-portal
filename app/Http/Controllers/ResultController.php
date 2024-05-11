@@ -92,6 +92,14 @@ class ResultController extends Controller
                         }
                     }
 
+                    $semester = trim($row[26]);
+                    $level = trim($row[27]);
+                    $session = trim($row[28]);
+
+                    $academic_session_id = $this->getSessionId($session);
+
+                    $level_id = $this->getLevelId($level);
+
                     $remarks = serialize($remarks);
                     $tgpSum = array_sum($tgp);
                     $tcuSum = array_sum($tcu);
@@ -106,7 +114,7 @@ class ResultController extends Controller
                     $gpa = round($gpa, 2);
 
                     $result = Result::updateOrCreate(
-                        ['mat_num' => $mat_num, 'level_id' => $request->input('level'), 'session_id' => $request->input('session'), 'semester' => $request->input('semester')],
+                        ['mat_num' => $mat_num, 'level_id' => $level, 'academic_session_id' => $academic_session_id, 'semester' => $semester],
                         [
                             'tce' => $tceSum,
                             'tcu' => $tcuSum,
@@ -117,16 +125,36 @@ class ResultController extends Controller
                     );
 
                     if ($result) {
-                        $details .= $mat_num ." result computed successfully!\n";
+                        $details .= '<p>'.$mat_num .' result computed successfully!</p>';
                     } else {
-                        $details .= "Failed to compute result for ".$mat_num."\n";
+                        $details .= "<p>Failed to compute result for ".$mat_num."</p>";
                     }
                 }
 
                 echo $details;
-                echo '<p><a href="'.url()->previous().'"><button>Back</button></a></p>';
+                echo '<p><a href="javascript:history.back();"><button>Back</button></a></p>';
             }
         }
+    }
+
+    private function getSessionId($session)
+    {
+        $session = AcademicSession::where('title', $session)->first();
+        if($session)
+        {
+            return $session->id;
+        }
+        return null;
+    }
+
+    private function getLevelId($level)
+    {
+        $level = Level::where('name', $level)->first();
+        if($level)
+        {
+            return $level->id;
+        }
+        return null;
     }
 
     private function gradeP($tot)
@@ -162,7 +190,7 @@ class ResultController extends Controller
         if ($course) {
             return $course->unit;
         } else {
-            echo '<p>'.$cc.' course not found!</p>';
+            return false;
         }
     }
 
