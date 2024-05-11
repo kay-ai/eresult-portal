@@ -1,12 +1,11 @@
-@extends('layouts.app', [($activePage = 'results')])
+@extends('layouts.app', [($activePage = 'Results Stats')])
 
 @section('content')
     <div class="me-2">
         <div class="row mt-4">
-
             <div class="col-md-12">
-                <h3>Query Results</h3>
-                <div class="card border-0 shadow p-3 mb-4 mt-4">
+                <div class="card shadow-sm p-3">
+                    <p class="text-kdis-2 mb-3 subheader">Query Statistics</p>
                     <form method="post" action="">
                         @csrf
                         <div class="row">
@@ -29,8 +28,8 @@
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <button type="submit" class="btn d-block btn-second" onclick="fetchStudents();" style="width: 100%; margin-top:30px">
-                                    {{ __('View Results') }}
+                                <button type="submit" class="btn d-block btn-second" onclick="resultStats();" style="width: 100%; margin-top:30px">
+                                    {{ __('View Stats') }}
                                 </button>
                             </div>
                         </div>

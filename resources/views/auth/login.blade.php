@@ -50,7 +50,7 @@
                 </label>
             </div>
             @if (Route::has('password.request'))
-                <a class="text-danger" href="{{ route('forgot.password') }}">
+                <a class="text-kdis-2" href="{{ route('forgot.password') }}">
                     {{ __('Forgot Your Password?') }}
                 </a>
             @endif

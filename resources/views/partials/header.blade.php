@@ -5,7 +5,7 @@
 
     <div class="dropdown d-flex justify-content-end">
         <a class="dropdown-toggle text-kdis" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            {{ Auth::user()->username }}
+            {{ Auth::user()->first_name }} {{ Auth::user()->last_name }}
         </a>
         <div class="dropdown-menu dropdown-menu-end mr-2" aria-labelledby="navbarDropdown">
             <a class="dropdown-item" href="{{ route('logout') }}"

@@ -1,17 +1,21 @@
-@extends('layouts.app', [($activePage = 'Dashboard')])
+@extends('layouts.app', [($activePage = 'All Students')])
 
 @section('content')
     <div class="me-2">
         <div class="row mt-4">
             <div class="col-md-12">
-                <div class="card border-0 shadow p-3 mb-4">
+                <div class="card shadow-sm p-3 mb-4">
                     <form method="post" action="" onsubmit="event.preventDefault();">
                         <div class="row">
                             <div class="col-md-3">
                                 <label for="session" class="form-label">Academic Session: </label>
                                 <select name="session" class="form-control @error('session') is-invalid @enderror" id=""required autocomplete="session" autofocus>
                                     <option>- Select an Option -</option>
-                                    <option value=""></option>
+                                    @if ($sessions)
+                                        @foreach ($sessions as $session)
+                                            <option value="{{$session->id}}">{{$session->title}}</option>
+                                        @endforeach
+                                    @endif
                                 </select>
 
                                 @error('session')
@@ -59,7 +63,7 @@
             </div>
 
             <div class="col-md-12">
-                <div class="card border-0 shadow p-3">
+                <div class="card shadow-sm p-3">
                     <h5 class="text-kdis-2">Students</h5>
                     <table class="table datatable-benpoly" style="width:100%">
                         <thead>

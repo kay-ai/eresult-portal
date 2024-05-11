@@ -16,7 +16,7 @@ class ResultController extends Controller
         $levels = Level::all();
         $departments = Department::all();
         $sessions = AcademicSession::all();
-        return view('results', compact('levels', 'departments', 'sessions'));
+        return view('results.index', compact('levels', 'departments', 'sessions'));
     }
 
     public function uploadResults(Request $request)
@@ -24,12 +24,12 @@ class ResultController extends Controller
         $levels = Level::all();
         $departments = Department::all();
         $sessions = AcademicSession::all();
-        return view('uploads', compact('levels', 'departments', 'sessions'));
+        return view('results.uploadResult', compact('levels', 'departments', 'sessions'));
     }
 
     public function resultStats()
     {
-        return view('results');
+        return view('results.index');
     }
 
     public function courseStats()
@@ -37,7 +37,7 @@ class ResultController extends Controller
         $levels = Level::all();
         $departments = Department::all();
         $sessions = AcademicSession::all();
-        return view('resultStats', compact('levels', 'departments', 'sessions'));
+        return view('results.resultStats', compact('levels', 'departments', 'sessions'));
     }
 
     public function store(Request $request)

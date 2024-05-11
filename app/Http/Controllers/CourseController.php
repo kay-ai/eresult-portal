@@ -12,7 +12,7 @@ class CourseController extends Controller
     {
 		$levels = Level::all();
 		$courses = Course::all();
-		return view('courses', compact('levels', 'courses'));
+		return view('superAdmin.courses', compact('levels', 'courses'));
     }
 
     public function store(Request $request)

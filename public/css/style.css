@@ -47,6 +47,7 @@ body {
 
 .form-control {
     height: 50px;
+    font-size: 14px;
     background: var(--off-white);
 }
 
@@ -69,6 +70,10 @@ body {
     box-shadow: var(--box-shadow-black);
 }
 
+td:not(.action-btn) {
+    padding-top: .7rem !important;
+}
+
 .input-label {
     font-size: 14px;
     font-weight: 500;
@@ -86,10 +91,11 @@ body {
 }
 
 .login-logo {
-    height: 100px;
+    height: 120px;
     top: 0;
-    margin-left: 35px;
+    margin-left: 5px;
     margin-top: 35px;
+    transform: translateX(19rem);
 }
 
 .kdis-logo{
@@ -273,6 +279,7 @@ p{
 
 .has-dropdown .dropdown-link:hover{
     background-color: var(--gray-color);
+    color: var(--black-color);
 }
 
 .nav_icon {
@@ -316,6 +323,11 @@ p{
 
 .text-kdis{
     color: var(--first-color);
+}
+
+.subheader{
+    font-weight: 500;
+    font-size: 14px;
 }
 
 .card-title{

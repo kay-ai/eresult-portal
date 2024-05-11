@@ -10,7 +10,7 @@ class LevelController extends Controller
     public function index()
     {
         $levels = Level::latest()->get();
-        return view('levels', compact('levels'));
+        return view('superAdmin.levels', compact('levels'));
     }
 
     public function store(Request $request)
