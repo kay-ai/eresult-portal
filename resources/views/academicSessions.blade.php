@@ -1,4 +1,4 @@
-@extends('layouts.app', [($activePage = 'Account Setup')])
+@extends('layouts.app', [($activePage = 'Academic Sessions')])
 
 @section('content')
     <div class="me-2">
@@ -6,25 +6,15 @@
 
             <div class="col-md-4">
                 <h4 class="text-center">Create Session</h4>
-                <form method="post" action="" enctype="multipart/form-data">
+                <form method="post" action="{{route('sessions.create')}}" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group">
                         <label>Title</label>
                         <input type="text" name="title" required="required" class="form-control">
                     </div>
 
-                    <div class="form-group">
-                        <label>HOD</label>
-                        <input type="text" name="hod_name" required="required" class="form-control">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Signature</label>
-                        <input type="file" name="signature" required="required" class="form-control">
-                    </div>
-
                     <div class="form-group mt-3">
-                        <input type="submit" name="createSession" value="Create"
+                        <input type="submit" value="Create"
                             class="btn btn-success">
                     </div>
 
@@ -39,8 +29,7 @@
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Title</th>
-                            <th>HOD</th>
+                            <th>Name</th>
                             <th>Date Added</th>
                             <th>Action</th>
                         </tr>
@@ -51,9 +40,8 @@
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
                                     <td>{{ $val->title }}</td>
-                                    <td>{{ $val->hod }}</td>
                                     <td>{{ $val->created_at }}</td>
-                                    <td><button><i class="fa fa-eye"></i></button></td>
+                                    <td><button class="btn btn-sm btn-info"><i class="fa fa-eye"></i></button></td>
                                 </tr>
                             @endforeach
                         @endif
@@ -61,8 +49,7 @@
                     <tfoot>
                         <tr>
                             <th>#</th>
-                            <th>Title</th>
-                            <th>HOD</th>
+                            <th>Name</th>
                             <th>Date Added</th>
                             <th>Action</th>
                         </tr>

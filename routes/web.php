@@ -48,7 +48,7 @@ Route::group(['middleware' => 'auth'], function () {
     });
     Route::controller(AcademicSessionController::class)->group(function () {
         Route::get('/academic-session', 'index')->name('sessions.index');
-        Route::get('/create-session', 'store')->name('sessions.create');
+        Route::post('/create-session', 'store')->name('sessions.create');
         Route::post('/update', 'update')->name('sessions.update');
         Route::delete('/delete-session/{id}', 'destroy')->name('sessions.delete');
     });
@@ -70,10 +70,11 @@ Route::group(['middleware' => 'auth'], function () {
     });
     Route::controller(ExamOfficerController::class)->group(function () {
         Route::get('/exam-officer', 'index')->name('exam-officers.index');
+        Route::post('/create-exam-officer', 'store')->name('exam-officers.create');
     });
     Route::controller(GradeController::class)->group(function () {
         Route::get('/grades', 'index')->name('grades.index');
-        Route::get('/create-grade', 'store')->name('createGrade');
+        Route::post('/create-grade', 'store')->name('grades.create');
         Route::post('/update', 'update')->name('updateGrade');
         Route::delete('/delete-grade/{id}', 'destroy')->name('deleteGrade');
     });
@@ -96,6 +97,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::controller(StudentController::class)->group(function () {
         Route::get('/enroll-students', 'index')->name('students.index');
         Route::get('/all-students', 'view')->name('students.view');
+        Route::post('/fetch-students', 'fetchStudents')->name('students.fetch');
         Route::post('/upload-students', 'store')->name('students.enroll');
     });
 });

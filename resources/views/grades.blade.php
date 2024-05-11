@@ -6,7 +6,8 @@
 
 		<div class="col-md-4">
 		    <h2 class="text-center">Add Grade</h2>
-			<form method="post" action="">
+			<form method="post" action="{{route('grades.create')}}">
+                @csrf
 			    <div class="form-group">
 			        <label>Type</label>
 			        <input type="text" name="type" required="required" class="form-control">
@@ -28,7 +29,7 @@
 			    </div>
 
 			    <div class="form-group mt-3">
-			        <input type="submit" name="addGrade" value="Create" class="btn btn-primary">
+			        <input type="submit" value="Create" class="btn btn-primary">
 			    </div>
 
 			</form>
@@ -57,7 +58,7 @@
 								<td>{{$val->_from}} - {{$val->_to}}</td>
 								<td>{{$val->rmk}}</td>
 								<td>{{$val->created_at}}</td>
-								<td><button><i class="fa fa-eye"></i></button></td>
+								<td><button class="btn btn-sm btn-info"><i class="fa fa-eye"></i></button></td>
 							</tr>
 						@endforeach
 					@endif

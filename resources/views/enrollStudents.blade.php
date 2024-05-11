@@ -8,9 +8,9 @@
         <div class="row mt-4">
 
             <div class="col-md-12">
-                <h3>Query Students List</h3>
+                <h3>Upload Students List</h3>
                 <div class="card border-0 shadow p-3 mb-4">
-                    <form method="post" action="" enctype="multipart/form-data">
+                    <form method="post" action="{{route('students.enroll')}}" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
                             <div class="col-md-3">
@@ -23,7 +23,7 @@
                                     <option></option>
                                     @if ($levels)
                                         @foreach ($levels as $rec):
-                                           <option value="{{$rec->id}}">{{$rec['name']}}</option>
+                                           <option value="{{$rec->id}}">{{$rec->name}}</option>
                                         @endforeach;
                                     @endif
                                 </select>
@@ -36,7 +36,7 @@
                                 </select>
                             </div>
                             <div class="col-md-3">
-                                <button type="submit" class="btn d-block btn-second" onclick="fetchStudents();" style="width: 100%; margin-top:30px">
+                                <button type="submit" class="btn d-block btn-second" style="width: 100%; margin-top:30px">
                                     {{ __('Fetch Students') }}
                                 </button>
                             </div>

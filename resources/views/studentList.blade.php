@@ -69,6 +69,7 @@
                                 <th>First&nbsp;Name</th>
                                 <th>Middle&nbsp;Name</th>
                                 <th>Last&nbsp;Name</th>
+                                <th>Gender</th>
                                 <th>Level</th>
                                 <th>Session</th>
                                 <th>Action</th>
@@ -84,6 +85,7 @@
                                 <th>First&nbsp;Name</th>
                                 <th>Middle&nbsp;Name</th>
                                 <th>Last&nbsp;Name</th>
+                                <th>Gender</th>
                                 <th>Level</th>
                                 <th>Session</th>
                                 <th>Action</th>
