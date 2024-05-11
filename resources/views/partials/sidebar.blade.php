@@ -2,7 +2,7 @@
     <nav class="nav">
         <div>
             <a href="#" class="nav_logo">
-                <img class="kdis-logo" src="{{asset('images/benpoly-logo.png')}}" alt="">
+                <img class="kdis-logo" src="{{asset('storage/'.auth()->user()->account->logo ?? null)}}" alt="account-logo">
                 <div>
                     <p class="text-kdis mb-0" style="font-size: 12px; font-weight: 700;">BENUE STATE</p>
                     <p class="text-kdis-2">POLYTECHNIC</p>
@@ -60,7 +60,7 @@
                 <div class="has-dropdown">
                     @php
                         $resultLinks = [
-                            "Upload Resuslts",
+                            "Upload Results",
                             "All Results",
                         ];
                     @endphp
@@ -69,14 +69,14 @@
                         <span class="nav_name">Results</span>
                     </a>
                     <div class="dropdown {{in_array($activePage, $resultLinks) ? 'open' : '' }}">
-                        <a href="{{route('results.upload')}}" class="dropdown-link {{$activePage == 'Upload Resuslts' ? 'active' : '' }}">Upload Resuslts</a>
+                        <a href="{{route('results.upload')}}" class="dropdown-link {{$activePage == 'Upload Results' ? 'active' : '' }}">Upload Resuslts</a>
                         <a href="{{route('results.index')}}" class="dropdown-link {{$activePage == 'All Results' ? 'active' : '' }}">All Results</a>
                     </div>
                 </div>
                 <div class="has-dropdown">
                     @php
                         $statLinks = [
-                            "Resuslts",
+                            "Results Stats",
                             "Course Performances",
                         ];
                     @endphp
@@ -85,7 +85,7 @@
                         <span class="nav_name">Statistics</span>
                     </a>
                     <div class="dropdown {{in_array($activePage, $statLinks) ? 'open' : '' }}">
-                        <a href="{{route('results.courses.stats')}}" class="dropdown-link {{$activePage == 'Results' ? 'active' : '' }}">Results</a>
+                        <a href="{{route('results.courses.stats')}}" class="dropdown-link {{$activePage == 'Results Stats' ? 'active' : '' }}">Results</a>
                         <a href="#" class="dropdown-link {{$activePage == 'Course Performances' ? 'active' : '' }}">Course Performances</a>
                     </div>
                 </div>

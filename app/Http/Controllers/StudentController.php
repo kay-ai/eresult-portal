@@ -12,7 +12,7 @@ class StudentController extends Controller
 {
     public function index(){
         $levels = Level::all();
-        return view('enrollStudents', compact('levels'));
+        return view('students.enrollStudents', compact('levels'));
     }
 
     public function enrollStudents(){
@@ -24,7 +24,7 @@ class StudentController extends Controller
         $departments = Department::all();
         $sessions = AcademicSession::all();
         $students = Student::orderBy('mat_num', 'asc')->get();
-        return view('studentList', compact('levels', 'departments', 'sessions', 'students'));
+        return view('students.studentList', compact('levels', 'departments', 'sessions', 'students'));
     }
 
     public function fetchStudents(Request $request)

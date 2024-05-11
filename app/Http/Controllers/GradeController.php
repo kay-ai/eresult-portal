@@ -11,7 +11,7 @@ class GradeController extends Controller
     public function index()
     {
         $grades = Grade::all();
-        return view('grades', compact('grades'));
+        return view('superAdmin.grades', compact('grades'));
     }
 
     public function store(Request $request)

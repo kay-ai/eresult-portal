@@ -48,4 +48,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(ExamOfficer::class);
     }
+
+    public function account()
+    {
+        return $this->belongsTo(Account::class);
+    }
 }

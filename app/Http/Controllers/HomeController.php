@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Result;
+use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -25,7 +27,11 @@ class HomeController extends Controller
     public function index()
     {
         $users = User::latest()->get();
-        return view('dashboard', compact('users'));
+        $students = Student::latest()->get();
+        $results = Result::latest()->get();
+        $studentCount = count($students);
+        $resultCount = count($results);
+        return view('dashboard', compact('users','students','studentCount','resultCount'));
     }
 
     public function admin()
