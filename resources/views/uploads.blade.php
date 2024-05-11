@@ -11,7 +11,7 @@
             <div class="col-md-12">
                 <h3>Upload Results</h3>
                 <div class="card border-0 shadow p-3 mb-4 mt-4">
-                    <form method="post" action="" enctype="multipart/form-data">
+                    <form method="post" action="{{route('results.create')}}" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
                             <div class="col-md-3">
@@ -20,7 +20,7 @@
                                     <option></option>
                                     @if ($levels)
                                         @foreach ($levels as $rec):
-                                           <option value="{{$rec->id}}">{{$rec['name']}}</option>
+                                           <option value="{{$rec->id}}">{{$rec->name}}</option>
                                         @endforeach;
                                     @endif
                                 </select>

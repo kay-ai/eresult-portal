@@ -88,7 +88,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::controller(ResultController::class)->group(function () {
         Route::get('/results', 'index')->name('results.index');
         Route::get('/upload-results', 'uploadResults')->name('results.upload');
-        Route::post('/upload-results', 'store');
+        Route::post('/upload-results', 'store')->name('results.create');
         Route::post('/drop', 'destroy')->name('results.drop');
         Route::post('/view-results', 'show')->name('results.view');
         Route::get('/results-stats', 'resultStats')->name('results.stats');
