@@ -62,6 +62,8 @@ class ResultController extends Controller
                     $tcu = [];
                     $remarks = [];
 
+                    $rset = [];
+                    $y = 1;
                     for ($i = 2; $i <= 23; $i += 2) {
                         $cc = strtoupper(trim($row[$i]));
                         $tot = trim($row[$i + 1]);
@@ -90,6 +92,9 @@ class ResultController extends Controller
                                 $remarks[] = $cc;
                             }
                         }
+
+                        $rset[] = ['cc'.$y => $cc, 'cu'.$y => $cu1, 'score'.$y => $tot1, 'grade'.$y => $g1, 'rmk'.$y => $r1];
+                        $y++;
                     }
 
                     $semester = trim($row[26]);
