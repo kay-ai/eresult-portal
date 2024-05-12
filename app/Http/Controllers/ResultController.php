@@ -62,6 +62,8 @@ class ResultController extends Controller
                     $tcu = [];
                     $remarks = [];
 
+                    $rset = [];
+                    $y = 1;
                     for ($i = 2; $i <= 23; $i += 2) {
                         $cc = strtoupper(trim($row[$i]));
                         $tot = trim($row[$i + 1]);
@@ -90,7 +92,17 @@ class ResultController extends Controller
                                 $remarks[] = $cc;
                             }
                         }
+
+                        $rset['cc'.$y] = $cc;
+                        $rset['cu'.$y] = $cu1;
+                        $rset['score'.$y] = $tot;
+                        $rset['grade'.$y] = $g1;
+                        $rset['rmk'.$y] = $r1;
+
+                        $y++;
                     }
+
+                    // dd($rset);
 
                     $semester = trim($row[26]);
                     $level = trim($row[27]);
@@ -113,15 +125,19 @@ class ResultController extends Controller
                     $gpa = ($tgpSum / $tcuSum) ?: $tgpSum;
                     $gpa = round($gpa, 2);
 
+                    $rset = array_merge($rset, [
+                        'tce' => $tceSum,
+                        'tcu' => $tcuSum,
+                        'tgp' => $tgpSum,
+                        'gpa' => $gpa,
+                        'remarks' => $remarks,
+                    ]);
+
+                    // dd($rset);
+
                     $result = Result::updateOrCreate(
-                        ['mat_num' => $mat_num, 'level_id' => $level, 'academic_session_id' => $academic_session_id, 'semester' => $semester],
-                        [
-                            'tce' => $tceSum,
-                            'tcu' => $tcuSum,
-                            'tgp' => $tgpSum,
-                            'gpa' => $gpa,
-                            'remarks' => $remarks,
-                        ]
+                        ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'semester' => $semester],
+                        $rset,
                     );
 
                     if ($result) {
