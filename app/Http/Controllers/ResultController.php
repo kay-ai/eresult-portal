@@ -237,6 +237,6 @@ class ResultController extends Controller
         $session = $this->getSession($session_id);
 
         $results = Result::where('academic_session_id', $session_id)->where('semester', $semester)->where('level_id', $level_id)->get();
-        return view('displayResults', compact('session', 'semester', 'level', 'results'));
+        return view('results.displayResults', compact('session', 'semester', 'level', 'results'));
     }
 }
