@@ -18,4 +18,8 @@ class Student extends Model
     {
         return $this->belongsTo(AcademicSession::class);
     }
+
+    public function result(){
+        return $this->hasMany(Result::class, 'mat_num');
+    }
 }
