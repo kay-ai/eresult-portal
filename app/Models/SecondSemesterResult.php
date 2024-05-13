@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ResultSecond extends Model
+class SecondSemesterResult extends Model
 {
     use HasFactory;
 
@@ -80,6 +80,7 @@ class ResultSecond extends Model
         'tce',
         'gpa',
         'pgpa',
+        'cgpa',
         'pcgpa',
         'remarks',
     ];

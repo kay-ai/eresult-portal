@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\Result;
-use App\Models\ResultTwo;
+use App\Models\SecondSemesterResult;
 use App\Models\Level;
 use App\Models\Department;
 use App\Models\AcademicSession;
@@ -64,6 +64,7 @@ class ResultController extends Controller
                     $tgp = [];
                     $tcu = [];
                     $remarks = [];
+                    $cleared = [];
 
                     $rset = [];
                     $y = 1;
@@ -91,8 +92,10 @@ class ResultController extends Controller
                             $gp1 = $this->gp($cu1, $g1);
                             $tgp[] = $gp1;
 
-                            if ($tot < 39.9) {
+                            if ($g1 == 'F') {
                                 $remarks[] = $cc;
+                            }else{
+                                $cleared[] = $cc;
                             }
                         }
 
@@ -117,7 +120,7 @@ class ResultController extends Controller
 
                     $department_id = $this->getDepartmentId($dept);
 
-                    $remarks = $this->resolveCO($mat_num, $remarks, $level_id, $session);
+                    $remarks = array_merge($this->resolveCO($mat_num, $cleared, $semester, $level_id, $session));
 
                     $remarks = serialize($remarks);
                     $tgpSum = array_sum($tgp);
@@ -149,9 +152,13 @@ class ResultController extends Controller
 
                     }else{
 
-                        $cgpa = $this->getStdntCGPA($mat_num, $level_id, $gpa);
+                        // $cgpa = $this->getStdntCGPA($mat_num, $level_id, $gpa);
                         $pgpa = $this->prevGpa($mat_num, $level_id);
-
+                        if($pgpa != null){
+                            $cgpa = round((($gpa + $pgpa)/2),2);
+                        }else{
+                            $cgpa = 0;
+                        }
                         $pcgpa = $this->prevCgpa($mat_num, $level_id);
 
                         $rset = array_merge($rset, [
@@ -165,7 +172,7 @@ class ResultController extends Controller
                             'remarks' => $remarks,
                         ]);
 
-                        $result = Result2::updateOrCreate(
+                        $result = SecondSemesterResult::updateOrCreate(
                             ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'department_id' => $department_id, 'semester' => $semester],
                             $rset,
                         );
@@ -262,7 +269,12 @@ class ResultController extends Controller
 
     private function rmkP($tot)
     {
-        return ($tot <= 39.9) ? "Fail" : "Pass";
+        $grade = Grade::where('_type', 'F')->first();
+        if($grade){
+            return ($tot <= $grade->_to) ? "Fail" : "Pass";
+        }else{
+            return ($tot <= 39.9) ? "Fail" : "Pass";
+        }
     }
 
     private function gp($cu, $g)
@@ -307,7 +319,7 @@ class ResultController extends Controller
 
         $department = Department::find($department_id);
         if($semester == 'Second'){
-            $results = ResultTwo::where('academic_session_id', $session_id)->where('semester', $semester)->where('level_id', $level_id)->where('department_id', $department_id)->get();
+            $results = SecondSemesterResult::where('academic_session_id', $session_id)->where('semester', $semester)->where('level_id', $level_id)->where('department_id', $department_id)->get();
             return view('results.displaySecondSemesterResults', compact('session', 'semester', 'level', 'results', 'account', 'department'));
         }else{
             $results = Result::where('academic_session_id', $session_id)->where('semester', $semester)->where('level_id', $level_id)->where('department_id', $department_id)->get();
@@ -316,18 +328,23 @@ class ResultController extends Controller
 
     }
 
-    private function getStdntCGPA($mn, $level_id, $gp){
+    private function getStdntCGPA($mn, $semester, $level_id, $gp){
+        if($semester == 'Second'){
 
-        $res = ResultSecond::where('mat_num', $mn)->where('level_id', $level_id)->first();
+        }
+        $res = SecondSemesterResult::where('mat_num', $mn)->where('level_id', $level_id)->first();
         if($res){
             $cgpa = $res->cgpa;
             $cgpa = ($cgpa+$gp)/2;
             return round($cgpa,2);
         }else{
             $res = Result::where('mat_num', $mn)->where('level_id', $level_id)->first();
-            $gpa = $res->gpa;
-            $cgpa = ($gpa+$gp)/2;
-            return round($cgpa,2);
+            if($res){
+                $gpa = $res->gpa;
+                $cgpa = ($gpa+$gp)/2;
+                return round($cgpa,2);
+            }
+
         }
 
     }
@@ -335,21 +352,65 @@ class ResultController extends Controller
     private function prevGpa($mn, $level_id){
 
         $res = Result::where('mat_num', $mn)->where('level_id', $level_id)->first();
-        return $res->gpa;
-
+        if($res){
+            return $res->gpa;
+        }
+        return null;
     }
 
     private function prevCgpa($mn, $level_id){
 
-        $res = ResultSecond::where('mat_num', $mn)->where('level_id', $level_id)->first();
-        return $res->cgpa;
+        $res = SecondSemesterResult::where('mat_num', $mn)->where('level_id', $level_id)->first();
+        if($res){
+            return $res->cgpa;
+        }
+        return null;
 
     }
 
-    private function resolveCO($mn, $remarks, $semester, $level_id, $session)
+    private function resolveCO($mn, $cleared, $semester, $level_id, $session)
     {
+        $year = substr($session,0,4);
+        $_session = (($year-1).'/'.$year);
+        $_session_id = $this->getSessionId($_session);
+        $cr = [];
         if($semester == 'First'){
-            $f_rmks = Result::where('mat_num', $mn)->where('semester', $semester)->where('session', $session)->first();
+            $f_rmks = Result::where('mat_num', $mn)->where('semester', $semester)->where('academic_session_id', $_session_id)->first();
+            if($f_rmks){
+                $x_rmks = unserialize($f_rmks->remarks);
+                if(empty($x_rmks))
+                {
+                    // $cr = $remarks;
+                }else{
+                    foreach($x_rmks as $rmk)
+                    {
+                        if(!in_array($rmk, $cleared)){
+                            $cr[] = $rmk;
+                        }
+                    }
+
+                    return $cr;
+                }
+            }
+        }else{
+            $f_rmks = SecondSemesterResult::where('mat_num', $mn)->where('semester', $semester)->where('academic_session_id', $_session_id)->first();
+            if($f_rmks){
+                $x_rmks = unserialize($f_rmks->remarks);
+                if(empty($x_rmks))
+                {
+                    // $cr = $remarks;
+                }else{
+                    foreach($x_rmks as $rmk)
+                    {
+                        if(!in_array($rmk, $cleared)){
+                            $cr[] = $rmk;
+                        }
+                    }
+
+                    return $cr;
+                }
+            }
+            return [];
         }
     }
 }

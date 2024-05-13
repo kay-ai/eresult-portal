@@ -19,9 +19,9 @@ class Department extends Model
         return $this->hasMany(Result::class);
     }
 
-    public function resultsTwo()
+    public function secondSemesterResults()
     {
-        return $this->hasMany(Result2::class);
+        return $this->hasMany(SecondSemesterResult::class);
     }
 
     public function examOfficer()
