@@ -77,7 +77,7 @@ return new class extends Migration
             $table->string('score12', 11)->nullable();
             $table->string('grade12', 5)->nullable();
             $table->string('rmk12', 25)->nullable();
-            $table->string('dept', 25)->nullable();
+            $table->integer('department_id')->nullable();
             $table->string('tgp', 11)->nullable();
             $table->integer('tcu')->nullable();
             $table->string('tce', 11)->nullable();

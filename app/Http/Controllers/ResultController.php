@@ -7,6 +7,8 @@ use App\Models\Result;
 use App\Models\Level;
 use App\Models\Department;
 use App\Models\AcademicSession;
+use App\Models\Grade;
+use App\Models\Account;
 use Illuminate\Http\Request;
 
 class ResultController extends Controller
@@ -102,22 +104,24 @@ class ResultController extends Controller
                         $y++;
                     }
 
-                    // dd($rset);
+                    $dept = trim($row[26]);
 
-                    $semester = trim($row[26]);
-                    $level = trim($row[27]);
-                    $session = trim($row[28]);
+                    $semester = trim($row[27]);
+                    $level = trim($row[28]);
+                    $session = trim($row[29]);
 
                     $academic_session_id = $this->getSessionId($session);
 
                     $level_id = $this->getLevelId($level);
+
+                    $department_id = $this->getDepartmentId($dept);
 
                     $remarks = serialize($remarks);
                     $tgpSum = array_sum($tgp);
                     $tcuSum = array_sum($tcu);
                     $tceSum = array_sum($tce);
 
-                    if ($tcuSum > 30) {
+                    if ($tcuSum > 35) {
                         $details .= '<p class="w3-text-white">Maximum credit units exceeded for '.$mat_num.'!</p>';
                         continue;
                     }
@@ -136,7 +140,7 @@ class ResultController extends Controller
                     // dd($rset);
 
                     $result = Result::updateOrCreate(
-                        ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'semester' => $semester],
+                        ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'department_id' => $department_id, 'semester' => $semester],
                         $rset,
                     );
 
@@ -151,6 +155,16 @@ class ResultController extends Controller
                 echo '<p><a href="javascript:history.back();"><button>Back</button></a></p>';
             }
         }
+    }
+
+    private function getDepartmentId($dept)
+    {
+        $department = Department::where('name', $dept)->first();
+        if($department)
+        {
+            return $department->id;
+        }
+        return null;
     }
 
     private function getSessionId($session)
@@ -195,18 +209,27 @@ class ResultController extends Controller
 
     private function gradeP($tot)
     {
-        if ($tot <= 39.9) {
-            return "F";
-        } elseif ($tot <= 44.9) {
-            return "E";
-        } elseif ($tot <= 49.9) {
-            return "D";
-        } elseif ($tot <= 59.9) {
-            return "C";
-        } elseif ($tot <= 69.9) {
-            return "B";
-        } else {
-            return "A";
+        $grades = Grade::all();
+        if(count($grades) > 0){
+            foreach($grades as $key => $val){
+                if($tot >= $val->_from && $tot <= $val->_to){
+                    return $val->_type;
+                }
+            }
+        }else{
+            if ($tot <= 39.9) {
+                return "F";
+            } elseif ($tot <= 44.9) {
+                return "E";
+            } elseif ($tot <= 49.9) {
+                return "D";
+            } elseif ($tot <= 59.9) {
+                return "C";
+            } elseif ($tot <= 69.9) {
+                return "B";
+            } else {
+                return "A";
+            }
         }
     }
 
@@ -245,6 +268,7 @@ class ResultController extends Controller
 
     public function show(Request $request)
     {
+        $department_id = $request->department_id;
         $session_id = $request->session_id;
         $semester = $request->semester;
         $level_id = $request->level_id;
@@ -252,7 +276,11 @@ class ResultController extends Controller
         $level = $this->getLevel($level_id);
         $session = $this->getSession($session_id);
 
-        $results = Result::where('academic_session_id', $session_id)->where('semester', $semester)->where('level_id', $level_id)->get();
-        return view('results.displayResults', compact('session', 'semester', 'level', 'results'));
+        $account = Account::first();
+
+        $department = Department::find($department_id);
+
+        $results = Result::where('academic_session_id', $session_id)->where('semester', $semester)->where('level_id', $level_id)->where('department_id', $department_id)->get();
+        return view('results.displayResults', compact('session', 'semester', 'level', 'results', 'account', 'department'));
     }
 }
