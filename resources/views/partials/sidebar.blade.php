@@ -13,34 +13,36 @@
                     <i class='bx bx-grid-alt nav_icon'></i>
                     <span class="nav_name">Dashboard</span>
                 </a>
-                <div class="has-dropdown">
-                    @php
-                        $accountLinks = [
-                            "Basic Info",
-                            "Academic Session",
-                            "Faculties",
-                            "Departments",
-                            "Levels",
-                            "Courses",
-                            "Exam Officers",
-                            "Grade Settings"
-                        ];
-                    @endphp
-                    <a href="javascript:void(0);" class="nav_link {{in_array($activePage, $accountLinks) ? 'active' : '' }}">
-                        <i class='bx bx-buildings nav_icon'></i>
-                        <span class="nav_name">Account Setup</span>
-                    </a>
-                    <div class="dropdown {{in_array($activePage, $accountLinks) ? 'open' : '' }}">
-                        <a href="{{route('account.index')}}" class="dropdown-link {{$activePage == 'Basic Info' ? 'active' : '' }}">Basic Info</a>
-                        <a href="{{route('sessions.index')}}" class="dropdown-link {{$activePage == 'Academic Session' ? 'active' : '' }}">Academic Session</a>
-                        <a href="{{route('faculty.index')}}" class="dropdown-link {{$activePage == 'Faculties' ? 'active' : '' }}">Faculties</a>
-                        <a href="{{route('departments.index')}}" class="dropdown-link {{$activePage == 'Departments' ? 'active' : '' }}">Departments</a>
-                        <a href="{{route('levels.index')}}" class="dropdown-link {{$activePage == 'Levels' ? 'active' : '' }}">Levels</a>
-                        <a href="{{route('courses.index')}}" class="dropdown-link {{$activePage == 'Courses' ? 'active' : '' }}">Courses</a>
-                        <a href="{{route('exam-officers.index')}}" class="dropdown-link {{$activePage == 'Exam Officers' ? 'active' : '' }}">Exam Officers</a>
-                        <a href="{{route('grades.index')}}" class="dropdown-link {{$activePage == 'Grade Settings' ? 'active' : '' }}">Grade Settings</a>
+                @can('view set-up account')
+                    <div class="has-dropdown">
+                        @php
+                            $accountLinks = [
+                                "Basic Info",
+                                "Academic Session",
+                                "Faculties",
+                                "Departments",
+                                "Levels",
+                                "Courses",
+                                "Exam Officers",
+                                "Grade Settings"
+                            ];
+                        @endphp
+                        <a href="javascript:void(0);" class="nav_link {{in_array($activePage, $accountLinks) ? 'active' : '' }}">
+                            <i class='bx bx-buildings nav_icon'></i>
+                            <span class="nav_name">Account Setup</span>
+                        </a>
+                        <div class="dropdown {{in_array($activePage, $accountLinks) ? 'open' : '' }}">
+                            <a href="{{route('account.index')}}" class="dropdown-link {{$activePage == 'Basic Info' ? 'active' : '' }}">Basic Info</a>
+                            <a href="{{route('sessions.index')}}" class="dropdown-link {{$activePage == 'Academic Session' ? 'active' : '' }}">Academic Session</a>
+                            <a href="{{route('faculty.index')}}" class="dropdown-link {{$activePage == 'Faculties' ? 'active' : '' }}">Faculties</a>
+                            <a href="{{route('departments.index')}}" class="dropdown-link {{$activePage == 'Departments' ? 'active' : '' }}">Departments</a>
+                            <a href="{{route('levels.index')}}" class="dropdown-link {{$activePage == 'Levels' ? 'active' : '' }}">Levels</a>
+                            <a href="{{route('courses.index')}}" class="dropdown-link {{$activePage == 'Courses' ? 'active' : '' }}">Courses</a>
+                            <a href="{{route('exam-officers.index')}}" class="dropdown-link {{$activePage == 'Exam Officers' ? 'active' : '' }}">Exam Officers</a>
+                            <a href="{{route('grades.index')}}" class="dropdown-link {{$activePage == 'Grade Settings' ? 'active' : '' }}">Grade Settings</a>
+                        </div>
                     </div>
-                </div>
+                @endcan
                 <div class="has-dropdown">
                     @php
                         $studentLinks = [
@@ -107,10 +109,10 @@
                         <span class="nav_name">Settings</span>
                     </a>
                     <div class="dropdown {{in_array($activePage, $settingLinks) ? 'open' : '' }}">
-                        <a href="{{route('dashboard')}}" class="dropdown-link {{$activePage == 'Roles' ? 'active' : '' }}">Roles</a>
-                        <a href="#" class="dropdown-link {{$activePage == 'Permissions' ? 'active' : '' }}">Permissions</a>
-                        <a href="#" class="dropdown-link {{$activePage == 'Assign Role' ? 'active' : '' }}">Assign Role</a>
-                        <a href="#" class="dropdown-link {{$activePage == 'Assign Permission' ? 'active' : '' }}">Assign Permission</a>
+                        <a href="{{route('roles.index')}}" class="dropdown-link {{$activePage == 'Roles' ? 'active' : '' }}">Roles</a>
+                        <a href="{{route('permissions.index')}}" class="dropdown-link {{$activePage == 'Permissions' ? 'active' : '' }}">Permissions</a>
+                        <a href="{{route('role-assignment.index')}}" class="dropdown-link {{$activePage == 'Assign Role' ? 'active' : '' }}">Assign Role</a>
+                        <a href="{{route('permission-assignment.index')}}" class="dropdown-link {{$activePage == 'Assign Permission' ? 'active' : '' }}">Assign Permission</a>
                     </div>
                 </div>
             </div>

@@ -13,6 +13,10 @@ use App\Http\Controllers\ExamOfficerController;
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\LevelController;
+use App\Http\Controllers\PermissionAssignmentController;
+use App\Http\Controllers\PermissionsController;
+use App\Http\Controllers\RoleAssignmentController;
+use App\Http\Controllers\RolesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -100,4 +104,13 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/fetch-students', 'fetchStudents')->name('students.fetch');
         Route::post('/upload-students', 'store')->name('students.enroll');
     });
+
+    Route::resources([
+        'roles' => RolesController::class,
+        'permissions' => PermissionsController::class,
+        'role-assignment' => RoleAssignmentController::class,
+        'permission-assignment' => PermissionAssignmentController::class
+    ]);
+
+    Route::post('/role-permissions/{role}', [RolesController::class, 'getPermissions']);
 });

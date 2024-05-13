@@ -69,10 +69,10 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Mat.&nbsp;Number</th>
-                                <th>First&nbsp;Name</th>
-                                <th>Middle&nbsp;Name</th>
-                                <th>Last&nbsp;Name</th>
+                                <th>Mat. Number</th>
+                                <th>First Name</th>
+                                <th>Middle Name</th>
+                                <th>Last Name</th>
                                 <th>Gender</th>
                                 <th>Level</th>
                                 <th>Session</th>
@@ -103,10 +103,10 @@
                         <tfoot>
                             <tr>
                                 <th>#</th>
-                                <th>Mat.&nbsp;Number</th>
-                                <th>First&nbsp;Name</th>
-                                <th>Middle&nbsp;Name</th>
-                                <th>Last&nbsp;Name</th>
+                                <th>Mat. Number</th>
+                                <th>First Name</th>
+                                <th>Middle Name</th>
+                                <th>Last Name</th>
                                 <th>Gender</th>
                                 <th>Level</th>
                                 <th>Session</th>
