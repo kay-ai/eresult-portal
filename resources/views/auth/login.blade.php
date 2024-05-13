@@ -3,7 +3,7 @@
 @section('content')
     <div class="guest-header text-center mb-5">
         <h1 style="font-weight: 700">{{ __('Log in') }}</h1>
-        <p>Connect Anytime, Anywhere Intuitive Hotspot Made Perfect!</p>
+        <p>Manage Students, Manage Results, Generate Transcript, Print Result and much more!</p>
     </div>
 
     <form method="POST" action="{{ route('login') }}">
@@ -50,7 +50,7 @@
                 </label>
             </div>
             @if (Route::has('password.request'))
-                <a class="text-danger" href="{{ route('forgot.password') }}">
+                <a class="text-kdis-2" href="{{ route('forgot.password') }}">
                     {{ __('Forgot Your Password?') }}
                 </a>
             @endif

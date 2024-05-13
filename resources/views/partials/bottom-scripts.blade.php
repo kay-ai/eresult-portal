@@ -17,8 +17,21 @@
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/masonry/4.2.2/masonry.pkgd.min.js"></script>
 
+<script src="{{asset('js/app.js')}}"></script>
 <script src="{{asset('js/script.js')}}"></script>
 <script src="{{asset('js/charts.js')}}"></script>
+
+<script>
+    $(document).ready(function() {
+        $('.datatable-benpoly').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'copy', 'csv', 'excel', 'pdf', 'print'
+            ]
+        });
+    });
+</script>
 
 @stack('js')

@@ -10,18 +10,19 @@ class GradeController extends Controller
 
     public function index()
     {
-
+        $grades = Grade::all();
+        return view('superAdmin.grades', compact('grades'));
     }
 
     public function store(Request $request)
     {
         $grade = new Grade();
-        $grade->type = $request->type;
-		$grade->from = $request->from;
-		$grade->to = $request->to;
+        $grade->_type = $request->type;
+		$grade->_from = $request->from;
+		$grade->_to = $request->to;
 		$grade->rmk = $request->rmk;
 
-        $check = Grade::where('type', $request->type)->count();
+        $check = Grade::where('_type', $request->type)->count();
 
 		if($check > 1){
 			return redirect()->back()->with('error', 'Grade already exists!');

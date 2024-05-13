@@ -10,7 +10,7 @@ class LevelController extends Controller
     public function index()
     {
         $levels = Level::latest()->get();
-        return view('levels', compact('levels'));
+        return view('superAdmin.levels', compact('levels'));
     }
 
     public function store(Request $request)
@@ -23,7 +23,6 @@ class LevelController extends Controller
         } else {
             $level = new Level();
             $level->name = $name;
-            $level->created_at = now();
 
             try {
                 $level->save();

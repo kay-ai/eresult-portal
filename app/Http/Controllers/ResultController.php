@@ -2,13 +2,42 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Course;
+use App\Models\Result;
+use App\Models\Level;
+use App\Models\Department;
+use App\Models\AcademicSession;
 use Illuminate\Http\Request;
 
 class ResultController extends Controller
 {
     public function index()
     {
-        return view('results');
+        $levels = Level::all();
+        $departments = Department::all();
+        $sessions = AcademicSession::all();
+        return view('results.index', compact('levels', 'departments', 'sessions'));
+    }
+
+    public function uploadResults(Request $request)
+    {
+        $levels = Level::all();
+        $departments = Department::all();
+        $sessions = AcademicSession::all();
+        return view('results.uploadResult', compact('levels', 'departments', 'sessions'));
+    }
+
+    public function resultStats()
+    {
+        return view('results.index');
+    }
+
+    public function courseStats()
+    {
+        $levels = Level::all();
+        $departments = Department::all();
+        $sessions = AcademicSession::all();
+        return view('results.resultStats', compact('levels', 'departments', 'sessions'));
     }
 
     public function store(Request $request)
@@ -33,6 +62,8 @@ class ResultController extends Controller
                     $tcu = [];
                     $remarks = [];
 
+                    $rset = [];
+                    $y = 1;
                     for ($i = 2; $i <= 23; $i += 2) {
                         $cc = strtoupper(trim($row[$i]));
                         $tot = trim($row[$i + 1]);
@@ -61,7 +92,25 @@ class ResultController extends Controller
                                 $remarks[] = $cc;
                             }
                         }
+
+                        $rset['cc'.$y] = $cc;
+                        $rset['cu'.$y] = $cu1;
+                        $rset['score'.$y] = $tot;
+                        $rset['grade'.$y] = $g1;
+                        $rset['rmk'.$y] = $r1;
+
+                        $y++;
                     }
+
+                    // dd($rset);
+
+                    $semester = trim($row[26]);
+                    $level = trim($row[27]);
+                    $session = trim($row[28]);
+
+                    $academic_session_id = $this->getSessionId($session);
+
+                    $level_id = $this->getLevelId($level);
 
                     $remarks = serialize($remarks);
                     $tgpSum = array_sum($tgp);
@@ -76,28 +125,72 @@ class ResultController extends Controller
                     $gpa = ($tgpSum / $tcuSum) ?: $tgpSum;
                     $gpa = round($gpa, 2);
 
+                    $rset = array_merge($rset, [
+                        'tce' => $tceSum,
+                        'tcu' => $tcuSum,
+                        'tgp' => $tgpSum,
+                        'gpa' => $gpa,
+                        'remarks' => $remarks,
+                    ]);
+
+                    // dd($rset);
+
                     $result = Result::updateOrCreate(
-                        ['mat_num' => $mat_num, 'level_id' => $request->input('level'), 'session_id' => $request->input('session'), 'semester' => $request->input('semester')],
-                        [
-                            'tce' => $tceSum,
-                            'tcu' => $tcuSum,
-                            'tgp' => $tgpSum,
-                            'gpa' => $gpa,
-                            'remarks' => $remarks,
-                        ]
+                        ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'semester' => $semester],
+                        $rset,
                     );
 
                     if ($result) {
-                        $details .= $mat_num ." result computed successfully!\n";
+                        $details .= '<p>'.$mat_num .' result computed successfully!</p>';
                     } else {
-                        $details .= "Failed to compute result for ".$mat_num."\n";
+                        $details .= "<p>Failed to compute result for ".$mat_num."</p>";
                     }
                 }
 
                 echo $details;
-                echo '<p><a href="'.url()->previous().'"><button>Back</button></a></p>';
+                echo '<p><a href="javascript:history.back();"><button>Back</button></a></p>';
             }
         }
+    }
+
+    private function getSessionId($session)
+    {
+        $session = AcademicSession::where('title', $session)->first();
+        if($session)
+        {
+            return $session->id;
+        }
+        return null;
+    }
+
+    private function getLevelId($level)
+    {
+        $level = Level::where('name', $level)->first();
+        if($level)
+        {
+            return $level->id;
+        }
+        return null;
+    }
+
+    private function getSession($session_id)
+    {
+        $session = AcademicSession::where('id', $session_id)->first();
+        if($session)
+        {
+            return $session->title;
+        }
+        return null;
+    }
+
+    private function getLevel($level_id)
+    {
+        $level = Level::where('id', $level_id)->first();
+        if($level)
+        {
+            return $level->name;
+        }
+        return null;
     }
 
     private function gradeP($tot)
@@ -133,11 +226,11 @@ class ResultController extends Controller
         if ($course) {
             return $course->unit;
         } else {
-            echo '<p>'.$cc.' course not found!</p>';
+            return false;
         }
     }
 
-    public function destroy(Reqest $request)
+    public function destroy(Request $request)
     {
         $year = $request->year;
         $semester = $request->semester;
@@ -152,10 +245,14 @@ class ResultController extends Controller
 
     public function show(Request $request)
     {
-        $year = $request->year;
+        $session_id = $request->session_id;
         $semester = $request->semester;
-        $level = $request->level;
-        $results = Result::where('year', $year)->where('semester', $semester)->where('level', $level)->get();
-        return view('displayResults', compact('year', 'semester', 'level', 'results'));
+        $level_id = $request->level_id;
+
+        $level = $this->getLevel($level_id);
+        $session = $this->getSession($session_id);
+
+        $results = Result::where('academic_session_id', $session_id)->where('semester', $semester)->where('level_id', $level_id)->get();
+        return view('results.displayResults', compact('session', 'semester', 'level', 'results'));
     }
 }
