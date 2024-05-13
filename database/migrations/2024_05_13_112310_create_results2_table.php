@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('results', function (Blueprint $table) {
+        Schema::create('results2', function (Blueprint $table) {
             $table->id();
             $table->string('mat_num', 25)->nullable();
             $table->integer('level_id');
@@ -82,6 +82,9 @@ return new class extends Migration
             $table->integer('tcu')->nullable();
             $table->string('tce', 11)->nullable();
             $table->string('gpa', 11)->nullable();
+            $table->string('pgpa', 11)->nullable();
+            $table->string('cgpa', 11)->nullable();
+            $table->string('pcgpa', 11)->nullable();
             $table->string('remarks', 225)->nullable();
             $table->timestamps();
         });
@@ -92,6 +95,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('results');
+        Schema::dropIfExists('results2');
     }
 };
