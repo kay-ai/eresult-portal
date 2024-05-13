@@ -18,5 +18,4 @@ class ExamOfficer extends Model
     {
         return $this->belongsTo(Department::class);
     }
-
 }

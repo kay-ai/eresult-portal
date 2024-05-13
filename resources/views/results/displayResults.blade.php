@@ -17,32 +17,16 @@
         .text-center{
             text-align: center;
         }
-        .full-width{
-            width: 100%;
-        }
     </style>
 </head>
 
 <body>
 
-    <div class="full-width">
-        <table style="width:100%">
-            <tr>
-                <th style="width:10%"><img src="{{asset('storage/'.$account->logo)}}" class="img-fluid" style="width:80px;height:80px"></th>
-                <th style="width:90%;text-align:center">
-                    <h1 class="text-center">{{$account->school}}</h1>
-                    <p class="text-center">Motto: {{$account->motto}}</p>
-                </th>
-            </tr>
-            <tr>
-                <td></td>
-                <td><h2 class="text-center">{{$department->name}} Result for {{ $level }} Level, {{ $semester }} Semester, Session:
-                    {{ $session }}
-                </h2></td>
-            </tr>
-        </table>
-
-    </div>
+    <span class="full-width">
+        <h2 class="text-center">Result for {{ $level }} Level, {{ $semester }} Semester, Session:
+            {{ $session }}
+        </h2>
+    </span>
 
     <table width="100%" border="1" cellpadding="1" cellspacing="1"
         style="font-size: 70%;border-collapse:collapse">
@@ -83,14 +67,12 @@
                         $ov_rmk = implode(',', $remarks);
                     }
                     // $cgpa = getStdntCGPA($r['mat_num'], $level_id, $gp);
-
-                    $student = App\Models\Student::where('mat_num',$r->mat_num)->first();
                 @endphp
 
 
                 <tr>
                     <th scope="col">{{ $key + 1 }}</th>
-                    <th scope="col"><b>{{$student->lname}}</b> {{$student->fname}}</th>
+                    <th scope="col">{name}</th>
                     <th scope="col">{{ $r->mat_num }}</th>
                     <th scope="col">
 
@@ -177,37 +159,10 @@
 
     </table>
 
-    <table width="100%">
-        <thead>
-            <tr>
-                <th style="width:33%;text-align:center">
-                    <h4>HOD</h4>
-                </th>
-                <th style="width:33%;text-align:center">
-                    <h4>Dean</h4>
-                </th>
-                <th style="width:33%;text-align:center">
-                    <h4>Exam Officer</h4>
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td style="text-align:center">{{$department->hod}}<br><img src="{{asset('storage/'.$department->signature)}}" class="img-fluid" style="width:200px;height:50px"></td>
-                <td style="text-align:center"></td>
-                <td style="text-align:center"></td>
-            </tr>
-        </tbody>
-    </table>
-
     @php
         function getCtype($cc)
         {
-            $course = App\Models\Course::where('code', $cc)->first();
-            if($course){
-                return $course->type;
-            }
-            return null;
+            return 'Core';
         }
     @endphp
     @include('partials.bottom-scripts')
