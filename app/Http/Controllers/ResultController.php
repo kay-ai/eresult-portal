@@ -22,6 +22,14 @@ class ResultController extends Controller
         return view('results.index', compact('levels', 'departments', 'sessions'));
     }
 
+    public function transcript()
+    {
+        $levels = Level::all();
+        $departments = Department::all();
+        $sessions = AcademicSession::all();
+        return view('results.transcript', compact('levels', 'departments', 'sessions'));
+    }
+
     public function uploadResults(Request $request)
     {
         $levels = Level::all();
