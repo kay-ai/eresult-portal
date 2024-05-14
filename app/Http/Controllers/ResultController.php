@@ -120,7 +120,11 @@ class ResultController extends Controller
 
                     $department_id = $this->getDepartmentId($dept);
 
-                    $remarks = array_merge($this->resolveCO($mat_num, $cleared, $semester, $level_id, $session));
+                    $resolved = $this->resolveCO($mat_num, $cleared, $semester, $level_id, $session);
+
+                    if($resolved != null){
+                        $remarks = array_merge($resolved, $remarks);
+                    }
 
                     $remarks = serialize($remarks);
                     $tgpSum = array_sum($tgp);
