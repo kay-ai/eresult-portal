@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\ExamOfficer;
 use App\Models\User;
 use App\Models\Department;
+use Illuminate\Support\Facades\Hash;
 
 class ExamOfficerController extends Controller
 {
