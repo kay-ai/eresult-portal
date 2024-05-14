@@ -85,10 +85,9 @@
                     <td scope="col">{{ $key + 1 }}</td>
                     <td scope="col" class="text-center"><b>{{$student->lname}}</b> {{$student->fname}}</td>
                     <td scope="col" class="text-center">{{ $r->mat_num }}</td>
-                    <td scope="col">
+                    <td scope="col" style="padding: 0!important">
 
-                        <table border="1" style="width:100%;border-collapse:collapse" cellspacing="1"
-                            cellpadding="1">
+                        <table border="1" style="width:100%;border-collapse:collapse" cellpadding="1">
                             <tr>
                                 <td class="text-center">{{ $r->cc1 }}
                                     <br>
@@ -165,6 +164,7 @@
                                     {{ getCtype($r->cc11) }}</td>
                             </tr>
                         </table>
+
                     </td>
 
                     <td class="text-center">{{ $r->tcu }}</td>
