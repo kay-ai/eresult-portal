@@ -23,7 +23,7 @@
                             "Levels",
                             "Courses",
                             "Exam Officers",
-                            "Grade Settings"
+                            "Grade Settings",
                         ];
                     @endphp
                     <a href="javascript:void(0);" class="nav_link {{in_array($activePage, $accountLinks) ? 'active' : '' }}">
@@ -62,6 +62,7 @@
                         $resultLinks = [
                             "Upload Results",
                             "All Results",
+                            "Transcript"
                         ];
                     @endphp
                     <a href="javascript:void(0);" class="nav_link {{in_array($activePage, $resultLinks) ? 'active' : '' }}">
@@ -71,6 +72,7 @@
                     <div class="dropdown {{in_array($activePage, $resultLinks) ? 'open' : '' }}">
                         <a href="{{route('results.upload')}}" class="dropdown-link {{$activePage == 'Upload Results' ? 'active' : '' }}">Upload Resuslts</a>
                         <a href="{{route('results.index')}}" class="dropdown-link {{$activePage == 'All Results' ? 'active' : '' }}">All Results</a>
+                        <a href="{{route('results.transcript')}}" class="dropdown-link {{$activePage == 'Transcript' ? 'active' : '' }}">Student Transcript</a>
                     </div>
                 </div>
                 <div class="has-dropdown">

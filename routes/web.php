@@ -93,6 +93,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/view-results', 'show')->name('results.view');
         Route::get('/results-stats', 'resultStats')->name('results.stats');
         Route::get('/results-courses-stats', 'courseStats')->name('results.courses.stats');
+        Route::get('/transcript', 'transcript')->name('results.transcript');
     });
     Route::controller(StudentController::class)->group(function () {
         Route::get('/enroll-students', 'index')->name('students.index');
