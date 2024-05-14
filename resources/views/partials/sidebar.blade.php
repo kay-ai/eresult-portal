@@ -87,6 +87,7 @@
                             $resultLinks = [
                                 "Upload Results",
                                 "All Results",
+                            "Transcript"
                             ];
                         @endphp
                         <a href="javascript:void(0);" class="nav_link {{in_array($activePage, $resultLinks) ? 'active' : '' }}">
@@ -99,6 +100,7 @@
                             @endcan
                             @can('view sub-menu all-results')
                                 <a href="{{route('results.index')}}" class="dropdown-link {{$activePage == 'All Results' ? 'active' : '' }}">All Results</a>
+                        <a href="{{route('results.transcript')}}" class="dropdown-link {{$activePage == 'Transcript' ? 'active' : '' }}">Student Transcript</a>
                             @endcan
                         </div>
                     </div>

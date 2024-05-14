@@ -41,32 +41,23 @@
                 </h2></td>
             </tr>
         </table>
-
     </div>
 
-    <table width="100%" border="1" cellpadding="1" cellspacing="1"
-        style="font-size: 70%;border-collapse:collapse">
+    <table width="100%" border="1" cellpadding="1" cellspacing="1" style="font-size: 70%;border-collapse:collapse">
         <tr>
-            <th scope="col">S/N</th>
-            <th scope="col">Full Name </th>
-            <th scope="col">Matric Num </th>
+            <th scope="col" class="text-center">S/N</th>
+            <th scope="col" class="text-center">Full Name </th>
+            <th scope="col" class="text-center">Matric Num </th>
             <th scope="col">
 
-                <table style="width:100%" border="1" cellspacing="1" cellpadding="1">
-                    <tr>
-                        <th scope="col" style="text-align: center; width: 72.6%">Current Semester </th>
-                    </tr>
-                    <tr>
-                        <td style="text-align: center" style="width: 72.6%">Core Courses </td>
-                        <td style="width: 6.6%">TCC</td>
-                        <td style="width: 6.6%">TCE</td>
-                        <td style="width: 6.6%">TGP</td>
-                        <td style="width: 6.6%">GPA</td>
-                    </tr>
-                </table>
+                <h4 style="text-align: center;">Current Semester</h4>
 
             </th>
-            <th scope="col">Remarks</th>
+            <th class="text-center">TCC</th>
+            <th class="text-center">TCE</th>
+            <th class="text-center">TGP</th>
+            <th class="text-center">GPA</th>
+            <th scope="col" class="text-center">Remarks</th>
         </tr>
 
         @if ($results)
@@ -87,86 +78,98 @@
                     $student = App\Models\Student::where('mat_num',$r->mat_num)->first();
                 @endphp
 
-
                 <tr>
-                    <th scope="col">{{ $key + 1 }}</th>
-                    <th scope="col"><b>{{$student->lname}}</b> {{$student->fname}}</th>
-                    <th scope="col">{{ $r->mat_num }}</th>
-                    <th scope="col">
+                    <td scope="col">{{ $key + 1 }}</td>
+                    <td scope="col" class="text-center"><b>{{$student->lname}}</b> {{$student->fname}}</td>
+                    <td scope="col" class="text-center">{{ $r->mat_num }}</td>
+                    <td scope="col" style="padding: 0!important">
 
-                        <table border="1" style="width:100%;border-collapse:collapse" cellspacing="1"
-                            cellpadding="1">
+                        <table border="1" style="width:100%;border-collapse:collapse" cellpadding="1">
                             <tr>
-                                <td style="width: 6.6%">{{ $r->cc1 }}
+                                <td class="text-center">{{ $r->cc1 }}
                                     <br>
                                     {{ $r->cu1 }}
                                 </td>
-                                <td style="width: 6.6%">{{ $r->cc2 }}
+                                <td class="text-center">{{ $r->cc2 }}
                                     <br>
                                     {{ $r->cu2 }}
                                 </td>
-                                <td style="width: 6.6%">{{ $r->cc3 }}
+                                <td class="text-center">{{ $r->cc3 }}
                                     <br>
                                     {{ $r->cu3 }}
                                 </td>
-                                <td style="width: 6.6%">{{ $r->cc4 }}
+                                <td class="text-center">{{ $r->cc4 }}
                                     <br>
                                     {{ $r->cu4 }}
                                 </td>
-                                <td style="width: 6.6%">{{ $r->cc5 }}
+                                <td class="text-center">{{ $r->cc5 }}
                                     <br>
                                     {{ $r->cu5 }}
                                 </td>
-                                <td style="width: 6.6%">{{ $r->cc6 }}
+                                <td class="text-center">{{ $r->cc6 }}
                                     <br>
                                     {{ $r->cu6 }}
                                 </td>
-                                <td style="width: 6.6%">
+                                <td class="text-center">
                                     {{ $r->cc7 }}
                                     <br>
                                     {{ $r->cu7 }}
                                 </td>
-                                <td style="width: 6.6%">
+                                <td class="text-center">
                                     {{ $r->cc8 }}
                                     <br>
                                     {{ $r->cu8 }}
                                 </td>
-                                <td style="width: 6.6%">{{ $r->cc9 }} <br> {{ $r->cu9 }}</td>
-                                <td style="width: 6.6%">{{ $r->cc10 }} <br> {{ $r->cu10 }}</td>
-                                <td style="width: 6.6%">{{ $r->cc11 }} <br> {{ $r->cu11 }}</td>
-                                <td style="width: 6.6%">{{ $r->tcu }}</td>
-                                <td style="width: 6.6%">{{ $r->tce }}</td>
-                                <td style="width: 6.6%">{{ $r->tgp }}</td>
-                                <td style="width: 6.6%">{{ $r->gpa }}</td>
+                                <td class="text-center">{{ $r->cc9 }}
+                                    <br>
+                                    {{ $r->cu9 }}
+                                </td>
+                                <td class="text-center">
+                                    {{ $r->cc10 }}
+                                    <br>
+                                    {{ $r->cu10 }}
+                                </td>
+                                <td class="text-center">
+                                    {{ $r->cc11 }}
+                                    <br>
+                                    {{ $r->cu11 }}
+                                </td>
                             </tr>
+
                             <tr>
-                                <td style="width: 6.6%">{{ $r->score1 }} {{ $r->grade1 }}
+                                <td class="text-center">{{ $r->score1 }} {{ $r->grade1 }}
                                     {{ getCtype($r->cc1) }}</td>
-                                <td style="width: 6.6%">{{ $r->score2 }} {{ $r->grade2 }}
+                                <td class="text-center">{{ $r->score2 }} {{ $r->grade2 }}
                                     {{ getCtype($r->cc2) }}</td>
-                                <td style="width: 6.6%">{{ $r->score3 }} {{ $r->grade3 }}
+                                <td class="text-center">{{ $r->score3 }} {{ $r->grade3 }}
                                     {{ getCtype($r->cc3) }}</td>
-                                <td style="width: 6.6%">{{ $r->score4 }} {{ $r->grade4 }}
+                                <td class="text-center">{{ $r->score4 }} {{ $r->grade4 }}
                                     {{ getCtype($r->cc4) }}</td>
-                                <td style="width: 6.6%">{{ $r->score5 }} {{ $r->grade5 }}
+                                <td class="text-center">{{ $r->score5 }} {{ $r->grade5 }}
                                     {{ getCtype($r->cc5) }}</td>
-                                <td style="width: 6.6%">{{ $r->score6 }} {{ $r->grade6 }}
+                                <td class="text-center">{{ $r->score6 }} {{ $r->grade6 }}
                                     {{ getCtype($r->cc6) }}</td>
-                                <td style="width: 6.6%">{{ $r->score7 }} {{ $r->grade7 }}
+                                <td class="text-center">{{ $r->score7 }} {{ $r->grade7 }}
                                     {{ getCtype($r->cc7) }}</td>
-                                <td style="width: 6.6%">{{ $r->score8 }} {{ $r->grade8 }}
+                                <td class="text-center">{{ $r->score8 }} {{ $r->grade8 }}
                                     {{ getCtype($r->cc8) }}</td>
-                                <td style="width: 6.6%">{{ $r->score9 }} {{ $r->grade9 }}
+                                <td class="text-center">{{ $r->score9 }} {{ $r->grade9 }}
                                     {{ getCtype($r->cc9) }}</td>
-                                <td style="width: 6.6%">{{ $r->score10 }} {{ $r->grade10 }}
+                                <td class="text-center">{{ $r->score10 }} {{ $r->grade10 }}
                                     {{ getCtype($r->cc10) }}</td>
-                                <td style="width: 6.6%">{{ $r->score11 }} {{ $r->grade11 }}
+                                <td class="text-center">{{ $r->score11 }} {{ $r->grade11 }}
                                     {{ getCtype($r->cc11) }}</td>
                             </tr>
                         </table>
-                    </th>
 
-                    <th scope="col">{{ $ov_rmk }}</th>
+                    </td>
+
+                    <td class="text-center">{{ $r->tcu }}</td>
+                    <td class="text-center">{{ $r->tce }}</td>
+                    <td class="text-center">{{ $r->tgp }}</td>
+                    <td class="text-center">{{ $r->gpa }}</td>
+
+                    <td class="text-center">{{ $ov_rmk }}</td>
                 </tr>
             @endforeach
         @else

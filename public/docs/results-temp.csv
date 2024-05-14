@@ -1,3 +1,3 @@
 s/n,matric_num,cc1,score1,cc2,score2,cc3,score3,cc4,score4,cc5,score5,cc6,score6,cc7,score7,cc8,score8,cc9,score9,cc10,score10,cc11,score11,cc12,score12,dept,semester,level,academic_session
-1,15MS1044,CSC101,67,com112,45,com113,43,sta111,89,sta112,78,mth111,54,otm112,83,gns127,67,,,,,,,,,Computer Science,First,100,2023/2024
-2,15MS1045,CSC101,50,com112,67,com113,33,sta111,60,sta112,58,mth111,44,otm112,45,gns127,57,,,,,,,,,Computer Science,First,100,2023/2024
+1,15MS1044,CSC101,67,com111,45,com113,43,sta111,89,sta112,78,mth111,54,otm112,83,gns127,67,,,,,,,,,Computer Science,First,100,2023/2024
+2,15MS1045,CSC101,50,com111,67,com113,33,sta111,34,sta112,58,mth111,44,otm112,45,gns127,57,,,,,,,,,Computer Science,First,100,2023/2024
