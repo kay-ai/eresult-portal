@@ -8,6 +8,7 @@ use App\Models\SecondSemesterResult;
 use App\Models\Level;
 use App\Models\Department;
 use App\Models\AcademicSession;
+use App\Models\Carryover;
 use Illuminate\Http\Request;
 
 class ResultController extends Controller
@@ -114,8 +115,6 @@ class ResultController extends Controller
                         $y++;
                     }
 
-                    // dd($rset);
-
                     $semester = trim($row[26]);
                     $level = trim($row[27]);
                     $session = trim($row[28]);
@@ -125,6 +124,8 @@ class ResultController extends Controller
                     $level_id = $this->getLevelId($level);
 
                     $department_id = $this->getDepartmentId($dept);
+
+                    $this->recordCO($remarks, $mat_num, $department_id, $semester, $level_id, $session_id);
 
                     $resolved = $this->resolveCO($mat_num, $cleared, $semester, $level_id, $session);
 
@@ -402,6 +403,23 @@ class ResultController extends Controller
                 }
             }
             return [];
+        }
+    }
+
+    private function recordCO($array, $mat_num, $department_id, $semester, $level_id, $session_id)
+    {
+        if(!empty($array)){
+            $carryover = new Carryover();
+            foreach($array as $key => $val){
+                $carryover->level_id = $level_id;
+                $carryover->cc = $val;
+                $carryover->academic_session_id = $session_id;
+                $carryover->semester = $semester;
+                $carryover->mat_num = $mat_num;
+                $carryover->department_id = $department_id;
+
+                $carryover->save();
+            }
         }
     }
 }
