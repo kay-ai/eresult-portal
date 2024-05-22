@@ -1,4 +1,4 @@
-@extends('layouts.app', [($activePage = 'Faculties')])
+@extends('layouts.app', [($activePage = 'Schools')])
 
 @section('content')
     <div class="me-2">
@@ -6,12 +6,12 @@
 
             <div class="col-md-4">
                 <div class="card p-3 shadow-sm">
-                    <p class="text-kdis-2 mb-3 subheader">Create Faculty</p>
+                    <p class="text-kdis-2 mb-3 subheader">Create School</p>
                     <form method="post" action="{{route('faculty.create')}}" enctype="multipart/form-data">
                         @csrf
                         <div class="form-group">
                             <label>Name</label>
-                            <input type="text" name="name" required="required" placeholder="Physical and Applied Sciences" class="form-control">
+                            <input type="text" name="name" required="required" placeholder="SCHOOL OF ENGINEERING" class="form-control">
                         </div>
 
                         <div class="form-group">
@@ -28,7 +28,7 @@
 
             <div class="col-md-8">
                 <div class="card p-3 shadow-sm">
-                    <p class="text-kdis-2 mb-3 subheader">All Faculties</p>
+                    <p class="text-kdis-2 mb-3 subheader">All School</p>
                     <table class="table table-sm table-stripped" style="font-size: 12px">
                         <thead>
                             <tr>

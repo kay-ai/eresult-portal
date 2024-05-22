@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AcademicSession;
+use App\Models\Department;
+use App\Models\Level;
 use App\Models\Result;
 use App\Models\Student;
 use App\Models\User;
@@ -31,7 +34,12 @@ class HomeController extends Controller
         $results = Result::latest()->get();
         $studentCount = count($students);
         $resultCount = count($results);
-        return view('dashboard', compact('users','students','studentCount','resultCount'));
+
+        $levels = Level::all();
+        $departments = Department::all();
+        $sessions = AcademicSession::all();
+
+        return view('dashboard', compact('levels', 'departments', 'sessions', 'users','students','studentCount','resultCount'));
     }
 
     public function admin()

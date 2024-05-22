@@ -17,7 +17,7 @@ class AccountSeeder extends Seeder
             'id' => 1,
             'school' => 'Benue State Poly',
             'motto' => 'Knowledge and Hardwork',
-            'logo' => 'logo/qdw7hDlAZN6vasWd2XfJhrTC7wiqnrku7ylQLJOk.jpg',
+            'logo' => 'images/benpoly-logo.png',
             'state' => 'Benue',
             'pob' => '10023',
             'created_at' => now(),

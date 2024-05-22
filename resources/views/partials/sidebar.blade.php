@@ -34,7 +34,7 @@
                         <div class="dropdown {{in_array($activePage, $accountLinks) ? 'open' : '' }}">
                             <a href="{{route('account.index')}}" class="dropdown-link {{$activePage == 'Basic Info' ? 'active' : '' }}">Basic Info</a>
                             <a href="{{route('sessions.index')}}" class="dropdown-link {{$activePage == 'Academic Session' ? 'active' : '' }}">Academic Session</a>
-                            <a href="{{route('faculty.index')}}" class="dropdown-link {{$activePage == 'Faculties' ? 'active' : '' }}">Faculties</a>
+                            <a href="{{route('faculty.index')}}" class="dropdown-link {{$activePage == 'Faculties' ? 'active' : '' }}">Schools</a>
                             <a href="{{route('departments.index')}}" class="dropdown-link {{$activePage == 'Departments' ? 'active' : '' }}">Departments</a>
                             <a href="{{route('levels.index')}}" class="dropdown-link {{$activePage == 'Levels' ? 'active' : '' }}">Levels</a>
                             <a href="{{route('courses.index')}}" class="dropdown-link {{$activePage == 'Courses' ? 'active' : '' }}">Courses</a>

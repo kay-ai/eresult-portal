@@ -102,6 +102,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/enroll-students', 'index')->name('students.index');
         Route::get('/all-students', 'view')->name('students.view');
         Route::post('/fetch-students', 'fetchStudents')->name('students.fetch');
+        Route::post('/fetch-students/dashboard', 'fetchStudentsDashboard')->name('students.fetch.dashboard');
         Route::post('/upload-students', 'store')->name('students.enroll');
     });
 
