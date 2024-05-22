@@ -8,8 +8,6 @@ use App\Models\SecondSemesterResult;
 use App\Models\Level;
 use App\Models\Department;
 use App\Models\AcademicSession;
-use App\Models\Grade;
-use App\Models\Account;
 use Illuminate\Http\Request;
 
 class ResultController extends Controller
@@ -116,11 +114,11 @@ class ResultController extends Controller
                         $y++;
                     }
 
-                    $dept = trim($row[26]);
+                    // dd($rset);
 
-                    $semester = trim($row[27]);
-                    $level = trim($row[28]);
-                    $session = trim($row[29]);
+                    $semester = trim($row[26]);
+                    $level = trim($row[27]);
+                    $session = trim($row[28]);
 
                     $academic_session_id = $this->getSessionId($session);
 
@@ -139,7 +137,7 @@ class ResultController extends Controller
                     $tcuSum = array_sum($tcu);
                     $tceSum = array_sum($tce);
 
-                    if ($tcuSum > 35) {
+                    if ($tcuSum > 30) {
                         $details .= '<p class="w3-text-white">Maximum credit units exceeded for '.$mat_num.'!</p>';
                         continue;
                     }
@@ -147,20 +145,20 @@ class ResultController extends Controller
                     $gpa = ($tgpSum / $tcuSum) ?: $tgpSum;
                     $gpa = round($gpa, 2);
 
-                    if($semester == 'First'){
+                    $rset = array_merge($rset, [
+                        'tce' => $tceSum,
+                        'tcu' => $tcuSum,
+                        'tgp' => $tgpSum,
+                        'gpa' => $gpa,
+                        'remarks' => $remarks,
+                    ]);
 
-                        $rset = array_merge($rset, [
-                            'tce' => $tceSum,
-                            'tcu' => $tcuSum,
-                            'tgp' => $tgpSum,
-                            'gpa' => $gpa,
-                            'remarks' => $remarks,
-                        ]);
+                    // dd($rset);
 
-                        $result = Result::updateOrCreate(
-                            ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'department_id' => $department_id, 'semester' => $semester],
-                            $rset,
-                        );
+                    $result = Result::updateOrCreate(
+                        ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'semester' => $semester],
+                        $rset,
+                    );
 
                     }else{
 
@@ -201,16 +199,6 @@ class ResultController extends Controller
                 echo '<p><a href="javascript:history.back();"><button>Back</button></a></p>';
             }
         }
-    }
-
-    private function getDepartmentId($dept)
-    {
-        $department = Department::where('name', $dept)->first();
-        if($department)
-        {
-            return $department->id;
-        }
-        return null;
     }
 
     private function getSessionId($session)
@@ -255,27 +243,18 @@ class ResultController extends Controller
 
     private function gradeP($tot)
     {
-        $grades = Grade::all();
-        if(count($grades) > 0){
-            foreach($grades as $key => $val){
-                if($tot >= $val->_from && $tot <= $val->_to){
-                    return $val->_type;
-                }
-            }
-        }else{
-            if ($tot <= 39.9) {
-                return "F";
-            } elseif ($tot <= 44.9) {
-                return "E";
-            } elseif ($tot <= 49.9) {
-                return "D";
-            } elseif ($tot <= 59.9) {
-                return "C";
-            } elseif ($tot <= 69.9) {
-                return "B";
-            } else {
-                return "A";
-            }
+        if ($tot <= 39.9) {
+            return "F";
+        } elseif ($tot <= 44.9) {
+            return "E";
+        } elseif ($tot <= 49.9) {
+            return "D";
+        } elseif ($tot <= 59.9) {
+            return "C";
+        } elseif ($tot <= 69.9) {
+            return "B";
+        } else {
+            return "A";
         }
     }
 
@@ -319,7 +298,6 @@ class ResultController extends Controller
 
     public function show(Request $request)
     {
-        $department_id = $request->department_id;
         $session_id = $request->session_id;
         $semester = $request->semester;
         $level_id = $request->level_id;

@@ -7,12 +7,17 @@ use App\Models\Student;
 use App\Models\Level;
 use App\Models\Department;
 use App\Models\AcademicSession;
+use App\Models\Result;
+use App\Models\User;
+use Illuminate\Support\Facades\Validator;
 
 class StudentController extends Controller
 {
     public function index(){
         $levels = Level::all();
-        return view('students.enrollStudents', compact('levels'));
+        $departments = Department::all();
+        $sessions = AcademicSession::all();
+        return view('students.enrollStudents', compact('levels', 'departments', 'sessions',));
     }
 
     public function enrollStudents(){
@@ -29,40 +34,81 @@ class StudentController extends Controller
 
     public function fetchStudents(Request $request)
     {
+        $validator = Validator::make($request->all(),[
+            'semester' => ['string', 'required'],
+            'session_id' => ['integer', 'required'],
+            'level_id' => ['integer', 'required'],
+            'department_id' => ['integer', 'required'],
+        ]);
 
-        $output = "";
-        $semester = $request->input('semester');
-        $session_id = $request->input('session');
-        $level_id = $request->input('level');
-
-        $students = Student::where('semester', $semester)->where('academic_session_id', $session_id)->where('level_id', $level_id)->get();
-
-        if ($students) {
-            foreach ($students as $key => $val) {
-                $output .= '<tr>
-                    <td>'.($key+1).'</td>
-                    <td>'.$val->mat_num.'</td>
-                    <td>'.$val->fname.'</td>
-                    <td>'.$val->mname.'</td>
-                    <td>'.$val->lname.'</td>
-                    <td>'.$val->gender.'</td>
-                    <td>'.$val->level->name.'</td>
-                    <td>'.$val->academicSession->title.'</td>
-                    <td></td>
-                </tr>';
-            }
-        } else {
-            $output .= '<tr>
-                <td colspan="10" class="text-center">No records found...</td>
-            </tr>';
+        if ($validator->fails()) {
+            return redirect()->back()->with('error', $validator->errors())->withInput();
         }
 
-        return $output;
+        $semester = $request->input('semester');
+        $session_id = $request->input('session_id');
+        $level_id = $request->input('level_id');
+        $department_id = $request->input('department_id');
 
+        $levels = Level::all();
+        $departments = Department::all();
+        $sessions = AcademicSession::all();
+
+        $students = Student::where(['semester'=> $semester , 'academic_session_id'=> $session_id, 'level_id'=> $level_id, 'department_id'=>$department_id])->orderBy('mat_num', 'asc')->get();
+
+        return view('students.studentList', compact('levels', 'departments', 'sessions', 'students'));
+    }
+
+    public function fetchStudentsDashboard(Request $request)
+    {
+        $validator = Validator::make($request->all(),[
+            'semester' => ['string', 'required'],
+            'session_id' => ['integer', 'required'],
+            'level_id' => ['integer', 'required'],
+            'department_id' => ['integer', 'required'],
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->with('error', $validator->errors())->withInput();
+        }
+
+        $semester = $request->input('semester');
+        $session_id = $request->input('session_id');
+        $level_id = $request->input('level_id');
+        $department_id = $request->input('department_id');
+
+        $levels = Level::all();
+        $departments = Department::all();
+        $sessions = AcademicSession::all();
+
+        $users = User::latest()->get();
+        $studentsC = Student::latest()->get();
+        $results = Result::latest()->get();
+        $studentCount = count($studentsC);
+        $resultCount = count($results);
+
+        $students = Student::where(['semester'=> $semester , 'academic_session_id'=> $session_id, 'level_id'=> $level_id, 'department_id'=>$department_id])->orderBy('mat_num', 'asc')->get();
+
+        return view('dashboard', compact('levels', 'departments', 'sessions', 'students', 'users', 'studentCount','resultCount'));
     }
 
     public function store(Request $request)
     {
+        $validator = Validator::make($request->all(),[
+            'semester' => ['string', 'required'],
+            'session_id' => ['integer', 'required'],
+            'level_id' => ['integer', 'required'],
+            'department_id' => ['integer', 'required'],
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->with('error', $validator->errors())->withInput();
+        }
+
+        $semester = $request->input('semester');
+        $session_id = $request->input('session_id');
+        $level_id = $request->input('level_id');
+        $department_id = $request->input('department_id');
 
         $file = $request->file('csv');
 
@@ -84,42 +130,48 @@ class StudentController extends Controller
                     $ln = ucfirst(trim($data[3]));
                     $gender = ucfirst(trim($data[4]));
                     $mat_num = ucfirst(trim($data[5]));
-                    $level = trim($data[6]);
-                    $semester = ucfirst(trim($data[7]));
-                    $session = ucfirst(trim($data[8]));
+                    $email = trim($data[6]);
+                    $phone_number = ucfirst(trim($data[7]));
+                    $jamb_no = ucfirst(trim($data[8]));
+                    $prog_type = ucfirst(trim($data[9]));
 
-                    $session_id = $this->getSessionId($session);
-                    $level_id = $this->getLevelId($level);
+                    $existing_student = Student::where(['mat_num'=> $mat_num, 'level_id'=> $level_id, 'academic_session_id'=> $session_id, 'department_id'=>$department_id])->count();
+
+                    if($existing_student){
+                        $session = AcademicSession::where('id',$session_id)->first();
+                        print "<p>Student with Mat Num: ".$mat_num." already exists in ".$session->title." academic session</p>";
+                        continue;
+                    }
 
                     $student = new Student();
                     $student->fname = $fn;
                     $student->lname = $ln;
                     $student->mname = $mn;
                     $student->gender = $gender;
+                    $student->email = $email;
+                    $student->phone_number = $phone_number;
+                    $student->jamb_no = $jamb_no;
+                    $student->prog_type = $prog_type;
                     $student->level_id = $level_id;
                     $student->semester = $semester;
                     $student->academic_session_id = $session_id;
+                    $student->department_id = $department_id;
                     $student->mat_num = $mat_num;
                     $student->status = 1;
 
-                    $existing_student = Student::where('mat_num', $mat_num)->where('level_id', $level_id)->where('academic_session_id', $session_id)->count();
-                    if($existing_student > 0)
-                    {
-
-                    }else{
-                        try {
-                            $student->save();
-                            print "<p>Data uploaded successfully for: ".$mat_num."</p>";
-                        } catch (\Exception $e) {
-                            echo "Sorry, upload failed!";
-                            print $e->getMessage();
-                            break;
-                        }
+                    try {
+                        $student->save();
+                        print "<p>Data uploaded successfully for: ".$mat_num."</p>";
+                    } catch (\Exception $e) {
+                        echo "Sorry, upload failed!";
+                        print $e->getMessage();
+                        break;
                     }
 
                 }
                 fclose($handle);
             }
+            echo '<p><a href="javascript:history.back();"><button>Back</button></a></p>';
         } else {
             echo "Please select a CSV file extension!!!";
         }

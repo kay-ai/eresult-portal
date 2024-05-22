@@ -74,19 +74,11 @@ class Result extends Model
         'score12',
         'grade12',
         'rmk12',
-        'department_id',
+        'dept',
         'tgp',
         'tcu',
         'tce',
         'gpa',
         'remarks',
     ];
-
-    public function student(){
-        return $this->belongsTo(Student::class, 'mat_num');
-    }
-
-    public function department(){
-        return $this->belongsTo(Department::class);
-    }
 }

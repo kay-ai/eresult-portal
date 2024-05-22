@@ -17,9 +17,6 @@
         .text-center{
             text-align: center;
         }
-        .full-width{
-            width: 100%;
-        }
     </style>
 </head>
 
@@ -74,8 +71,6 @@
                         $ov_rmk = implode(',', $remarks);
                     }
                     // $cgpa = getStdntCGPA($r['mat_num'], $level_id, $gp);
-
-                    $student = App\Models\Student::where('mat_num',$r->mat_num)->first();
                 @endphp
 
                 <tr>
@@ -180,37 +175,10 @@
 
     </table>
 
-    <table width="100%">
-        <thead>
-            <tr>
-                <th style="width:33%;text-align:center">
-                    <h4>HOD</h4>
-                </th>
-                <th style="width:33%;text-align:center">
-                    <h4>Dean</h4>
-                </th>
-                <th style="width:33%;text-align:center">
-                    <h4>Exam Officer</h4>
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td style="text-align:center">{{$department->hod}}<br><img src="{{asset('storage/'.$department->signature)}}" class="img-fluid" style="width:200px;height:50px"></td>
-                <td style="text-align:center"></td>
-                <td style="text-align:center"></td>
-            </tr>
-        </tbody>
-    </table>
-
     @php
         function getCtype($cc)
         {
-            $course = App\Models\Course::where('code', $cc)->first();
-            if($course){
-                return $course->type;
-            }
-            return null;
+            return 'Core';
         }
     @endphp
     @include('partials.bottom-scripts')

@@ -8,6 +8,6 @@
         </div>
     </div>
     <div class="col-md-6 justify-content-end m-0 d-flex overflow-hidden" style="object-fit: cover;">
-        <img src="{{asset('/images/bg-img-2.webp')}}" alt="bg-img" style="height: 100vh;">
+        <img src="{{asset('/images/bg-img-2.jpg')}}" alt="bg-img" style="object-fit: cover; filter: saturate(0.5);">
     </div>
 </div>
