@@ -13,4 +13,19 @@ class Department extends Model
     {
         return $this->belongsTo(AcademicSession::class);
     }
+
+    public function results()
+    {
+        return $this->hasMany(Result::class);
+    }
+
+    public function secondSemesterResults()
+    {
+        return $this->hasMany(SecondSemesterResult::class);
+    }
+
+    public function examOfficer()
+    {
+        return $this->hasMany(ExamOfficer::class);
+    }
 }

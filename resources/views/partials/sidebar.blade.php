@@ -13,36 +13,34 @@
                     <i class='bx bx-grid-alt nav_icon'></i>
                     <span class="nav_name">Dashboard</span>
                 </a>
-                @can('view set-up account')
-                    <div class="has-dropdown">
-                        @php
-                            $accountLinks = [
-                                "Basic Info",
-                                "Academic Session",
-                                "Faculties",
-                                "Departments",
-                                "Levels",
-                                "Courses",
-                                "Exam Officers",
-                                "Grade Settings"
-                            ];
-                        @endphp
-                        <a href="javascript:void(0);" class="nav_link {{in_array($activePage, $accountLinks) ? 'active' : '' }}">
-                            <i class='bx bx-buildings nav_icon'></i>
-                            <span class="nav_name">Account Setup</span>
-                        </a>
-                        <div class="dropdown {{in_array($activePage, $accountLinks) ? 'open' : '' }}">
-                            <a href="{{route('account.index')}}" class="dropdown-link {{$activePage == 'Basic Info' ? 'active' : '' }}">Basic Info</a>
-                            <a href="{{route('sessions.index')}}" class="dropdown-link {{$activePage == 'Academic Session' ? 'active' : '' }}">Academic Session</a>
-                            <a href="{{route('faculty.index')}}" class="dropdown-link {{$activePage == 'Faculties' ? 'active' : '' }}">Schools</a>
-                            <a href="{{route('departments.index')}}" class="dropdown-link {{$activePage == 'Departments' ? 'active' : '' }}">Departments</a>
-                            <a href="{{route('levels.index')}}" class="dropdown-link {{$activePage == 'Levels' ? 'active' : '' }}">Levels</a>
-                            <a href="{{route('courses.index')}}" class="dropdown-link {{$activePage == 'Courses' ? 'active' : '' }}">Courses</a>
-                            <a href="{{route('exam-officers.index')}}" class="dropdown-link {{$activePage == 'Exam Officers' ? 'active' : '' }}">Exam Officers</a>
-                            <a href="{{route('grades.index')}}" class="dropdown-link {{$activePage == 'Grade Settings' ? 'active' : '' }}">Grade Settings</a>
-                        </div>
+                <div class="has-dropdown">
+                    @php
+                        $accountLinks = [
+                            "Basic Info",
+                            "Academic Session",
+                            "Faculties",
+                            "Departments",
+                            "Levels",
+                            "Courses",
+                            "Exam Officers",
+                            "Grade Settings",
+                        ];
+                    @endphp
+                    <a href="javascript:void(0);" class="nav_link {{in_array($activePage, $accountLinks) ? 'active' : '' }}">
+                        <i class='bx bx-buildings nav_icon'></i>
+                        <span class="nav_name">Account Setup</span>
+                    </a>
+                    <div class="dropdown {{in_array($activePage, $accountLinks) ? 'open' : '' }}">
+                        <a href="{{route('account.index')}}" class="dropdown-link {{$activePage == 'Basic Info' ? 'active' : '' }}">Basic Info</a>
+                        <a href="{{route('sessions.index')}}" class="dropdown-link {{$activePage == 'Academic Session' ? 'active' : '' }}">Academic Session</a>
+                        <a href="{{route('faculty.index')}}" class="dropdown-link {{$activePage == 'Faculties' ? 'active' : '' }}">Faculties</a>
+                        <a href="{{route('departments.index')}}" class="dropdown-link {{$activePage == 'Departments' ? 'active' : '' }}">Departments</a>
+                        <a href="{{route('levels.index')}}" class="dropdown-link {{$activePage == 'Levels' ? 'active' : '' }}">Levels</a>
+                        <a href="{{route('courses.index')}}" class="dropdown-link {{$activePage == 'Courses' ? 'active' : '' }}">Courses</a>
+                        <a href="{{route('exam-officers.index')}}" class="dropdown-link {{$activePage == 'Exam Officers' ? 'active' : '' }}">Exam Officers</a>
+                        <a href="{{route('grades.index')}}" class="dropdown-link {{$activePage == 'Grade Settings' ? 'active' : '' }}">Grade Settings</a>
                     </div>
-                @endcan
+                </div>
                 <div class="has-dropdown">
                     @php
                         $studentLinks = [
@@ -64,6 +62,7 @@
                         $resultLinks = [
                             "Upload Results",
                             "All Results",
+                            "Transcript"
                         ];
                     @endphp
                     <a href="javascript:void(0);" class="nav_link {{in_array($activePage, $resultLinks) ? 'active' : '' }}">
@@ -73,6 +72,7 @@
                     <div class="dropdown {{in_array($activePage, $resultLinks) ? 'open' : '' }}">
                         <a href="{{route('results.upload')}}" class="dropdown-link {{$activePage == 'Upload Results' ? 'active' : '' }}">Upload Resuslts</a>
                         <a href="{{route('results.index')}}" class="dropdown-link {{$activePage == 'All Results' ? 'active' : '' }}">All Results</a>
+                        <a href="{{route('results.transcript')}}" class="dropdown-link {{$activePage == 'Transcript' ? 'active' : '' }}">Student Transcript</a>
                     </div>
                 </div>
                 <div class="has-dropdown">
