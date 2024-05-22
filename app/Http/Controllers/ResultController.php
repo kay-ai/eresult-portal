@@ -138,27 +138,27 @@ class ResultController extends Controller
                     $tceSum = array_sum($tce);
 
                     if ($tcuSum > 30) {
-                        $details .= '<p class="w3-text-white">Maximum credit units exceeded for '.$mat_num.'!</p>';
+                        $details .= '<p class="text-danger">Maximum credit units exceeded for '.$mat_num.'!</p>';
                         continue;
                     }
 
                     $gpa = ($tgpSum / $tcuSum) ?: $tgpSum;
                     $gpa = round($gpa, 2);
 
-                    $rset = array_merge($rset, [
-                        'tce' => $tceSum,
-                        'tcu' => $tcuSum,
-                        'tgp' => $tgpSum,
-                        'gpa' => $gpa,
-                        'remarks' => $remarks,
-                    ]);
+                    if($semester == "First"){
 
-                    // dd($rset);
+                        $rset = array_merge($rset, [
+                            'tce' => $tceSum,
+                            'tcu' => $tcuSum,
+                            'tgp' => $tgpSum,
+                            'gpa' => $gpa,
+                            'remarks' => $remarks,
+                        ]);
 
-                    $result = Result::updateOrCreate(
-                        ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'semester' => $semester],
-                        $rset,
-                    );
+                        $result = Result::updateOrCreate(
+                            ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'semester' => $semester],
+                            $rset,
+                        );
 
                     }else{
 
@@ -169,6 +169,7 @@ class ResultController extends Controller
                         }else{
                             $cgpa = 0;
                         }
+
                         $pcgpa = $this->prevCgpa($mat_num, $level_id);
 
                         $rset = array_merge($rset, [
