@@ -28,7 +28,7 @@
 
             <div class="col-md-8">
                 <div class="card p-3 shadow-sm">
-                    <p class="text-kdis-2 mb-3 subheader">All School</p>
+                    <p class="text-kdis-2 mb-3 subheader">All Schools</p>
                     <table class="table table-sm table-stripped" style="font-size: 12px">
                         <thead>
                             <tr>
