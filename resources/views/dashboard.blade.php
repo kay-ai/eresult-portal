@@ -57,7 +57,7 @@
                         </div>
                         <div class="border-bottom px-3 py-2">
                             <div class="d-flex justify-content-between align-items-center">
-                                <p style="font-size: 25px; font-weight:600;">099</p>
+                                <p style="font-size: 25px; font-weight:600;">0</p>
                                 <small class="text-dark">
                                     12.22% <i class="fa fa-chevron-down text-danger" aria-hidden="true"></i>
                                 </small>
@@ -77,7 +77,7 @@
                         </div>
                         <div class="border-bottom px-3 py-2">
                             <div class="d-flex justify-content-between align-items-center">
-                                <p style="font-size: 25px; font-weight:600;">530</p>
+                                <p style="font-size: 25px; font-weight:600;">0</p>
                                 <small class="text-dark">
                                     10.29% <i class="fa fa-chevron-up text-success" aria-hidden="true"></i>
                                 </small>

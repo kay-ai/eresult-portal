@@ -10,6 +10,7 @@ use App\Models\Account;
 use App\Models\Department;
 use App\Models\AcademicSession;
 use App\Models\Carryover;
+use App\Models\Grade;
 use Illuminate\Http\Request;
 
 class ResultController extends Controller
@@ -116,17 +117,21 @@ class ResultController extends Controller
                         $y++;
                     }
 
-                    $semester = trim($row[26]);
-                    $level = trim($row[27]);
-                    $session = trim($row[28]);
+                    $department_id = $request->department_id;
+                    $semester = $request->semester;
+                    $level_id = $request->level_id;
+                    $academic_session_id = $request->session_id;
 
-                    $academic_session_id = $this->getSessionId($session);
+                    $session = AcademicSession::where('id', $academic_session_id)->first();
+                    $session = $session->title;
 
-                    $level_id = $this->getLevelId($level);
+                    // $academic_session_id = $this->getSessionId($session);
 
-                    $department_id = $this->getDepartmentId($dept);
+                    // $level_id = $this->getLevelId($level);
 
-                    $this->recordCO($remarks, $mat_num, $department_id, $semester, $level_id, $session_id);
+                    // $department_id = $this->getDepartmentId($dept);
+
+                    $this->recordCO($remarks, $mat_num, $department_id, $semester, $level_id, $academic_session_id);
 
                     $resolved = $this->resolveCO($mat_num, $cleared, $semester, $level_id, $session);
 
