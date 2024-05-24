@@ -6,6 +6,7 @@ use App\Models\Course;
 use App\Models\Result;
 use App\Models\SecondSemesterResult;
 use App\Models\Level;
+use App\Models\Account;
 use App\Models\Department;
 use App\Models\AcademicSession;
 use App\Models\Carryover;
@@ -303,19 +304,22 @@ class ResultController extends Controller
         $session_id = $request->session_id;
         $semester = $request->semester;
         $level_id = $request->level_id;
+        $department_id = $request->department_id;
 
         $level = $this->getLevel($level_id);
         $session = $this->getSession($session_id);
 
         $account = Account::first();
 
+        $courses = Course::where('semester', $semester)->get();
+
         $department = Department::find($department_id);
         if($semester == 'Second'){
             $results = SecondSemesterResult::where('academic_session_id', $session_id)->where('semester', $semester)->where('level_id', $level_id)->where('department_id', $department_id)->get();
-            return view('results.displaySecondSemesterResults', compact('session', 'semester', 'level', 'results', 'account', 'department'));
+            return view('results.displaySecondSemesterResults', compact('session', 'semester', 'level', 'results', 'account', 'department', 'courses'));
         }else{
             $results = Result::where('academic_session_id', $session_id)->where('semester', $semester)->where('level_id', $level_id)->where('department_id', $department_id)->get();
-            return view('results.displayResults', compact('session', 'semester', 'level', 'results', 'account', 'department'));
+            return view('results.displayResults', compact('session', 'semester', 'level', 'results', 'account', 'department', 'courses'));
         }
 
     }
