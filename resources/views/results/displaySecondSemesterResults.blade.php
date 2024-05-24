@@ -140,28 +140,17 @@
                             </tr>
 
                             <tr>
-                                <td class="text-center">{{ $r->score1 }} {{ $r->grade1 }}
-                                    {{ getCtype($r->cc1) }}</td>
-                                <td class="text-center">{{ $r->score2 }} {{ $r->grade2 }}
-                                    {{ getCtype($r->cc2) }}</td>
-                                <td class="text-center">{{ $r->score3 }} {{ $r->grade3 }}
-                                    {{ getCtype($r->cc3) }}</td>
-                                <td class="text-center">{{ $r->score4 }} {{ $r->grade4 }}
-                                    {{ getCtype($r->cc4) }}</td>
-                                <td class="text-center">{{ $r->score5 }} {{ $r->grade5 }}
-                                    {{ getCtype($r->cc5) }}</td>
-                                <td class="text-center">{{ $r->score6 }} {{ $r->grade6 }}
-                                    {{ getCtype($r->cc6) }}</td>
-                                <td class="text-center">{{ $r->score7 }} {{ $r->grade7 }}
-                                    {{ getCtype($r->cc7) }}</td>
-                                <td class="text-center">{{ $r->score8 }} {{ $r->grade8 }}
-                                    {{ getCtype($r->cc8) }}</td>
-                                <td class="text-center">{{ $r->score9 }} {{ $r->grade9 }}
-                                    {{ getCtype($r->cc9) }}</td>
-                                <td class="text-center">{{ $r->score10 }} {{ $r->grade10 }}
-                                    {{ getCtype($r->cc10) }}</td>
-                                <td class="text-center">{{ $r->score11 }} {{ $r->grade11 }}
-                                    {{ getCtype($r->cc11) }}</td>
+                                <td class="text-center">{{ $r->score1 }} {{ $r->grade1 }}</td>
+                                <td class="text-center">{{ $r->score2 }} {{ $r->grade2 }}</td>
+                                <td class="text-center">{{ $r->score3 }} {{ $r->grade3 }}</td>
+                                <td class="text-center">{{ $r->score4 }} {{ $r->grade4 }}</td>
+                                <td class="text-center">{{ $r->score5 }} {{ $r->grade5 }}</td>
+                                <td class="text-center">{{ $r->score6 }} {{ $r->grade6 }}</td>
+                                <td class="text-center">{{ $r->score7 }} {{ $r->grade7 }}</td>
+                                <td class="text-center">{{ $r->score8 }} {{ $r->grade8 }}</td>
+                                <td class="text-center">{{ $r->score9 }} {{ $r->grade9 }}</td>
+                                <td class="text-center">{{ $r->score10 }} {{ $r->grade10 }}</td>
+                                <td class="text-center">{{ $r->score11 }} {{ $r->grade11 }}</td>
                             </tr>
                         </table>
 
@@ -208,17 +197,6 @@
             </tr>
         </tbody>
     </table>
-
-    @php
-        function getCtype($cc)
-        {
-            $course = App\Models\Course::where('code', $cc)->first();
-            if($course){
-                return $course->type;
-            }
-            return null;
-        }
-    @endphp
     @include('partials.bottom-scripts')
 </body>
 

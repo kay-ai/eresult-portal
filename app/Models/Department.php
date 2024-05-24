@@ -14,6 +14,11 @@ class Department extends Model
         return $this->belongsTo(AcademicSession::class);
     }
 
+    public function faculty()
+    {
+        return $this->belongsTo(Faculty::class);
+    }
+
     public function results()
     {
         return $this->hasMany(Result::class);

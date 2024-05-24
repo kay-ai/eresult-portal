@@ -6,8 +6,10 @@ use App\Models\Course;
 use App\Models\Result;
 use App\Models\SecondSemesterResult;
 use App\Models\Level;
+use App\Models\Account;
 use App\Models\Department;
 use App\Models\AcademicSession;
+use App\Models\Carryover;
 use Illuminate\Http\Request;
 
 class ResultController extends Controller
@@ -114,8 +116,6 @@ class ResultController extends Controller
                         $y++;
                     }
 
-                    // dd($rset);
-
                     $semester = trim($row[26]);
                     $level = trim($row[27]);
                     $session = trim($row[28]);
@@ -125,6 +125,8 @@ class ResultController extends Controller
                     $level_id = $this->getLevelId($level);
 
                     $department_id = $this->getDepartmentId($dept);
+
+                    $this->recordCO($remarks, $mat_num, $department_id, $semester, $level_id, $session_id);
 
                     $resolved = $this->resolveCO($mat_num, $cleared, $semester, $level_id, $session);
 
@@ -138,27 +140,27 @@ class ResultController extends Controller
                     $tceSum = array_sum($tce);
 
                     if ($tcuSum > 30) {
-                        $details .= '<p class="w3-text-white">Maximum credit units exceeded for '.$mat_num.'!</p>';
+                        $details .= '<p class="text-danger">Maximum credit units exceeded for '.$mat_num.'!</p>';
                         continue;
                     }
 
                     $gpa = ($tgpSum / $tcuSum) ?: $tgpSum;
                     $gpa = round($gpa, 2);
 
-                    $rset = array_merge($rset, [
-                        'tce' => $tceSum,
-                        'tcu' => $tcuSum,
-                        'tgp' => $tgpSum,
-                        'gpa' => $gpa,
-                        'remarks' => $remarks,
-                    ]);
+                    if($semester == "First"){
 
-                    // dd($rset);
+                        $rset = array_merge($rset, [
+                            'tce' => $tceSum,
+                            'tcu' => $tcuSum,
+                            'tgp' => $tgpSum,
+                            'gpa' => $gpa,
+                            'remarks' => $remarks,
+                        ]);
 
-                    $result = Result::updateOrCreate(
-                        ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'semester' => $semester],
-                        $rset,
-                    );
+                        $result = Result::updateOrCreate(
+                            ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'semester' => $semester],
+                            $rset,
+                        );
 
                     }else{
 
@@ -169,6 +171,7 @@ class ResultController extends Controller
                         }else{
                             $cgpa = 0;
                         }
+
                         $pcgpa = $this->prevCgpa($mat_num, $level_id);
 
                         $rset = array_merge($rset, [
@@ -301,19 +304,22 @@ class ResultController extends Controller
         $session_id = $request->session_id;
         $semester = $request->semester;
         $level_id = $request->level_id;
+        $department_id = $request->department_id;
 
         $level = $this->getLevel($level_id);
         $session = $this->getSession($session_id);
 
         $account = Account::first();
 
+        $courses = Course::where('semester', $semester)->get();
+
         $department = Department::find($department_id);
         if($semester == 'Second'){
             $results = SecondSemesterResult::where('academic_session_id', $session_id)->where('semester', $semester)->where('level_id', $level_id)->where('department_id', $department_id)->get();
-            return view('results.displaySecondSemesterResults', compact('session', 'semester', 'level', 'results', 'account', 'department'));
+            return view('results.displaySecondSemesterResults', compact('session', 'semester', 'level', 'results', 'account', 'department', 'courses'));
         }else{
             $results = Result::where('academic_session_id', $session_id)->where('semester', $semester)->where('level_id', $level_id)->where('department_id', $department_id)->get();
-            return view('results.displayResults', compact('session', 'semester', 'level', 'results', 'account', 'department'));
+            return view('results.displayResults', compact('session', 'semester', 'level', 'results', 'account', 'department', 'courses'));
         }
 
     }
@@ -401,6 +407,23 @@ class ResultController extends Controller
                 }
             }
             return [];
+        }
+    }
+
+    private function recordCO($array, $mat_num, $department_id, $semester, $level_id, $session_id)
+    {
+        if(!empty($array)){
+            $carryover = new Carryover();
+            foreach($array as $key => $val){
+                $carryover->level_id = $level_id;
+                $carryover->cc = $val;
+                $carryover->academic_session_id = $session_id;
+                $carryover->semester = $semester;
+                $carryover->mat_num = $mat_num;
+                $carryover->department_id = $department_id;
+
+                $carryover->save();
+            }
         }
     }
 }
