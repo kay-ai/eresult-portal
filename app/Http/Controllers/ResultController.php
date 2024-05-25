@@ -11,7 +11,6 @@ use App\Models\Department;
 use App\Models\AcademicSession;
 use App\Models\Grade;
 use App\Models\Carryover;
-use App\Models\Carryover;
 use Illuminate\Http\Request;
 
 class ResultController extends Controller
@@ -130,8 +129,6 @@ class ResultController extends Controller
 
                     $department_id = $this->getDepartmentId($dept);
 
-                    $this->recordCO($remarks, $mat_num, $department_id, $semester, $level_id, $academic_session_id);
-
                     $this->recordCO($remarks, $mat_num, $department_id, $semester, $level_id, $session_id);
 
                     $resolved = $this->resolveCO($mat_num, $cleared, $semester, $level_id, $session);
@@ -147,7 +144,6 @@ class ResultController extends Controller
 
                     if ($tcuSum > 30) {
                         $details .= '<p class="text-danger">Maximum credit units exceeded for '.$mat_num.'!</p>';
-                        $details .= '<p class="text-danger">Maximum credit units exceeded for '.$mat_num.'!</p>';
                         continue;
                     }
 
@@ -156,15 +152,6 @@ class ResultController extends Controller
 
                     if($semester == "First"){
 
-                    if($semester == "First"){
-
-                        $rset = array_merge($rset, [
-                            'tce' => $tceSum,
-                            'tcu' => $tcuSum,
-                            'tgp' => $tgpSum,
-                            'gpa' => $gpa,
-                            'remarks' => $remarks,
-                        ]);
                         $rset = array_merge($rset, [
                             'tce' => $tceSum,
                             'tcu' => $tcuSum,
@@ -177,10 +164,6 @@ class ResultController extends Controller
                             ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'department_id' => $department_id, 'semester' => $semester],
                             $rset,
                         );
-                        $result = Result::updateOrCreate(
-                            ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'semester' => $semester],
-                            $rset,
-                        );
 
                     }else{
 
@@ -190,7 +173,6 @@ class ResultController extends Controller
                         }else{
                             $cgpa = 0;
                         }
-
 
                         $pcgpa = $this->prevCgpa($mat_num, $level_id);
 
@@ -344,7 +326,6 @@ class ResultController extends Controller
         $session_id = $request->session_id;
         $semester = $request->semester;
         $level_id = $request->level_id;
-        $department_id = $request->department_id;
 
         $level = $this->getLevel($level_id);
         $session = $this->getSession($session_id);
@@ -353,16 +334,12 @@ class ResultController extends Controller
 
         $courses = Course::where('semester', $semester)->get();
 
-        $courses = Course::where('semester', $semester)->get();
-
         $department = Department::find($department_id);
         if($semester == 'Second'){
             $results = SecondSemesterResult::where('academic_session_id', $session_id)->where('semester', $semester)->where('level_id', $level_id)->where('department_id', $department_id)->get();
             return view('results.displaySecondSemesterResults', compact('session', 'semester', 'level', 'results', 'account', 'department', 'courses'));
-            return view('results.displaySecondSemesterResults', compact('session', 'semester', 'level', 'results', 'account', 'department', 'courses'));
         }else{
             $results = Result::where('academic_session_id', $session_id)->where('semester', $semester)->where('level_id', $level_id)->where('department_id', $department_id)->get();
-            return view('results.displayResults', compact('session', 'semester', 'level', 'results', 'account', 'department', 'courses'));
             return view('results.displayResults', compact('session', 'semester', 'level', 'results', 'account', 'department', 'courses'));
         }
 
@@ -450,23 +427,6 @@ class ResultController extends Controller
                 }
             }
             return [];
-        }
-    }
-
-    private function recordCO($array, $mat_num, $department_id, $semester, $level_id, $session_id)
-    {
-        if(!empty($array)){
-            $carryover = new Carryover();
-            foreach($array as $key => $val){
-                $carryover->level_id = $level_id;
-                $carryover->cc = $val;
-                $carryover->academic_session_id = $session_id;
-                $carryover->semester = $semester;
-                $carryover->mat_num = $mat_num;
-                $carryover->department_id = $department_id;
-
-                $carryover->save();
-            }
         }
     }
 
