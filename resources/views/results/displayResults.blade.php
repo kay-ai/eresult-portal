@@ -14,8 +14,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
     <style>
+        *{
+            box-sizing: border-box;
+        }
         .text-center{
             text-align: center;
+        }
+        .full-width{
+            width: 100%;
+            float: left;
         }
     </style>
 </head>
@@ -23,21 +30,116 @@
 <body>
 
     <div class="full-width">
+        <h3 class="text-center">{{$department->name}} Department<br>{{$account->school}}<br>{{$department->faculty->name}}<br>{{$department->name}} Result for {{ $level }} Level, {{ $semester }} Semester, Session:
+            {{ $session }}</h3>
+    </div>
+
+    <div class="full-width">
+
         <table style="width:100%">
             <tr>
-                <th style="width:10%"><img src="{{asset('storage/'.$account->logo)}}" class="img-fluid" style="width:80px;height:80px"></th>
-                <th style="width:90%;text-align:center">
-                    <h1 class="text-center">{{$account->school}}</h1>
-                    <p class="text-center">Motto: {{$account->motto}}</p>
+                <th style="width:30%">
+                    <table style="width:100%;float:left;font-size: 11px;border-collapse:collapse;margin-bottom:10px;text-align:left" border="1" cellpadding="1" cellspacing="1">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Course Title</th>
+                                <th>Code</th>
+                                <th>Unit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if($courses)
+                                @foreach($courses as $key => $course)
+                                <tr>
+                                    <td>{{($key+1)}}</td>
+                                    <td>{{$course->title}}</td>
+                                    <td>{{$course->code}}</td>
+                                    <td>{{$course->unit}}</td>
+                                </tr>
+                                @endforeach
+                            @endif
+                        </tbody>
+                    </table>
+                </th>
+                <th style="width:40%;text-align:center">
+                    <img src="{{asset('storage/'.auth()->user()->account->logo ?? null)}}" class="img-fluid" style="width:200px;height:200px;border-radius:50%">
+                </th>
+                <th style="width:30%">
+                    <table style="width:100%;float:left;font-size: 11px;border-collapse:collapse;margin-bottom:10px;text-align:left" border="1">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Code</th>
+                                <th>Meaning</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr>
+                                <td>1</td>
+                                <td>CU</td>
+                                <td>Credit Unit</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>CCU</td>
+                                <td>Cumulative Credit Unit</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>CF</td>
+                                <td>Credit Failed</td>
+                            </tr>
+
+                            <tr>
+                                <td>4</td>
+                                <td>CUF</td>
+                                <td>Credit Unit Failed</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>%F</td>
+                                <td>Percentage of Failure</td>
+                            </tr>
+
+                            <tr>
+                                <td>6</td>
+                                <td>CGP</td>
+                                <td>Cumulative Grade Point</td>
+                            </tr>
+
+                            <tr>
+                                <td>7</td>
+                                <td>CGP</td>
+                                <td>Cumulative Grade Point Average</td>
+                            </tr>
+
+                            <tr>
+                                <td>8</td>
+                                <td>ECO</td>
+                                <td>External Carryover</td>
+                            </tr>
+
+                            <tr>
+                                <td>9</td>
+                                <td>AB</td>
+                                <td>Absent</td>
+                            </tr>
+
+                        </tbody>
+                    </table>
                 </th>
             </tr>
-            <tr>
-                <td></td>
-                <td><h2 class="text-center">{{$department->name}} Result for {{ $level }} Level, {{ $semester }} Semester, Session:
-                    {{ $session }}
-                </h2></td>
-            </tr>
         </table>
+
+    </div>
+
+    <div class="full-width">
+
+
+
+
     </div>
 
     <table width="100%" border="1" cellpadding="1" cellspacing="1" style="font-size: 70%;border-collapse:collapse">
@@ -46,9 +148,22 @@
             <th scope="col" class="text-center">Full Name </th>
             <th scope="col" class="text-center">Matric Num </th>
             <th scope="col">
-
-                <h4 style="text-align: center;">Current Semester</h4>
-
+                <table border="1" style="width:100%;border-collapse:collapse" cellpadding="1">
+                    <tr>
+                    @if($courses)
+                        @foreach($courses as $key => $course)
+                        <th scope="col">{{$course->code}}</th>
+                        @endforeach
+                    @endif
+                    </tr>
+                    <tr>
+                    @if($courses)
+                        @foreach($courses as $key => $course)
+                        <td>{{$course->unit}}</td>
+                        @endforeach
+                    @endif
+                    </tr>
+                </table>
             </th>
             <th class="text-center">TCC</th>
             <th class="text-center">TCE</th>
@@ -70,7 +185,9 @@
                     } else {
                         $ov_rmk = implode(',', $remarks);
                     }
-                    // $cgpa = getStdntCGPA($r['mat_num'], $level_id, $gp);
+
+                    $student = App\Models\Student::where('mat_num',$r->mat_num)->first();
+
                 @endphp
 
                 <tr>
@@ -82,78 +199,45 @@
                         <table border="1" style="width:100%;border-collapse:collapse" cellpadding="1">
                             <tr>
                                 <td class="text-center">{{ $r->cc1 }}
-                                    <br>
-                                    {{ $r->cu1 }}
                                 </td>
                                 <td class="text-center">{{ $r->cc2 }}
-                                    <br>
-                                    {{ $r->cu2 }}
                                 </td>
                                 <td class="text-center">{{ $r->cc3 }}
-                                    <br>
-                                    {{ $r->cu3 }}
                                 </td>
                                 <td class="text-center">{{ $r->cc4 }}
-                                    <br>
-                                    {{ $r->cu4 }}
                                 </td>
                                 <td class="text-center">{{ $r->cc5 }}
-                                    <br>
-                                    {{ $r->cu5 }}
                                 </td>
                                 <td class="text-center">{{ $r->cc6 }}
-                                    <br>
-                                    {{ $r->cu6 }}
                                 </td>
                                 <td class="text-center">
                                     {{ $r->cc7 }}
-                                    <br>
-                                    {{ $r->cu7 }}
                                 </td>
                                 <td class="text-center">
                                     {{ $r->cc8 }}
-                                    <br>
-                                    {{ $r->cu8 }}
                                 </td>
                                 <td class="text-center">{{ $r->cc9 }}
-                                    <br>
-                                    {{ $r->cu9 }}
                                 </td>
                                 <td class="text-center">
                                     {{ $r->cc10 }}
-                                    <br>
-                                    {{ $r->cu10 }}
                                 </td>
                                 <td class="text-center">
                                     {{ $r->cc11 }}
-                                    <br>
-                                    {{ $r->cu11 }}
                                 </td>
                             </tr>
 
                             <tr>
-                                <td class="text-center">{{ $r->score1 }} {{ $r->grade1 }}
-                                    {{ getCtype($r->cc1) }}</td>
-                                <td class="text-center">{{ $r->score2 }} {{ $r->grade2 }}
-                                    {{ getCtype($r->cc2) }}</td>
-                                <td class="text-center">{{ $r->score3 }} {{ $r->grade3 }}
-                                    {{ getCtype($r->cc3) }}</td>
-                                <td class="text-center">{{ $r->score4 }} {{ $r->grade4 }}
-                                    {{ getCtype($r->cc4) }}</td>
-                                <td class="text-center">{{ $r->score5 }} {{ $r->grade5 }}
-                                    {{ getCtype($r->cc5) }}</td>
-                                <td class="text-center">{{ $r->score6 }} {{ $r->grade6 }}
-                                    {{ getCtype($r->cc6) }}</td>
-                                <td class="text-center">{{ $r->score7 }} {{ $r->grade7 }}
-                                    {{ getCtype($r->cc7) }}</td>
-                                <td class="text-center">{{ $r->score8 }} {{ $r->grade8 }}
-                                    {{ getCtype($r->cc8) }}</td>
-                                <td class="text-center">{{ $r->score9 }} {{ $r->grade9 }}
-                                    {{ getCtype($r->cc9) }}</td>
-                                <td class="text-center">{{ $r->score10 }} {{ $r->grade10 }}
-                                    {{ getCtype($r->cc10) }}</td>
-                                <td class="text-center">{{ $r->score11 }} {{ $r->grade11 }}
-                                    {{ getCtype($r->cc11) }}</td>
+                                <td class="text-center">{{ $r->score1 }} {{ $r->grade1 }}</td>
+                                <td class="text-center">{{ $r->score2 }} {{ $r->grade2 }}</td>
+                                <td class="text-center">{{ $r->score3 }} {{ $r->grade3 }}</td>
+                                <td class="text-center">{{ $r->score4 }} {{ $r->grade4 }}</td>
+                                <td class="text-center">{{ $r->score5 }} {{ $r->grade5 }}</td>
+                                <td class="text-center">{{ $r->score6 }} {{ $r->grade6 }}</td>
+                                <td class="text-center">{{ $r->score7 }} {{ $r->grade7 }}</td>
+                                <td class="text-center">{{ $r->score8 }} {{ $r->grade8 }}</td>
+                                <td class="text-center">{{ $r->score9 }} {{ $r->grade9 }}</td>
+                                <td class="text-center">{{ $r->score10 }} {{ $r->grade10 }}</td>
+                                <td class="text-center">{{ $r->score11 }} {{ $r->grade11 }}</td>
                             </tr>
                         </table>
 
@@ -176,10 +260,14 @@
     </table>
 
     @php
-        function getCtype($cc)
-        {
-            return 'Core';
-        }
+        // function getCtype($cc)
+        // {
+        //     $course = App\Models\Course::where('code', $cc)->first();
+        //     if($course){
+        //         return $course->type;
+        //     }
+        //     return null;
+        // }
     @endphp
     @include('partials.bottom-scripts')
 </body>
