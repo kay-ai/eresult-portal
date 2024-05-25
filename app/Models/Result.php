@@ -74,6 +74,7 @@ class Result extends Model
         'score12',
         'grade12',
         'rmk12',
+        'department_id',
         'dept',
         'tgp',
         'tcu',
