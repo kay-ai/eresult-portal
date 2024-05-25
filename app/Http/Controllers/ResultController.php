@@ -129,7 +129,7 @@ class ResultController extends Controller
 
                     $department_id = $this->getDepartmentId($dept);
 
-                    $this->recordCO($remarks, $mat_num, $department_id, $semester, $level_id, $session_id);
+                    $this->recordCO($remarks, $mat_num, $department_id, $semester, $level_id, $academic_session_id);
 
                     $resolved = $this->resolveCO($mat_num, $cleared, $semester, $level_id, $session);
 
