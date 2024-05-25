@@ -14,6 +14,7 @@ class Result extends Model
         'level_id',
         'semester',
         'academic_session_id',
+        'department_id',
         'cc1',
         'cu1',
         'score1',
