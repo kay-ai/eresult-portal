@@ -40,8 +40,8 @@
                                         <label for="semester" class="form-label">Semester: </label>
                                         <select name="semester" class="form-control @error('semester') is-invalid @enderror" id=""required autocomplete="semester" autofocus>
                                             <option>- Select an Option -</option>
-                                            <option value="first">First Semester</option>
-                                            <option value="second">Second Semester</option>
+                                            <option value="First">First Semester</option>
+                                            <option value="Second">Second Semester</option>
                                         </select>
 
                                         @error('semester')
