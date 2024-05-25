@@ -9,6 +9,7 @@ use App\Models\Level;
 use App\Models\Account;
 use App\Models\Department;
 use App\Models\AcademicSession;
+use App\Models\Grade;
 use App\Models\Carryover;
 use Illuminate\Http\Request;
 
@@ -116,9 +117,11 @@ class ResultController extends Controller
                         $y++;
                     }
 
-                    $semester = trim($row[26]);
-                    $level = trim($row[27]);
-                    $session = trim($row[28]);
+                    $dept = trim($row[26]);
+
+                    $semester = trim($row[27]);
+                    $level = trim($row[28]);
+                    $session = trim($row[29]);
 
                     $academic_session_id = $this->getSessionId($session);
 
@@ -126,7 +129,7 @@ class ResultController extends Controller
 
                     $department_id = $this->getDepartmentId($dept);
 
-                    $this->recordCO($remarks, $mat_num, $department_id, $semester, $level_id, $session_id);
+                    $this->recordCO($remarks, $mat_num, $department_id, $semester, $level_id, $academic_session_id);
 
                     $resolved = $this->resolveCO($mat_num, $cleared, $semester, $level_id, $session);
 
@@ -158,13 +161,12 @@ class ResultController extends Controller
                         ]);
 
                         $result = Result::updateOrCreate(
-                            ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'semester' => $semester],
+                            ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'department_id' => $department_id, 'semester' => $semester],
                             $rset,
                         );
 
                     }else{
 
-                        // $cgpa = $this->getStdntCGPA($mat_num, $level_id, $gpa);
                         $pgpa = $this->prevGpa($mat_num, $level_id);
                         if($pgpa != null){
                             $cgpa = round((($gpa + $pgpa)/2),2);
@@ -186,7 +188,7 @@ class ResultController extends Controller
                         ]);
 
                         $result = SecondSemesterResult::updateOrCreate(
-                            ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'department_id' => $department_id, 'semester' => $semester],
+                            ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'department_id' => $department_id, 'department_id' => $department_id, 'semester' => $semester],
                             $rset,
                         );
                     }
@@ -202,6 +204,16 @@ class ResultController extends Controller
                 echo '<p><a href="javascript:history.back();"><button>Back</button></a></p>';
             }
         }
+    }
+
+    private function getDepartmentId($dept)
+    {
+        $department = Department::where('name', $dept)->first();
+        if($department)
+        {
+            return $department->id;
+        }
+        return null;
     }
 
     private function getSessionId($session)
@@ -246,18 +258,27 @@ class ResultController extends Controller
 
     private function gradeP($tot)
     {
-        if ($tot <= 39.9) {
-            return "F";
-        } elseif ($tot <= 44.9) {
-            return "E";
-        } elseif ($tot <= 49.9) {
-            return "D";
-        } elseif ($tot <= 59.9) {
-            return "C";
-        } elseif ($tot <= 69.9) {
-            return "B";
-        } else {
-            return "A";
+        $grades = Grade::all();
+        if(count($grades) > 0){
+            foreach($grades as $key => $val){
+                if($tot >= $val->_from && $tot <= $val->_to){
+                    return $val->_type;
+                }
+            }
+        }else{
+            if ($tot <= 39.9) {
+                return "F";
+            } elseif ($tot <= 44.9) {
+                return "E";
+            } elseif ($tot <= 49.9) {
+                return "D";
+            } elseif ($tot <= 59.9) {
+                return "C";
+            } elseif ($tot <= 69.9) {
+                return "B";
+            } else {
+                return "A";
+            }
         }
     }
 
@@ -301,10 +322,10 @@ class ResultController extends Controller
 
     public function show(Request $request)
     {
+        $department_id = $request->department_id;
         $session_id = $request->session_id;
         $semester = $request->semester;
         $level_id = $request->level_id;
-        $department_id = $request->department_id;
 
         $level = $this->getLevel($level_id);
         $session = $this->getSession($session_id);
@@ -326,13 +347,12 @@ class ResultController extends Controller
 
     private function getStdntCGPA($mn, $semester, $level_id, $gp){
         if($semester == 'Second'){
-
-        }
-        $res = SecondSemesterResult::where('mat_num', $mn)->where('level_id', $level_id)->first();
-        if($res){
-            $cgpa = $res->cgpa;
-            $cgpa = ($cgpa+$gp)/2;
-            return round($cgpa,2);
+            $res = SecondSemesterResult::where('mat_num', $mn)->where('level_id', $level_id)->first();
+            if($res){
+                $cgpa = $res->cgpa;
+                $cgpa = ($cgpa+$gp)/2;
+                return round($cgpa,2);
+            }
         }else{
             $res = Result::where('mat_num', $mn)->where('level_id', $level_id)->first();
             if($res){
