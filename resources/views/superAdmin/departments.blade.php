@@ -11,7 +11,7 @@
                         @csrf
                         <div class="form-group">
                             <label>Title</label>
-                            <input type="text" name="name" required="required" placeholder="SCHOOL OF ENGINEERING TECHNOLOGY" class="form-control">
+                            <input type="text" name="name" required="required" placeholder="Department of Engineering" class="form-control">
                         </div>
 
                         <div class="form-group">
@@ -20,7 +20,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label>Faculty</label>
+                            <label>School</label>
                             <select name="faculty_id" class="form-control" required="required">
                                 <option>- Select an Option -</option>
                                 @if($faculties)

@@ -11,6 +11,17 @@
                         @csrf
                         <div class="row">
                             <div class="col-md-3">
+                                <label for="level" class="form-label">Department</label>
+                                <select name="department_id" class="form-control" required="required">
+                                    <option>- Select a Level -</option>
+                                    @if ($departments)
+                                        @foreach ($departments as $rec):
+                                           <option value="{{$rec->id}}">{{$rec->name}}</option>
+                                        @endforeach;
+                                    @endif
+                                </select>
+                            </div>
+                            <div class="col-md-3">
                                 <label for="level" class="form-label">Academic Session</label>
                                 <select name="session_id" class="form-control" required="required">
                                     <option>- Select a Session -</option>

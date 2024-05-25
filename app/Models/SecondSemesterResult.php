@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Result extends Model
+class SecondSemesterResult extends Model
 {
     use HasFactory;
 
@@ -75,11 +75,21 @@ class Result extends Model
         'grade12',
         'rmk12',
         'department_id',
-        'dept',
         'tgp',
         'tcu',
         'tce',
         'gpa',
+        'pgpa',
+        'cgpa',
+        'pcgpa',
         'remarks',
     ];
+
+    public function student(){
+        return $this->belongsTo(Student::class, 'mat_num');
+    }
+
+    public function department(){
+        return $this->belongsTo(Department::class);
+    }
 }

@@ -1,119 +1,259 @@
-<?php
-global $router;
- $semester = $router->input('semester');
- $session_id = $router->input('session');
- $level_id = $router->input('level');
+<!doctype html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
- echo '<span class="full-width"><h2 class="center">Result for '.getLevelName($level_id).' Level, '.$semester.' Semester, Session: '.getSessionTitle($session_id).'</h2></span>';
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
- echo '<table width="100%" border="1" cellpadding="1" cellspacing="1" style="font-size: 70%;border-collapse:collapse">
- <tr>
-   <th scope="col">S/N</th>
-   <th scope="col">Full Name </th>
-   <th scope="col">Matric Num </th>
-   <th scope="col">
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-     <table style="width:100%" border="1" cellspacing="1" cellpadding="1">
-       <tr>
-         <th scope="col" style="text-align: center; width: 72.6%">Current Semester </th>
-       </tr>
-       <tr>
-         <td style="text-align: center" style="width: 72.6%">Core Courses </td>
-         <td style="width: 6.6%">TCC</td>
-         <td style="width: 6.6%">TCE</td>
-         <td style="width: 6.6%">TGP</td>
-         <td style="width: 6.6%">GPA</td>
+    <title>Print Results | E-Result Portal</title>
+    <link rel="stylesheet" href="{{ 'css/style.css' }}">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+    <style>
+        *{
+            box-sizing: border-box;
+        }
+        .text-center{
+            text-align: center;
+        }
+        .full-width{
+            width: 100%;
+            float: left;
+        }
+    </style>
+</head>
 
-         <td style="width: 6.6%">Prev GPA</td>
-         <td style="width: 6.6%">CGPA</td>
+<body>
 
-       </tr>
-     </table>
+    <div class="full-width">
+        <h3 class="text-center">{{$department->name}} Department<br>{{$account->school}}<br>{{$department->faculty->name}}<br>{{$department->name}} Result for {{ $level }} Level, {{ $semester }} Semester, Session:
+            {{ $session }}</h3>
+    </div>
 
-   </th>
-   <th scope="col">Remarks</th>
- </tr>';
+    <div class="full-width">
 
- $sql = "SELECT * FROM results WHERE session_id = '$session_id' AND semester = '$semester' AND level_id = '$level_id' ORDER BY id DESC";
- $x = 0;
+        <table style="width:100%">
+            <tr>
+                <th style="width:30%">
+                    <table style="width:100%;float:left;font-size: 11px;border-collapse:collapse;margin-bottom:10px;text-align:left" border="1" cellpadding="1" cellspacing="1">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Course Title</th>
+                                <th>Code</th>
+                                <th>Unit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if($courses)
+                                @foreach($courses as $key => $course)
+                                <tr>
+                                    <td>{{($key+1)}}</td>
+                                    <td>{{$course->title}}</td>
+                                    <td>{{$course->code}}</td>
+                                    <td>{{$course->unit}}</td>
+                                </tr>
+                                @endforeach
+                            @endif
+                        </tbody>
+                    </table>
+                </th>
+                <th style="width:40%;text-align:center">
+                    <img src="{{asset('storage/'.auth()->user()->account->logo ?? null)}}" class="img-fluid" style="width:200px;height:200px;border-radius:50%">
+                </th>
+                <th style="width:30%">
+                    <table style="width:100%;float:left;font-size: 11px;border-collapse:collapse;margin-bottom:10px;text-align:left" border="1">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Code</th>
+                                <th>Meaning</th>
+                            </tr>
+                        </thead>
+                        <tbody>
 
- if($router->countRows($sql) > 0){
+                            <tr>
+                                <td>1</td>
+                                <td>CU</td>
+                                <td>Credit Unit</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>CCU</td>
+                                <td>Cumulative Credit Unit</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>CF</td>
+                                <td>Credit Failed</td>
+                            </tr>
 
-   $res = $router->select($sql);
+                            <tr>
+                                <td>4</td>
+                                <td>CUF</td>
+                                <td>Credit Unit Failed</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>%F</td>
+                                <td>Percentage of Failure</td>
+                            </tr>
 
-   foreach($res as $r){
-     $x++;
-     $cc1 = $r['cc1'];
-     $g1 = $r['grade1'];
-     $gp = $r['gpa'];
-     $mn = $r['mat_num'];
+                            <tr>
+                                <td>6</td>
+                                <td>CGP</td>
+                                <td>Cumulative Grade Point</td>
+                            </tr>
 
-     $cgpa = getStdntCGPA($mn, $level_id, $gp);
-     $pgpa = prevGpa($mn, $level_id);
+                            <tr>
+                                <td>7</td>
+                                <td>CGP</td>
+                                <td>Cumulative Grade Point Average</td>
+                            </tr>
 
-     $remarks = unserialize($r['remarks']);
-     if(empty($remarks)){
-       $ov_rmk = "PASS";
-     }else{
-       $ov_rmk = implode(",", $remarks);
-     }
-     // $cgpa = getStdntCGPA($r['mat_num'], $level_id, $gp);
+                            <tr>
+                                <td>8</td>
+                                <td>ECO</td>
+                                <td>External Carryover</td>
+                            </tr>
 
-     echo '<tr>
-   <th scope="col">'.$x.'</th>
-   <th scope="col">'.getFullName($r['mat_num']).'</th>
-   <th scope="col">'.$r['mat_num'].'</th>
-   <th scope="col">
+                            <tr>
+                                <td>9</td>
+                                <td>AB</td>
+                                <td>Absent</td>
+                            </tr>
 
-   <table border="1" style="width:100%;border-collapse:collapse" cellspacing="1" cellpadding="1">
-     <tr>
-       <td style="width: 6.6%">'.$r['cc1'].'<br>'.$r['cu1'].'</td>
-       <td style="width: 6.6%">'.$r['cc2'].'<br>'.$r['cu2'].'</td>
-       <td style="width: 6.6%">'.$r['cc3'].'<br>'.$r['cu3'].'</td>
-       <td style="width: 6.6%">'.$r['cc4'].'<br>'.$r['cu4'].'</td>
-       <td style="width: 6.6%">'.$r['cc5'].'<br>'.$r['cu5'].'</td>
-       <td style="width: 6.6%">'.$r['cc6'].'<br>'.$r['cu6'].'</td>
-       <td style="width: 6.6%">'.$r['cc7'].'<br>'.$r['cu7'].'</td>
-       <td style="width: 6.6%">'.$r['cc8'].'<br>'.$r['cu8'].'</td>
-       <td style="width: 6.6%"'.$r['cc9'].'<br>'.$r['cu9'].'</td>
-       <td style="width: 6.6%">'.$r['cc10'].'<br>'.$r['cu10'].'</td>
-       <td style="width: 6.6%">'.$r['cc11'].'<br>'.$r['cu11'].'</td>
-       <td style="width: 6.6%">'.$r['tcu'].'</td>
-       <td style="width: 6.6%">'.$r['tce'].'</td>
-       <td style="width: 6.6%">'.$r['tgp'].'</td>
-       <td style="width: 6.6%">'.$r['gpa'].'</td>
+                        </tbody>
+                    </table>
+                </th>
+            </tr>
+        </table>
 
-       <td style="width: 6.6%">'.$pgpa.'</td>
-       <td style="width: 6.6%">'.$cgpa.'</td>
-     </tr>
-     <tr>
-       <td style="width: 6.6%">'.$r['score1'].''.$r['grade1'].' '.getCtype($r['cc1']).'</td>
-       <td style="width: 6.6%">'.$r['score2'].''.$r['grade2'].' '.getCtype($r['cc2']).'</td>
-       <td style="width: 6.6%">'.$r['score3'].''.$r['grade3'].' '.getCtype($r['cc3']).'</td>
-       <td style="width: 6.6%">'.$r['score4'].''.$r['grade4'].' '.getCtype($r['cc4']).'</td>
-       <td style="width: 6.6%">'.$r['score5'].''.$r['grade5'].' '.getCtype($r['cc5']).'</td>
-       <td style="width: 6.6%">'.$r['score6'].''.$r['grade6'].' '.getCtype($r['cc6']).'</td>
-       <td style="width: 6.6%">'.$r['score7'].''.$r['grade7'].' '.getCtype($r['cc7']).'</td>
-       <td style="width: 6.6%">'.$r['score8'].''.$r['grade8'].' '.getCtype($r['cc8']).'</td>
-       <td style="width: 6.6%">'.$r['score9'].''.$r['grade9'].' '.getCtype($r['cc9']).'</td>
-       <td style="width: 6.6%">'.$r['score10'].''.$r['grade10'].' '.getCtype($r['cc10']).'</td>
-       <td style="width: 6.6%">'.$r['score11'].''.$r['grade11'].' '.getCtype($r['cc11']).'</td>
-     </tr>
-   </table></th>
+    </div>
 
-   <th scope="col">'.$ov_rmk.'</th>
- </tr>';
-   }
+    <div class="full-width">
 
- }else{
-   echo '<tr><td colspan="10">No data found...</td></tr>';
-   //echo $db->connection_error($sql);
- }
 
- echo '</table>
- <div class="full-width">
-   <div class="centered"><button onclick="myprint('div1')" style="padding: 5px 8px; border: 1px solid lightblue; border-radius: 5px; background: blue; color: white">
-         <b><i class="fa fa-print"></i>&nbsp;Print</b>
-         </button>
-   </div>
- </div>';
+
+
+    </div>
+
+    <table width="100%" border="1" cellpadding="1" cellspacing="1" style="font-size: 70%;border-collapse:collapse">
+        <tr>
+            <th scope="col" class="text-center">S/N</th>
+            <th scope="col" class="text-center">Full Name </th>
+            <th scope="col" class="text-center">Matric Num </th>
+            <th scope="col">
+                <table border="1" style="width:100%;border-collapse:collapse" cellpadding="1">
+                    <tr>
+                    @if($courses)
+                        @foreach($courses as $key => $course)
+                        <th scope="col">{{$course->code}}</th>
+                        @endforeach
+                    @endif
+                    </tr>
+                    <tr>
+                    @if($courses)
+                        @foreach($courses as $key => $course)
+                        <td>{{$course->unit}}</td>
+                        @endforeach
+                    @endif
+                    </tr>
+                </table>
+            </th>
+            <th class="text-center">TCC</th>
+            <th class="text-center">TCE</th>
+            <th class="text-center">TGP</th>
+            <th class="text-center">GPA</th>
+            <th class="text-center">Prev GPA</th>
+            <th class="text-center">CGPA</th>
+            <th scope="col" class="text-center" style="padding: 0!important">
+                <table border="1" style="width:100%;border-collapse:collapse" cellpadding="1">
+                    <tr>
+                        <th colspan="2">Remarks</th>
+                    </tr>
+                    <tr>
+                        <th style="width:80%">CARRYOVER</th>
+                        <th style="width:20%">Status</th>
+                    </tr>
+                </table>
+            </th>
+        </tr>
+
+        @if ($results)
+
+            @foreach ($results as $key => $r)
+                @php
+                    $cc1 = $r->cc1;
+                    $g1 = $r->grade1;
+                    $gp = $r->gpa;
+                    $remarks = unserialize($r->remarks);
+                    if (empty($remarks)) {
+                        $ov_rmk = 'PASS';
+                    } else {
+                        $ov_rmk = implode(',', $remarks);
+                    }
+
+                    $student = App\Models\Student::where('mat_num',$r->mat_num)->first();
+
+                @endphp
+
+                <tr>
+                    <td scope="col">{{ $key + 1 }}</td>
+                    <td scope="col" class="text-center"><b>{{$student->lname}}</b> {{$student->fname}}</td>
+                    <td scope="col" class="text-center">{{ $r->mat_num }}</td>
+                    <td scope="col" style="padding: 0!important">
+
+                        <table border="1" style="width:100%;border-collapse:collapse" cellpadding="1">
+
+                            <tr>
+                                <td class="text-center">{{ $r->score1 }} {{ $r->grade1 }}</td>
+                                <td class="text-center">{{ $r->score2 }} {{ $r->grade2 }}</td>
+                                <td class="text-center">{{ $r->score3 }} {{ $r->grade3 }}</td>
+                                <td class="text-center">{{ $r->score4 }} {{ $r->grade4 }}</td>
+                                <td class="text-center">{{ $r->score5 }} {{ $r->grade5 }}</td>
+                                <td class="text-center">{{ $r->score6 }} {{ $r->grade6 }}</td>
+                                <td class="text-center">{{ $r->score7 }} {{ $r->grade7 }}</td>
+                                <td class="text-center">{{ $r->score8 }} {{ $r->grade8 }}</td>
+                                <td class="text-center">{{ $r->score9 }} {{ $r->grade9 }}</td>
+                                <td class="text-center">{{ $r->score10 }} {{ $r->grade10 }}</td>
+                                <td class="text-center">{{ $r->score11 }} {{ $r->grade11 }}</td>
+                            </tr>
+                        </table>
+
+                    </td>
+
+                    <td class="text-center">{{ $r->tcu }}</td>
+                    <td class="text-center">{{ $r->tce }}</td>
+                    <td class="text-center">{{ $r->tgp }}</td>
+                    <td class="text-center">{{ $r->gpa }}</td>
+
+                    <td class="text-center">{{$r->pgpa}}</td>
+                    <td class="text-center">{{$r->cgpa}}</td>
+
+                    <td class="text-center" style="padding: 0!important">
+                        <table border="1" style="width:100%;border-collapse:collapse" cellpadding="1">
+                            <tr>
+                                <td style="width:80%">{{ $ov_rmk }}</td>
+                                <td style="width:20%"></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            @endforeach
+        @else
+            <tr>
+                <td colspan="10">No data found...</td>
+            </tr>
+        @endif
+
+    </table>
+
+    @include('partials.bottom-scripts')
+</body>
+
+</html>

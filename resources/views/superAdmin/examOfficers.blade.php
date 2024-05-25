@@ -9,17 +9,29 @@
                 <form method="post" action="{{route('exam-officers.create')}}" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group">
-                        <label>Users</label>
-                        <select name="user_id" required="required" class="form-control form-select">
-                            <option>- Select a User -</option>
-                            @if($users)
-                                @foreach($users as $key => $user)
-                                <option value="{{$user->id}}">{{$user->first_name}} {{$user->last_name}}</option>
-                                @endforeach
-                            @endif
-                        </select>
+                        <label>First Name</label>
+                        <input type="text" name="first_name" class="form-control">
                     </div>
-
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" name="last_name" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" name="email" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="tel" name="phone" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" name="password" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm Password</label>
+                        <input type="password" name="cpassword" class="form-control">
+                    </div>
                     <div class="form-group">
                         <label>Department</label>
                         <select name="department_id" required="required" class="form-control">
