@@ -169,7 +169,17 @@
             <th class="text-center">TCE</th>
             <th class="text-center">TGP</th>
             <th class="text-center">GPA</th>
-            <th scope="col" class="text-center">Remarks</th>
+            <th scope="col" class="text-center" style="padding: 0!important">
+                <table border="1" style="width:100%;border-collapse:collapse" cellpadding="1">
+                    <tr>
+                        <th colspan="2">Remarks</th>
+                    </tr>
+                    <tr>
+                        <th style="width:80%">CARRYOVER</th>
+                        <th style="width:20%">Status</th>
+                    </tr>
+                </table>
+            </th>
         </tr>
 
         @if ($results)
@@ -197,34 +207,6 @@
                     <td scope="col" style="padding: 0!important">
 
                         <table border="1" style="width:100%;border-collapse:collapse" cellpadding="1">
-                            <tr>
-                                <td class="text-center">{{ $r->cc1 }}
-                                </td>
-                                <td class="text-center">{{ $r->cc2 }}
-                                </td>
-                                <td class="text-center">{{ $r->cc3 }}
-                                </td>
-                                <td class="text-center">{{ $r->cc4 }}
-                                </td>
-                                <td class="text-center">{{ $r->cc5 }}
-                                </td>
-                                <td class="text-center">{{ $r->cc6 }}
-                                </td>
-                                <td class="text-center">
-                                    {{ $r->cc7 }}
-                                </td>
-                                <td class="text-center">
-                                    {{ $r->cc8 }}
-                                </td>
-                                <td class="text-center">{{ $r->cc9 }}
-                                </td>
-                                <td class="text-center">
-                                    {{ $r->cc10 }}
-                                </td>
-                                <td class="text-center">
-                                    {{ $r->cc11 }}
-                                </td>
-                            </tr>
 
                             <tr>
                                 <td class="text-center">{{ $r->score1 }} {{ $r->grade1 }}</td>
@@ -248,7 +230,14 @@
                     <td class="text-center">{{ $r->tgp }}</td>
                     <td class="text-center">{{ $r->gpa }}</td>
 
-                    <td class="text-center">{{ $ov_rmk }}</td>
+                    <td class="text-center" style="padding: 0!important">
+                        <table border="1" style="width:100%;border-collapse:collapse" cellpadding="1">
+                            <tr>
+                                <td style="width:80%">{{ $ov_rmk }}</td>
+                                <td style="width:20%"></td>
+                            </tr>
+                        </table>
+                    </td>
                 </tr>
             @endforeach
         @else
@@ -259,16 +248,6 @@
 
     </table>
 
-    @php
-        // function getCtype($cc)
-        // {
-        //     $course = App\Models\Course::where('code', $cc)->first();
-        //     if($course){
-        //         return $course->type;
-        //     }
-        //     return null;
-        // }
-    @endphp
     @include('partials.bottom-scripts')
 </body>
 
