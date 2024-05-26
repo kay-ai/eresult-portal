@@ -99,7 +99,7 @@
                                     <div class="col-md-3">
                                         <label for="session" class="form-label">Academic Session: </label>
                                         <select name="session_id" class="form-control @error('session') is-invalid @enderror" id=""required autocomplete="session" autofocus>
-                                            <option>- Select an Option -</option>
+                                            {{-- <option>- Select an Option -</option> --}}
                                             @if ($sessions)
                                                 @foreach ($sessions as $session)
                                                     <option value="{{$session->id}}">{{$session->title}}</option>
@@ -116,7 +116,7 @@
                                     <div class="col-md-3">
                                         <label for="semester" class="form-label">Semester: </label>
                                         <select name="semester" class="form-control @error('semester') is-invalid @enderror" id=""required autocomplete="semester" autofocus>
-                                            <option>- Select an Option -</option>
+                                            {{-- <option>- Select an Option -</option> --}}
                                             <option value="first">First Semester</option>
                                             <option value="second">Second Semester</option>
                                         </select>
@@ -130,7 +130,7 @@
                                     <div class="col-md-3">
                                         <label for="level_id" class="form-label">Level: </label>
                                         <select name="level_id" class="form-control @error('level') is-invalid @enderror" id="" required autocomplete="level" autofocus>
-                                            <option>- Select an Option -</option>
+                                            {{-- <option>- Select an Option -</option> --}}
                                             @if ($levels)
                                                 @foreach ($levels as $level)
                                                     <option value="{{$level->id}}">{{$level->name}}</option>
@@ -147,7 +147,7 @@
                                     <div class="col-md-3">
                                         <label for="department_id" class="form-label">Department: </label>
                                         <select name="department_id" class="form-control @error('level') is-invalid @enderror" id="" required autocomplete="level" autofocus>
-                                            <option>- Select an Option -</option>
+                                            {{-- <option>- Select an Option -</option> --}}
                                             @if ($departments)
                                                 @foreach ($departments as $department)
                                                     <option value="{{$department->id}}">{{$department->name}}</option>
