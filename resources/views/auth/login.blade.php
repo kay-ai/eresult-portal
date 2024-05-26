@@ -55,6 +55,6 @@
                 </a>
             @endif
         </div>
-        <p class="text-secondary mt-3 text-center">Don't have an account? <a href="/register" class="text-dark">Sign Up</a></p>
+        {{-- <p class="text-secondary mt-3 text-center">Don't have an account? <a href="/register" class="text-dark">Sign Up</a></p> --}}
     </form>
 @endsection

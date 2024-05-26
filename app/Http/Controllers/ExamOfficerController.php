@@ -7,6 +7,7 @@ use App\Models\ExamOfficer;
 use App\Models\User;
 use App\Models\Department;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class ExamOfficerController extends Controller
 {
@@ -31,6 +32,7 @@ class ExamOfficerController extends Controller
         $user->password = Hash::make($request->password);
         $user->first_name = $request->first_name;
         $user->last_name = $request->last_name;
+        $user->account_id = 1;
 
         if ($user->save()) {
             $examOfficer = new ExamOfficer();
@@ -38,6 +40,12 @@ class ExamOfficerController extends Controller
             $examOfficer->department_id = $request->department_id;
 
             if ($examOfficer->save()) {
+                $role = Role::where('name', 'Exam Officer')->first();
+
+                if($role){
+                    $user->syncRoles([$role->name]);
+                }
+
                 return redirect()->back()->with('success', 'Exam Officer added successfully!');
             } else {
                 // Rollback user creation if exam officer creation fails

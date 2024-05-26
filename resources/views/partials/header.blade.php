@@ -4,6 +4,7 @@
     </div>
 
     <div class="dropdown d-flex justify-content-end">
+        <p style="font-weight: 500">Role: {{ Auth::user()->roles->pluck('name')->implode(', ') }}&nbsp; | &nbsp;</p>
         <a class="dropdown-toggle text-kdis" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             {{ Auth::user()->first_name }} {{ Auth::user()->last_name }}
         </a>

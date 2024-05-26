@@ -54,6 +54,7 @@ class ResultController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->all());
         if ($request->hasFile('csv')) {
             $file = $request->file('csv');
             $fileExtension = $file->getClientOriginalExtension();
@@ -117,19 +118,13 @@ class ResultController extends Controller
                         $y++;
                     }
 
-                    $dept = trim($row[26]);
+                    $department_id = $request->department_id;
+                    $semester = $request->semester;
+                    $level_id = $request->level_id;
+                    $academic_session_id = $request->session_id;
 
-                    $semester = trim($row[27]);
-                    $level = trim($row[28]);
-                    $session = trim($row[29]);
-
-                    $academic_session_id = $this->getSessionId($session);
-
-                    $level_id = $this->getLevelId($level);
-
-                    $department_id = $this->getDepartmentId($dept);
-
-                    $this->recordCO($remarks, $mat_num, $department_id, $semester, $level_id, $academic_session_id);
+                    $aSession = AcademicSession::where('id', $academic_session_id)->first();
+                    $session = $aSession->title;
 
                     $resolved = $this->resolveCO($mat_num, $cleared, $semester, $level_id, $session);
 
@@ -151,7 +146,6 @@ class ResultController extends Controller
                     $gpa = round($gpa, 2);
 
                     if($semester == "First"){
-
                         $rset = array_merge($rset, [
                             'tce' => $tceSum,
                             'tcu' => $tcuSum,
