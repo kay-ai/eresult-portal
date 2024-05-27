@@ -92,6 +92,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::controller(ResultController::class)->group(function () {
         Route::get('/results', 'index')->name('results.index');
         Route::get('/upload-results', 'uploadResults')->name('results.upload');
+        Route::get('/upload-carryover-results', 'uploadCarryoverResults')->name('results.uploadCarryover');
+        Route::post('/upload-carryover-results', 'storeCarryOverResults')->name('results.createCarryoverResults');
         Route::post('/upload-results', 'store')->name('results.create');
         Route::post('/drop', 'destroy')->name('results.drop');
         Route::post('/view-results', 'show')->name('results.view');

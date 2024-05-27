@@ -39,6 +39,14 @@ class ResultController extends Controller
         return view('results.uploadResult', compact('levels', 'departments', 'sessions'));
     }
 
+    public function uploadCarryoverResults(Request $request)
+    {
+        $levels = Level::all();
+        $departments = Department::all();
+        $sessions = AcademicSession::all();
+        return view('results.uploadCarryoverResult', compact('levels', 'departments', 'sessions'));
+    }
+
     public function resultStats()
     {
         return view('results.index');
