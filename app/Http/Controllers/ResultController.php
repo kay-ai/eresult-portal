@@ -240,17 +240,38 @@ class ResultController extends Controller
 
                     $rset = [];
                     $y = 1;
+                    //get existing results
+                    if($request->semester == "First"){
+                        $ex_results = Result::where('mat_num', $mat_num)->where('semester', $request->semester)->where('department_id', $request->department_id)->where('academic_session_id', $request->session_id)->where('level_id', $request->level_id)->first();
+                    }else{
+                        $ex_results = SecondSemesterResult::where('mat_num', $mat_num)->where('semester', $request->semester)->where('department_id', $request->department_id)->where('academic_session_id', $request->session_id)->where('level_id', $request->level_id)->first();
+                    }
                     for ($i = 2; $i <= 23; $i += 2) {
                         $cc = strtoupper(trim($row[$i]));
                         $tot = trim($row[$i + 1]);
-
                         if (empty($cc)) {
-                            $cc1 = null;
-                            $cu1 = null;
-                            $tot1 = null;
-                            $g1 = null;
-                            $r1 = null;
-                            $gp1 = null;
+                            $cc = $ex_results["cc".$y];
+                            $cc1 = $ex_results["cc".$y];
+                            $cu1 = $ex_results["cu".$y];
+                            $tot = $ex_results["tot".$y];
+                            $g1 = $ex_results["g".$y];
+                            $r1 = $ex_results["r".$y];
+                            $gp1 = $ex_results["gp".$y];
+
+                            $tcu[] = $cu1;
+
+                            if ($g1 != 'F') {
+                                $tce[] = $cu1;
+                            }
+
+                            $tgp[] = $gp1;
+
+                            if ($g1 == 'F') {
+                                $remarks[] = $cc;
+                            }else{
+                                $cleared[] = $cc;
+                            }
+
                         } else {
                             $cu1 = $this->getCU($cc);
                             $tcu[] = $cu1;
@@ -328,6 +349,11 @@ class ResultController extends Controller
                             $rset,
                         );
 
+                        $result = Result::updateOrCreate(
+                            ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'department_id' => $department_id, 'semester' => $semester],
+                            $rset,
+                        );
+
                     }else{
 
                         $pgpa = $this->prevGpa($mat_num, $level_id);
@@ -351,6 +377,11 @@ class ResultController extends Controller
                         ]);
 
                         $result = SecondCarryOverResult::updateOrCreate(
+                            ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'department_id' => $department_id, 'department_id' => $department_id, 'semester' => $semester],
+                            $rset,
+                        );
+
+                        $result = SecondSemesterResult::updateOrCreate(
                             ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'department_id' => $department_id, 'department_id' => $department_id, 'semester' => $semester],
                             $rset,
                         );
