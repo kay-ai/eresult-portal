@@ -615,16 +615,19 @@ class ResultController extends Controller
     private function recordCO($array, $mat_num, $department_id, $semester, $level_id, $session_id)
     {
         if(!empty($array)){
-            $ex_carryover = Carryover::where('level_id', $level_id)->where('academic_session_id', $academic_session_id)->where('semester', $semester)->where('mat_num', $mat_num)->where('department_id', $department_id)->get();
+            $ex_carryover = Carryover::where('level_id', $level_id)->where('academic_session_id', $session_id)->where('semester', $semester)->where('mat_num', $mat_num)->where('department_id', $department_id)->get();
             $ex_co = [];
             if($ex_carryover){
                 foreach($ex_carryover as $key => $val){
                     $ex_co[] = $val->cc;
                 }
             }
-            $carryover = new Carryover();
+
+            // dd($array);
             foreach($array as $key => $val){
+                // dd(!in_array($val, $ex_co));
                 if(!in_array($val, $ex_co)){
+                    $carryover = new Carryover();
                     $carryover->level_id = $level_id;
                     $carryover->cc = $val;
                     $carryover->academic_session_id = $session_id;
