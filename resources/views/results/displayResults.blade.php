@@ -150,17 +150,30 @@
             <th scope="col">
                 <table border="1" style="width:100%;border-collapse:collapse" cellpadding="1">
                     <tr>
-                    @if($courses)
-                        @foreach($courses as $key => $course)
-                        <th scope="col">{{$course->code}}</th>
-                        @endforeach
-                    @endif
+                        @php
+                        if(count($courses) < 11){
+                            $cells = 11 - count($courses);
+                        }else{
+                            $cells = 0;
+                        }
+                        @endphp
+                        @if($courses)
+                            @foreach($courses as $key => $course)
+                            <th scope="col" style="width: 9%">{{$course->code}}</th>
+                            @endforeach
+                            @for($c = 0; $c < $cells; $c++)
+                            <th scope="col"></th>
+                            @endfor
+                        @endif
                     </tr>
                     <tr>
                     @if($courses)
                         @foreach($courses as $key => $course)
-                        <td>{{$course->unit}}</td>
+                        <td style="width: 9%">{{$course->unit}}</td>
                         @endforeach
+                        @for($c = 0; $c < $cells; $c++)
+                            <td scope="col" style="width: 9%"></td>
+                        @endfor
                     @endif
                     </tr>
                 </table>
@@ -169,7 +182,7 @@
             <th class="text-center">TCE</th>
             <th class="text-center">TGP</th>
             <th class="text-center">GPA</th>
-            <th scope="col" class="text-center" style="padding: 0!important">
+            <th scope="col" class="text-center">
                 <table border="1" style="width:100%;border-collapse:collapse" cellpadding="1">
                     <tr>
                         <th colspan="2">Remarks</th>
@@ -209,17 +222,17 @@
                         <table border="1" style="width:100%;border-collapse:collapse" cellpadding="1">
 
                             <tr>
-                                <td class="text-center">{{ $r->score1 }} {{ $r->grade1 }}</td>
-                                <td class="text-center">{{ $r->score2 }} {{ $r->grade2 }}</td>
-                                <td class="text-center">{{ $r->score3 }} {{ $r->grade3 }}</td>
-                                <td class="text-center">{{ $r->score4 }} {{ $r->grade4 }}</td>
-                                <td class="text-center">{{ $r->score5 }} {{ $r->grade5 }}</td>
-                                <td class="text-center">{{ $r->score6 }} {{ $r->grade6 }}</td>
-                                <td class="text-center">{{ $r->score7 }} {{ $r->grade7 }}</td>
-                                <td class="text-center">{{ $r->score8 }} {{ $r->grade8 }}</td>
-                                <td class="text-center">{{ $r->score9 }} {{ $r->grade9 }}</td>
-                                <td class="text-center">{{ $r->score10 }} {{ $r->grade10 }}</td>
-                                <td class="text-center">{{ $r->score11 }} {{ $r->grade11 }}</td>
+                                <td class="text-center" style="width: 9%">{{ $r->score1 }}</td>
+                                <td class="text-center" style="width: 9%">{{ $r->score2 }}</td>
+                                <td class="text-center" style="width: 9%">{{ $r->score3 }}</td>
+                                <td class="text-center" style="width: 9%">{{ $r->score4 }}</td>
+                                <td class="text-center" style="width: 9%">{{ $r->score5 }}</td>
+                                <td class="text-center" style="width: 9%">{{ $r->score6 }}</td>
+                                <td class="text-center" style="width: 9%">{{ $r->score7 }}</td>
+                                <td class="text-center" style="width: 9%">{{ $r->score8 }}</td>
+                                <td class="text-center" style="width: 9%">{{ $r->score9 }}</td>
+                                <td class="text-center" style="width: 9%">{{ $r->score10 }}</td>
+                                <td class="text-center" style="width: 9%">{{ $r->score11 }}</td>
                             </tr>
                         </table>
 
@@ -230,7 +243,7 @@
                     <td class="text-center">{{ $r->tgp }}</td>
                     <td class="text-center">{{ $r->gpa }}</td>
 
-                    <td class="text-center" style="padding: 0!important">
+                    <td scope="col" class="text-center" style="padding: 0!important">
                         <table border="1" style="width:100%;border-collapse:collapse" cellpadding="1">
                             <tr>
                                 <td style="width:80%">{{ $ov_rmk }}</td>
