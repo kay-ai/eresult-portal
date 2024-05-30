@@ -247,7 +247,7 @@ class ResultController extends Controller
                         $ex_results = SecondSemesterResult::where('mat_num', $mat_num)->where('semester', $request->semester)->where('department_id', $request->department_id)->where('academic_session_id', $request->session_id)->where('level_id', $request->level_id)->first();
                     }
                     for ($i = 2; $i <= 23; $i += 2) {
-                        $cc = strtoupper(trim($row[$i]));
+                        $cc = strtoupper(trim($row[$i])) ?? $ex_results["cc".$y];
                         $tot = trim($row[$i + 1]);
                         if (empty($cc)) {
                             $cc = $ex_results["cc".$y];
@@ -349,10 +349,10 @@ class ResultController extends Controller
                             $rset,
                         );
 
-                        $result = Result::updateOrCreate(
-                            ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'department_id' => $department_id, 'semester' => $semester],
-                            $rset,
-                        );
+                        // $result = Result::updateOrCreate(
+                        //     ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'department_id' => $department_id, 'semester' => $semester],
+                        //     $rset,
+                        // );
 
                     }else{
 
@@ -381,10 +381,10 @@ class ResultController extends Controller
                             $rset,
                         );
 
-                        $result = SecondSemesterResult::updateOrCreate(
-                            ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'department_id' => $department_id, 'department_id' => $department_id, 'semester' => $semester],
-                            $rset,
-                        );
+                        // $result = SecondSemesterResult::updateOrCreate(
+                        //     ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'department_id' => $department_id, 'department_id' => $department_id, 'semester' => $semester],
+                        //     $rset,
+                        // );
                     }
 
                     if ($result) {
