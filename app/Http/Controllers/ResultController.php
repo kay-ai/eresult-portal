@@ -560,10 +560,30 @@ class ResultController extends Controller
                 {
                     // $cr = $remarks;
                 }else{
-                    foreach($x_rmks as $rmk)
+
+                    //get carryovers from carryover table
+                    $carryOvers = Carryover::where('level_id', $level_id)->where('academic_session_id', $_session_id)->where('semester', $semester)->where('mat_num', $mn)->get();
+                    $ex_co = [];
+                    if($carryOvers){
+                        foreach($carryOvers as $key => $val){
+                            $ex_co[] = $val->cc;
+                        }
+                    }
+
+                    foreach($x_rmks as $co)
                     {
-                        if(!in_array($rmk, $cleared)){
+                        if(!in_array($co, $cleared)){
                             $cr[] = $rmk;
+                        }else{
+                            if(in_array($co, $ex_co)){
+                                for($x = 0; $x < count($ex_co); $x++){
+                                    if($ex_co[$x] == $co){
+                                        $this_carryover = Carryover::where('level_id', $level_id)->where('academic_session_id', $_session_id)->where('semester', $semester)->where('mat_num', $mn)->where('cc', $co)->first();
+                                        $this_carryover->status = 'pass';
+                                        $this_carryover->save();
+                                    }
+                                }
+                            }
                         }
                     }
 
@@ -595,16 +615,25 @@ class ResultController extends Controller
     private function recordCO($array, $mat_num, $department_id, $semester, $level_id, $session_id)
     {
         if(!empty($array)){
+            $ex_carryover = Carryover::where('level_id', $level_id)->where('academic_session_id', $academic_session_id)->where('semester', $semester)->where('mat_num', $mat_num)->where('department_id', $department_id)->get();
+            $ex_co = [];
+            if($ex_carryover){
+                foreach($ex_carryover as $key => $val){
+                    $ex_co[] = $val->cc;
+                }
+            }
             $carryover = new Carryover();
             foreach($array as $key => $val){
-                $carryover->level_id = $level_id;
-                $carryover->cc = $val;
-                $carryover->academic_session_id = $session_id;
-                $carryover->semester = $semester;
-                $carryover->mat_num = $mat_num;
-                $carryover->department_id = $department_id;
+                if(!in_array($val, $ex_co)){
+                    $carryover->level_id = $level_id;
+                    $carryover->cc = $val;
+                    $carryover->academic_session_id = $session_id;
+                    $carryover->semester = $semester;
+                    $carryover->mat_num = $mat_num;
+                    $carryover->department_id = $department_id;
 
-                $carryover->save();
+                    $carryover->save();
+                }
             }
         }
     }
