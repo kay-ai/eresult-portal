@@ -11,6 +11,7 @@ use App\Models\Department;
 use App\Models\AcademicSession;
 use App\Models\Grade;
 use App\Models\Carryover;
+use App\Models\CarryOverResult;
 use Illuminate\Http\Request;
 
 class ResultController extends Controller
