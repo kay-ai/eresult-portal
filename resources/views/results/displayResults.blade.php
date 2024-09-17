@@ -178,9 +178,9 @@
                     </tr>
                 </table>
             </th>
-            <th class="text-center">TCC</th>
+            <th class="text-center">CCU</th>
             <th class="text-center">TCE</th>
-            <th class="text-center">TGP</th>
+            <th class="text-center">CGP</th>
             <th class="text-center">GPA</th>
             <th scope="col" class="text-center">
                 <table border="1" style="width:100%;border-collapse:collapse" cellpadding="1">
@@ -204,9 +204,11 @@
                     $gp = $r->gpa;
                     $remarks = unserialize($r->remarks);
                     if (empty($remarks)) {
-                        $ov_rmk = 'PASS';
+                        $ov_rmk = '';
+                        $status = "PASS";
                     } else {
                         $ov_rmk = implode(',', $remarks);
+                        $status = "";
                     }
 
                     $student = App\Models\Student::where('mat_num',$r->mat_num)->first();
@@ -247,7 +249,7 @@
                         <table border="1" style="width:100%;border-collapse:collapse" cellpadding="1">
                             <tr>
                                 <td style="width:80%">{{ $ov_rmk }}</td>
-                                <td style="width:20%"></td>
+                                <td style="width:20%">{{ $status }}</td>
                             </tr>
                         </table>
                     </td>

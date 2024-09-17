@@ -246,17 +246,19 @@ class ResultController extends Controller
                     }else{
                         $ex_results = SecondSemesterResult::where('mat_num', $mat_num)->where('semester', $request->semester)->where('department_id', $request->department_id)->where('academic_session_id', $request->session_id)->where('level_id', $request->level_id)->first();
                     }
+
                     for ($i = 2; $i <= 23; $i += 2) {
-                        $cc = strtoupper(trim($row[$i])) ?? $ex_results["cc".$y];
+                        $cc = strtoupper(trim($row[$i]));
                         $tot = trim($row[$i + 1]);
-                        if (empty($cc)) {
+                        if (empty($tot)) {
                             $cc = $ex_results["cc".$y];
-                            $cc1 = $ex_results["cc".$y];
                             $cu1 = $ex_results["cu".$y];
-                            $tot = $ex_results["tot".$y];
-                            $g1 = $ex_results["g".$y];
-                            $r1 = $ex_results["r".$y];
-                            $gp1 = $ex_results["gp".$y];
+                            $tot = $ex_results["score".$y];
+                            $g1 = $ex_results["grade".$y];
+                            $r1 = $ex_results["rmk".$y];
+
+                            $gp1 = $this->gp($cu1, $g1);
+                            // $gp1 = $ex_results["gp".$y];
 
                             $tcu[] = $cu1;
 
@@ -272,9 +274,17 @@ class ResultController extends Controller
                                 $cleared[] = $cc;
                             }
 
+                            $rset['cc'.$y] = $cc;
+                            $rset['cu'.$y] = $cu1;
+                            $rset['score'.$y] = $tot;
+                            $rset['grade'.$y] = $g1;
+                            $rset['rmk'.$y] = $r1;
+
                         } else {
                             $cu1 = $this->getCU($cc);
                             $tcu[] = $cu1;
+
+                            $tot = trim($row[$i + 1]);
 
                             $g1 = $this->gradeP($tot);
                             if ($g1 != 'F') {
@@ -290,13 +300,13 @@ class ResultController extends Controller
                             }else{
                                 $cleared[] = $cc;
                             }
-                        }
 
-                        $rset['cc'.$y] = $cc;
-                        $rset['cu'.$y] = $cu1;
-                        $rset['score'.$y] = $tot;
-                        $rset['grade'.$y] = $g1;
-                        $rset['rmk'.$y] = $r1;
+                            $rset['cc'.$y] = $cc;
+                            $rset['cu'.$y] = $cu1;
+                            $rset['score'.$y] = $tot;
+                            $rset['grade'.$y] = $g1;
+                            $rset['rmk'.$y] = $r1;
+                        }
 
                         $y++;
                     }
@@ -349,10 +359,10 @@ class ResultController extends Controller
                             $rset,
                         );
 
-                        // $result = Result::updateOrCreate(
-                        //     ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'department_id' => $department_id, 'semester' => $semester],
-                        //     $rset,
-                        // );
+                        $result = Result::updateOrCreate(
+                            ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'department_id' => $department_id, 'semester' => $semester],
+                            $rset,
+                        );
 
                     }else{
 
@@ -381,10 +391,10 @@ class ResultController extends Controller
                             $rset,
                         );
 
-                        // $result = SecondSemesterResult::updateOrCreate(
-                        //     ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'department_id' => $department_id, 'department_id' => $department_id, 'semester' => $semester],
-                        //     $rset,
-                        // );
+                        $result = SecondSemesterResult::updateOrCreate(
+                            ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'department_id' => $department_id, 'department_id' => $department_id, 'semester' => $semester],
+                            $rset,
+                        );
                     }
 
                     if ($result) {
