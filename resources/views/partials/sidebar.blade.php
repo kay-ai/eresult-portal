@@ -87,7 +87,8 @@
                             $resultLinks = [
                                 "Upload Results",
                                 "All Results",
-                                "Transcript"
+                                "Transcript",
+                                "Upload Carryover Results",
                             ];
                         @endphp
                         <a href="javascript:void(0);" class="nav_link {{in_array($activePage, $resultLinks) ? 'active' : '' }}">
@@ -97,6 +98,9 @@
                         <div class="dropdown {{in_array($activePage, $resultLinks) ? 'open' : '' }}">
                             @can('view sub-menu upload-results')
                                 <a href="{{route('results.upload')}}" class="dropdown-link {{$activePage == 'Upload Results' ? 'active' : '' }}">Upload Resuslts</a>
+                            @endcan
+                            @can('view sub-menu upload-results')
+                                <a href="{{route('results.uploadCarryover')}}" class="dropdown-link {{$activePage == 'Upload Carryover Results' ? 'active' : '' }}">Upload Carryover Results</a>
                             @endcan
                             @can('view sub-menu all-results')
                                 <a href="{{route('results.index')}}" class="dropdown-link {{$activePage == 'All Results' ? 'active' : '' }}">All Results</a>
