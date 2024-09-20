@@ -22,6 +22,8 @@
 
     <!-- DataTables Buttons CSS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
+
+    @stack('css')
 </head>
 <body>
         @auth
