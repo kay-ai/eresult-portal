@@ -615,7 +615,7 @@ class ResultController extends Controller
                     foreach($x_rmks as $co)
                     {
                         if(!in_array($co, $cleared)){
-                            $cr[] = $rmk;
+                            $cr[] = $co;
                         }else{
                             if(in_array($co, $ex_co)){
                                 for($x = 0; $x < count($ex_co); $x++){
