@@ -536,7 +536,7 @@ class ResultController extends Controller
 
         $account = Account::first();
 
-        $courses = Course::where('semester', $semester)->get();
+        $courses = Course::where('semester', $semester)->orderBy('id', 'desc')->get();
 
         $department = Department::find($department_id);
         if($semester == 'Second'){
