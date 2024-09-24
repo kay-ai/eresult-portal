@@ -11,6 +11,7 @@ use App\Models\Department;
 use App\Models\AcademicSession;
 use App\Models\Grade;
 use App\Models\Carryover;
+use App\Models\CarryOverResult;
 use Illuminate\Http\Request;
 
 class ResultController extends Controller
@@ -39,6 +40,14 @@ class ResultController extends Controller
         return view('results.uploadResult', compact('levels', 'departments', 'sessions'));
     }
 
+    public function uploadCarryoverResults(Request $request)
+    {
+        $levels = Level::all();
+        $departments = Department::all();
+        $sessions = AcademicSession::all();
+        return view('results.uploadCarryoverResult', compact('levels', 'departments', 'sessions'));
+    }
+
     public function resultStats()
     {
         return view('results.index');
@@ -54,7 +63,6 @@ class ResultController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all());
         if ($request->hasFile('csv')) {
             $file = $request->file('csv');
             $fileExtension = $file->getClientOriginalExtension();
@@ -118,13 +126,19 @@ class ResultController extends Controller
                         $y++;
                     }
 
-                    $department_id = $request->department_id;
-                    $semester = $request->semester;
-                    $level_id = $request->level_id;
-                    $academic_session_id = $request->session_id;
+                    $dept = trim($row[26]);
 
-                    $aSession = AcademicSession::where('id', $academic_session_id)->first();
-                    $session = $aSession->title;
+                    $semester = trim($row[27]);
+                    $level = trim($row[28]);
+                    $session = trim($row[29]);
+
+                    $academic_session_id = $this->getSessionId($session);
+
+                    $level_id = $this->getLevelId($level);
+
+                    $department_id = $this->getDepartmentId($dept);
+
+                    $this->recordCO($remarks, $mat_num, $department_id, $semester, $level_id, $academic_session_id);
 
                     $resolved = $this->resolveCO($mat_num, $cleared, $semester, $level_id, $session);
 
@@ -146,6 +160,7 @@ class ResultController extends Controller
                     $gpa = round($gpa, 2);
 
                     if($semester == "First"){
+
                         $rset = array_merge($rset, [
                             'tce' => $tceSum,
                             'tcu' => $tcuSum,
@@ -180,6 +195,201 @@ class ResultController extends Controller
                             'pcgpa' => $pcgpa,
                             'remarks' => $remarks,
                         ]);
+
+                        $result = SecondSemesterResult::updateOrCreate(
+                            ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'department_id' => $department_id, 'department_id' => $department_id, 'semester' => $semester],
+                            $rset,
+                        );
+                    }
+
+                    if ($result) {
+                        $details .= '<p>'.$mat_num .' result computed successfully!</p>';
+                    } else {
+                        $details .= "<p>Failed to compute result for ".$mat_num."</p>";
+                    }
+                }
+
+                echo $details;
+                echo '<p><a href="javascript:history.back();"><button>Back</button></a></p>';
+            }
+        }
+    }
+
+    public function storeCarryOverResults(Request $request)
+    {
+        if ($request->hasFile('csv')) {
+            $file = $request->file('csv');
+            $fileExtension = $file->getClientOriginalExtension();
+
+            if ($fileExtension == 'csv') {
+                $filePath = $file->getRealPath();
+                $csvData = array_map('str_getcsv', file($filePath));
+                $details = '';
+
+                foreach ($csvData as $key => $row) {
+                    if ($key == 0) {
+                        continue;
+                    }
+
+                    $mat_num = trim($row[1]);
+                    $tce = [];
+                    $tgp = [];
+                    $tcu = [];
+                    $remarks = [];
+                    $cleared = [];
+
+                    $rset = [];
+                    $y = 1;
+                    //get existing results
+                    if($request->semester == "First"){
+                        $ex_results = Result::where('mat_num', $mat_num)->where('semester', $request->semester)->where('department_id', $request->department_id)->where('academic_session_id', $request->session_id)->where('level_id', $request->level_id)->first();
+                    }else{
+                        $ex_results = SecondSemesterResult::where('mat_num', $mat_num)->where('semester', $request->semester)->where('department_id', $request->department_id)->where('academic_session_id', $request->session_id)->where('level_id', $request->level_id)->first();
+                    }
+
+                    for ($i = 2; $i <= 23; $i += 2) {
+                        $cc = strtoupper(trim($row[$i]));
+                        $tot = trim($row[$i + 1]);
+                        if (empty($tot)) {
+                            $cc = $ex_results["cc".$y];
+                            $cu1 = $ex_results["cu".$y];
+                            $tot = $ex_results["score".$y];
+                            $g1 = $ex_results["grade".$y];
+                            $r1 = $ex_results["rmk".$y];
+
+                            $gp1 = $this->gp($cu1, $g1);
+                            // $gp1 = $ex_results["gp".$y];
+
+                            $tcu[] = $cu1;
+
+                            if ($g1 != 'F') {
+                                $tce[] = $cu1;
+                            }
+
+                            $tgp[] = $gp1;
+
+                            if ($g1 == 'F') {
+                                $remarks[] = $cc;
+                            }else{
+                                $cleared[] = $cc;
+                            }
+
+                            $rset['cc'.$y] = $cc;
+                            $rset['cu'.$y] = $cu1;
+                            $rset['score'.$y] = $tot;
+                            $rset['grade'.$y] = $g1;
+                            $rset['rmk'.$y] = $r1;
+
+                        } else {
+                            $cu1 = $this->getCU($cc);
+                            $tcu[] = $cu1;
+
+                            $tot = trim($row[$i + 1]);
+
+                            $g1 = $this->gradeP($tot);
+                            if ($g1 != 'F') {
+                                $tce[] = $cu1;
+                            }
+
+                            $r1 = $this->rmkP($tot);
+                            $gp1 = $this->gp($cu1, $g1);
+                            $tgp[] = $gp1;
+
+                            if ($g1 == 'F') {
+                                $remarks[] = $cc;
+                            }else{
+                                $cleared[] = $cc;
+                            }
+
+                            $rset['cc'.$y] = $cc;
+                            $rset['cu'.$y] = $cu1;
+                            $rset['score'.$y] = $tot;
+                            $rset['grade'.$y] = $g1;
+                            $rset['rmk'.$y] = $r1;
+                        }
+
+                        $y++;
+                    }
+
+                    $dept = trim($row[26]);
+
+                    $semester = trim($row[27]);
+                    $level = trim($row[28]);
+                    $session = trim($row[29]);
+
+                    $academic_session_id = $this->getSessionId($session);
+
+                    $level_id = $this->getLevelId($level);
+
+                    $department_id = $this->getDepartmentId($dept);
+
+                    $this->recordCO($remarks, $mat_num, $department_id, $semester, $level_id, $academic_session_id);
+
+                    $resolved = $this->resolveCO($mat_num, $cleared, $semester, $level_id, $session);
+
+                    if($resolved != null){
+                        $remarks = array_merge($resolved, $remarks);
+                    }
+
+                    $remarks = serialize($remarks);
+                    $tgpSum = array_sum($tgp);
+                    $tcuSum = array_sum($tcu);
+                    $tceSum = array_sum($tce);
+
+                    if ($tcuSum > 30) {
+                        $details .= '<p class="text-danger">Maximum credit units exceeded for '.$mat_num.'!</p>';
+                        continue;
+                    }
+
+                    $gpa = ($tgpSum / $tcuSum) ?: $tgpSum;
+                    $gpa = round($gpa, 2);
+
+                    if($semester == "First"){
+
+                        $rset = array_merge($rset, [
+                            'tce' => $tceSum,
+                            'tcu' => $tcuSum,
+                            'tgp' => $tgpSum,
+                            'gpa' => $gpa,
+                            'remarks' => $remarks,
+                        ]);
+
+                        $result = CarryOverResult::updateOrCreate(
+                            ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'department_id' => $department_id, 'semester' => $semester],
+                            $rset,
+                        );
+
+                        $result = Result::updateOrCreate(
+                            ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'department_id' => $department_id, 'semester' => $semester],
+                            $rset,
+                        );
+
+                    }else{
+
+                        $pgpa = $this->prevGpa($mat_num, $level_id);
+                        if($pgpa != null){
+                            $cgpa = round((($gpa + $pgpa)/2),2);
+                        }else{
+                            $cgpa = 0;
+                        }
+
+                        $pcgpa = $this->prevCgpa($mat_num, $level_id);
+
+                        $rset = array_merge($rset, [
+                            'tce' => $tceSum,
+                            'tcu' => $tcuSum,
+                            'tgp' => $tgpSum,
+                            'gpa' => $gpa,
+                            'pgpa' => $pgpa,
+                            'cgpa' => $cgpa,
+                            'pcgpa' => $pcgpa,
+                            'remarks' => $remarks,
+                        ]);
+
+                        $result = SecondCarryOverResult::updateOrCreate(
+                            ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'department_id' => $department_id, 'department_id' => $department_id, 'semester' => $semester],
+                            $rset,
+                        );
 
                         $result = SecondSemesterResult::updateOrCreate(
                             ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'department_id' => $department_id, 'department_id' => $department_id, 'semester' => $semester],
@@ -326,7 +536,7 @@ class ResultController extends Controller
 
         $account = Account::first();
 
-        $courses = Course::where('semester', $semester)->get();
+        $courses = Course::where('semester', $semester)->orderBy('id', 'desc')->get();
 
         $department = Department::find($department_id);
         if($semester == 'Second'){
@@ -392,10 +602,30 @@ class ResultController extends Controller
                 {
                     // $cr = $remarks;
                 }else{
-                    foreach($x_rmks as $rmk)
+
+                    //get carryovers from carryover table
+                    $carryOvers = Carryover::where('level_id', $level_id)->where('academic_session_id', $_session_id)->where('semester', $semester)->where('mat_num', $mn)->get();
+                    $ex_co = [];
+                    if($carryOvers){
+                        foreach($carryOvers as $key => $val){
+                            $ex_co[] = $val->cc;
+                        }
+                    }
+
+                    foreach($x_rmks as $co)
                     {
-                        if(!in_array($rmk, $cleared)){
-                            $cr[] = $rmk;
+                        if(!in_array($co, $cleared)){
+                            $cr[] = $co;
+                        }else{
+                            if(in_array($co, $ex_co)){
+                                for($x = 0; $x < count($ex_co); $x++){
+                                    if($ex_co[$x] == $co){
+                                        $this_carryover = Carryover::where('level_id', $level_id)->where('academic_session_id', $_session_id)->where('semester', $semester)->where('mat_num', $mn)->where('cc', $co)->first();
+                                        $this_carryover->status = 'pass';
+                                        $this_carryover->save();
+                                    }
+                                }
+                            }
                         }
                     }
 
@@ -427,16 +657,28 @@ class ResultController extends Controller
     private function recordCO($array, $mat_num, $department_id, $semester, $level_id, $session_id)
     {
         if(!empty($array)){
-            $carryover = new Carryover();
-            foreach($array as $key => $val){
-                $carryover->level_id = $level_id;
-                $carryover->cc = $val;
-                $carryover->academic_session_id = $session_id;
-                $carryover->semester = $semester;
-                $carryover->mat_num = $mat_num;
-                $carryover->department_id = $department_id;
+            $ex_carryover = Carryover::where('level_id', $level_id)->where('academic_session_id', $session_id)->where('semester', $semester)->where('mat_num', $mat_num)->where('department_id', $department_id)->get();
+            $ex_co = [];
+            if($ex_carryover){
+                foreach($ex_carryover as $key => $val){
+                    $ex_co[] = $val->cc;
+                }
+            }
 
-                $carryover->save();
+            // dd($array);
+            foreach($array as $key => $val){
+                // dd(!in_array($val, $ex_co));
+                if(!in_array($val, $ex_co)){
+                    $carryover = new Carryover();
+                    $carryover->level_id = $level_id;
+                    $carryover->cc = $val;
+                    $carryover->academic_session_id = $session_id;
+                    $carryover->semester = $semester;
+                    $carryover->mat_num = $mat_num;
+                    $carryover->department_id = $department_id;
+
+                    $carryover->save();
+                }
             }
         }
     }

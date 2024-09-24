@@ -22,15 +22,15 @@ class SuperAdminSeeder extends Seeder
             $role = Role::where('name', 'Super Admin')->first();
         }
 
-        $user = User::where('email','favourobasi6@gmail.com')->first();
+        $user = User::where('email','benpolyadmin@gmail.com')->first();
 
         if(!$user){
             $user = new User();
-            $user->first_name = 'favour';
-            $user->last_name = 'obasi';
-            $user->email = 'favourobasi6@gmail.com';
+            $user->first_name = 'Benpoly';
+            $user->last_name = 'Admin';
+            $user->email = 'benpolyadmin@gmail.com';
             $user->phone_number = '09053143790';
-            $user->password = Hash::make('12345678');
+            $user->password = Hash::make('@benpoly+2024');
             $user->account_id = 1;
             $user->save();
         }

@@ -49,21 +49,37 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @php
+                                $total_course_units = [];
+                            @endphp
                             @if($courses)
                                 @foreach($courses as $key => $course)
+                                @php
+                                $total_course_units[] = $course->unit;
+                                @endphp
                                 <tr>
                                     <td>{{($key+1)}}</td>
                                     <td>{{$course->title}}</td>
-                                    <td>{{$course->code}}</td>
+                                    <td>{{strtoupper($course->code)}}</td>
                                     <td>{{$course->unit}}</td>
                                 </tr>
                                 @endforeach
                             @endif
+                            <tr>
+                                <td colspan="2"></td>
+                                <td>Total</td>
+                                <td>{{array_sum($total_course_units)}}</td>
+                            </tr>
                         </tbody>
                     </table>
                 </th>
                 <th style="width:40%;text-align:center">
                     <img src="{{asset('storage/'.auth()->user()->account->logo ?? null)}}" class="img-fluid" style="width:200px;height:200px;border-radius:50%">
+                    <div style="width:100%;float:left;margin-top:15px">
+                        <div class="col-md-4 m-auto">
+                            <p>NUMBER OF STUDENTS: {{count($results)}}</p>
+                        </div>
+                    </div>
                 </th>
                 <th style="width:30%">
                     <table style="width:100%;float:left;font-size: 11px;border-collapse:collapse;margin-bottom:10px;text-align:left" border="1">
@@ -135,14 +151,7 @@
 
     </div>
 
-    <div class="full-width">
-
-
-
-
-    </div>
-
-    <table width="100%" border="1" cellpadding="1" cellspacing="1" style="font-size: 70%;border-collapse:collapse">
+    <table width="100%" border="1" cellpadding="1" cellspacing="1" style="font-size: 70%;border-collapse:collapse;margin-bottom:30px">
         <tr>
             <th scope="col" class="text-center">S/N</th>
             <th scope="col" class="text-center">Full Name </th>
@@ -150,35 +159,49 @@
             <th scope="col">
                 <table border="1" style="width:100%;border-collapse:collapse" cellpadding="1">
                     <tr>
-                    @if($courses)
-                        @foreach($courses as $key => $course)
-                        <th scope="col">{{$course->code}}</th>
-                        @endforeach
-                    @endif
+                        @php
+                        if(count($courses) < 11){
+                            $cells = 11 - count($courses);
+                        }else{
+                            $cells = 0;
+                        }
+                        @endphp
+                        @if($courses)
+                            @foreach($courses as $key => $course)
+                            <th scope="col" style="width: 9%">{{strtoupper($course->code)}}</th>
+                            @endforeach
+                            @for($c = 0; $c < $cells; $c++)
+                            <th scope="col"></th>
+                            @endfor
+                        @endif
                     </tr>
                     <tr>
                     @if($courses)
                         @foreach($courses as $key => $course)
-                        <td>{{$course->unit}}</td>
+                        <td style="width: 9%">{{$course->unit}}</td>
                         @endforeach
+                        @for($c = 0; $c < $cells; $c++)
+                            <td scope="col" style="width: 9%"></td>
+                        @endfor
                     @endif
                     </tr>
                 </table>
             </th>
-            <th class="text-center">TCC</th>
-            <th class="text-center">TCE</th>
-            <th class="text-center">TGP</th>
+            <th class="text-center">CCU</th>
+            <th class="text-center">CF</th>
+            <th class="text-center">CUF</th>
+            <th class="text-center">%F</th>
             <th class="text-center">GPA</th>
             <th class="text-center">Prev GPA</th>
             <th class="text-center">CGPA</th>
-            <th scope="col" class="text-center" style="padding: 0!important">
+            <th scope="col" class="text-center">
                 <table border="1" style="width:100%;border-collapse:collapse" cellpadding="1">
                     <tr>
-                        <th colspan="2">Remarks</th>
+                        <th colspan="2">REMARK</th>
                     </tr>
                     <tr>
-                        <th style="width:80%">CARRYOVER</th>
-                        <th style="width:20%">Status</th>
+                        <th style="width:80%">CARRYOVER(S)/<br>REMARk</th>
+                        <th style="width:20%">STATUS</th>
                     </tr>
                 </table>
             </th>
@@ -191,11 +214,21 @@
                     $cc1 = $r->cc1;
                     $g1 = $r->grade1;
                     $gp = $r->gpa;
+                    $cuf = [];
                     $remarks = unserialize($r->remarks);
                     if (empty($remarks)) {
-                        $ov_rmk = 'PASS';
+                        $ov_rmk = '';
+                        $status = "PASS";
                     } else {
                         $ov_rmk = implode(',', $remarks);
+                        $status = "";
+                        foreach($remarks as $rmk){
+                            foreach ($courses as $course) {
+                                if (strtoupper($course['code']) === strtoupper($rmk)) {
+                                    $cuf[] = $course['unit'];
+                                }
+                            }
+                        }
                     }
 
                     $student = App\Models\Student::where('mat_num',$r->mat_num)->first();
@@ -211,35 +244,36 @@
                         <table border="1" style="width:100%;border-collapse:collapse" cellpadding="1">
 
                             <tr>
-                                <td class="text-center">{{ $r->score1 }} {{ $r->grade1 }}</td>
-                                <td class="text-center">{{ $r->score2 }} {{ $r->grade2 }}</td>
-                                <td class="text-center">{{ $r->score3 }} {{ $r->grade3 }}</td>
-                                <td class="text-center">{{ $r->score4 }} {{ $r->grade4 }}</td>
-                                <td class="text-center">{{ $r->score5 }} {{ $r->grade5 }}</td>
-                                <td class="text-center">{{ $r->score6 }} {{ $r->grade6 }}</td>
-                                <td class="text-center">{{ $r->score7 }} {{ $r->grade7 }}</td>
-                                <td class="text-center">{{ $r->score8 }} {{ $r->grade8 }}</td>
-                                <td class="text-center">{{ $r->score9 }} {{ $r->grade9 }}</td>
-                                <td class="text-center">{{ $r->score10 }} {{ $r->grade10 }}</td>
-                                <td class="text-center">{{ $r->score11 }} {{ $r->grade11 }}</td>
+                                <td class="text-center" style="width: 9%">{{ $r->score1 }}</td>
+                                <td class="text-center" style="width: 9%">{{ $r->score2 }}</td>
+                                <td class="text-center" style="width: 9%">{{ $r->score3 }}</td>
+                                <td class="text-center" style="width: 9%">{{ $r->score4 }}</td>
+                                <td class="text-center" style="width: 9%">{{ $r->score5 }}</td>
+                                <td class="text-center" style="width: 9%">{{ $r->score6 }}</td>
+                                <td class="text-center" style="width: 9%">{{ $r->score7 }}</td>
+                                <td class="text-center" style="width: 9%">{{ $r->score8 }}</td>
+                                <td class="text-center" style="width: 9%">{{ $r->score9 }}</td>
+                                <td class="text-center" style="width: 9%">{{ $r->score10 }}</td>
+                                <td class="text-center" style="width: 9%">{{ $r->score11 }}</td>
                             </tr>
                         </table>
 
                     </td>
 
                     <td class="text-center">{{ $r->tcu }}</td>
-                    <td class="text-center">{{ $r->tce }}</td>
-                    <td class="text-center">{{ $r->tgp }}</td>
+                    <td class="text-center">{{ count($remarks) < 1 ? '-' : count($remarks) }}</td> <!--removed tce-->
+                    <td class="text-center">{{ array_sum($cuf) < 1 ? '-' : array_sum($cuf) }}</td>
+                    <td class="text-center">{{ (count($remarks)/count($courses) * 100) == 0 ? '-' : count($remarks)/count($courses) * 100 }}</td>
                     <td class="text-center">{{ $r->gpa }}</td>
 
                     <td class="text-center">{{$r->pgpa}}</td>
                     <td class="text-center">{{$r->cgpa}}</td>
 
-                    <td class="text-center" style="padding: 0!important">
+                    <td scope="col" class="text-center" style="padding: 0!important">
                         <table border="1" style="width:100%;border-collapse:collapse" cellpadding="1">
                             <tr>
                                 <td style="width:80%">{{ $ov_rmk }}</td>
-                                <td style="width:20%"></td>
+                                <td style="width:20%">{{ $status }}</td>
                             </tr>
                         </table>
                     </td>
@@ -251,6 +285,19 @@
             </tr>
         @endif
 
+    </table>
+
+    <table width="100%" style="text-align: center">
+        <tr>
+            <th style="width: 33%"></th>
+            <th style="width: 33%"></th>
+            <th style="width: 33%"></th>
+        </tr>
+        <tr>
+            <td>EXAM SUPERVISOR</td>
+            <td>HOD/ASST.CHIEF EXAMINER</td>
+            <td>DEAN/CHIEF EXAMINER</td>
+        </tr>
     </table>
 
     @include('partials.bottom-scripts')
