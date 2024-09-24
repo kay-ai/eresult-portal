@@ -1,10 +1,9 @@
 @extends('layouts.app', [($activePage = 'Upload Results')])
 
 @section('content')
+@include('modals.download-result-template')
     <div class="me-2">
-        <a href="{{asset('docs/results-temp.csv')}}" download>
-            <button class="btn btn-first">Download Results CSV Template</button>
-        </a>
+        <button class="btn btn-first" data-toggle="modal" data-target="#download-result-template">Download Results CSV Template</button>
         <div class="row mt-4">
 
             <div class="col-md-12">

@@ -59,8 +59,19 @@
                                 <option value="Second">Second Semester</option>
                             </select>
                         </div>
+                        <div class="col-md-2 mt-3">
+                            <label class="form-label">Department:</label>
+                            <select name="department" class="form-control form-select" required="required">
+                                <option value="">-- Select an Option --</option>
+                                @if($departments)
+                                    @foreach($departments as $rec)
+                                        <option value="{{$rec->id}}">{{$rec->name}}</option>
+                                    @endforeach
+                                @endif
+                            </select>
+                        </div>
 
-                        <div class="col-md-12">
+                        <div class="col-md-2 mt-3">
                             <div class="form-group mt-4">
                                 <input type="submit" value="Register" class="btn btn-second">
                             </div>
@@ -83,6 +94,7 @@
                             <th>Type</th>
                             <th>Semester</th>
                             <th>Level</th>
+                            <th>Department</th>
                             <th>Date&nbsp;Added</th>
                             <th>Action</th>
                         </tr>
@@ -98,6 +110,7 @@
                                     <td>{{$val->type}}</td>
                                     <td>{{$val->semester}}</td>
                                     <td>{{$val->level->name}}</td>
+                                    <td>{{$val->department->name ?? 'N/A'}}</td>
                                     <td>{{$val->created_at}}</td>
                                     <td class="action-btn">
                                         <div class="btn-group btn-group-sm" role="group" aria-label="">
