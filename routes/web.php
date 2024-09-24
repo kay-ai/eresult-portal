@@ -92,6 +92,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::controller(ResultController::class)->group(function () {
         Route::get('/results', 'index')->name('results.index');
         Route::get('/upload-results', 'uploadResults')->name('results.upload');
+        Route::post('/download-result-template', 'downloadTemplate')->name('results.template.download');
         Route::get('/upload-carryover-results', 'uploadCarryoverResults')->name('results.uploadCarryover');
         Route::post('/upload-carryover-results', 'storeCarryOverResults')->name('results.createCarryoverResults');
         Route::post('/upload-results', 'store')->name('results.create');

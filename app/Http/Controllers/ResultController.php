@@ -13,6 +13,7 @@ use App\Models\Grade;
 use App\Models\Carryover;
 use App\Models\CarryOverResult;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Date;
 
 class ResultController extends Controller
 {
@@ -59,6 +60,54 @@ class ResultController extends Controller
         $departments = Department::all();
         $sessions = AcademicSession::all();
         return view('results.resultStats', compact('levels', 'departments', 'sessions'));
+    }
+
+    public function downloadTemplate(Request $request)
+    {
+        $semester = $request->semester;
+        $level_id = $request->level_id;
+        $department_id = $request->department_id;
+
+        $courses = Course::where([
+            'semester' => $semester,
+            'level_id' => $level_id,
+            'department_id' => $department_id
+        ])->orderBy('id', 'asc')->get();
+
+        $department = Department::where('id', $department_id)->first();
+        $level = Level::where('id', $level_id)->first();
+
+        $csvFileName = "course_template.csv";
+        $filePath = storage_path('app/public/templates' . $csvFileName);
+
+        $file = fopen($filePath, 'w');
+
+
+        $header = ['sn','matric_num','cc1','score1','cc2','score2','cc3','score3','cc4','score4','cc5','score5','cc6','score6','cc7','score7', 'cc8','score8','cc9','score9','cc10','score10','cc11','score11','cc12','score12','dept','semester','level','academic_session'];
+        fputcsv($file, $header);
+
+        $row = array_fill(0, count($header), '');
+
+        $row[0] = '';
+        $row[1] = '';
+        $row[26] = $department->name;
+        $row[27] = $semester;
+        $row[28] = $level->name;
+        $row[29] = '';
+
+        foreach ($courses as $index => $course) {
+            if ($index < 12) {
+                $row[2 + $index * 2] = $course->code;
+            }
+        }
+
+        fputcsv($file, $row);
+
+        // Close the files
+        fclose($file);
+
+        // Return the file as a download response
+        return response()->download($filePath, $csvFileName)->deleteFileAfterSend(true);
     }
 
     public function store(Request $request)
