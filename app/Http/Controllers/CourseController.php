@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Level;
 use App\Models\Course;
+use App\Models\Department;
 
 class CourseController extends Controller
 {
@@ -12,7 +13,8 @@ class CourseController extends Controller
     {
 		$levels = Level::all();
 		$courses = Course::all();
-		return view('superAdmin.courses', compact('levels', 'courses'));
+		$departments = Department::all();
+		return view('superAdmin.courses', compact('levels', 'courses', 'departments'));
     }
 
     public function store(Request $request)
@@ -23,6 +25,7 @@ class CourseController extends Controller
 		$course->code = $request->code;
 		$course->type = $request->type;
 		$course->level_id = $request->level;
+		$course->department_id = $request->department;
 		$course->semester = $request->semester;
 
         $check = Course::where('title', $request->title)->count();
