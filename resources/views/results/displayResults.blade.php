@@ -150,14 +150,7 @@
         </table>
 
     </div>
-
-    <div class="full-width">
-
-
-
-
-    </div>
-
+    <div class="full-width"></div>
     <table width="100%" border="1" cellpadding="1" cellspacing="1" style="font-size: 70%;border-collapse:collapse;margin-bottom:30px">
         <tr>
             <th scope="col" class="text-center">S/N</th>
@@ -175,20 +168,20 @@
                         @endphp
                         @if($courses)
                             @foreach($courses as $key => $course)
-                            <th scope="col" style="width: 50px">{{strtoupper($course->code)}}</th>
+                            <th scope="col" style="width: 45px">{{strtoupper($course->code)}}</th>
                             @endforeach
                             @for($c = 0; $c < $cells; $c++)
-                            <th scope="col" style="width: 50px"></th>
+                            <th scope="col" style="width: 45px"></th>
                             @endfor
                         @endif
                     </tr>
                     <tr>
                     @if($courses)
                         @foreach($courses as $key => $course)
-                        <td style="width: 50px">{{$course->unit}}</td>
+                        <td style="width: 45px">{{$course->unit}}</td>
                         @endforeach
                         @for($c = 0; $c < $cells; $c++)
-                            <td scope="col" style="width: 50px"></td>
+                            <td scope="col" style="width: 45px"></td>
                         @endfor
                     @endif
                     </tr>
@@ -198,8 +191,10 @@
             <th class="text-center">CF</th>
             <th class="text-center">CUF</th>
             <th class="text-center">%F</th>
-            <th class="text-center">CGP</th>
+            @if($semester == 'First')<th class="text-center">CGP</th>@endif
             <th class="text-center">GPA</th>
+            @if($semester == 'Second')<th class="text-center">Prev GPA</th>@endif
+            @if($semester == 'Second')<th class="text-center">CGPA</th>@endif
             <th scope="col" class="text-center">
                 <table border="1" style="width:100%;border-collapse:collapse" cellpadding="1">
                     <tr>
@@ -227,7 +222,7 @@
                         $status = "PASS";
                     } else {
                         $ov_rmk = implode(',', $remarks);
-                        $status = "";
+                        $status = "CO";
                         foreach($remarks as $rmk){
                             foreach ($courses as $course) {
                                 if (strtoupper($course['code']) === strtoupper($rmk)) {
@@ -251,17 +246,17 @@
 
                         <table border="1" style="width:100%;border-collapse:collapse" cellpadding="1">
                             <tr>
-                                <td class="text-center" style="width: 50px">{{ $r->score1 }}</td>
-                                <td class="text-center" style="width: 50px">{{ $r->score2 }}</td>
-                                <td class="text-center" style="width: 50px">{{ $r->score3 }}</td>
-                                <td class="text-center" style="width: 50px">{{ $r->score4 }}</td>
-                                <td class="text-center" style="width: 50px">{{ $r->score5 }}</td>
-                                <td class="text-center" style="width: 50px">{{ $r->score6 }}</td>
-                                <td class="text-center" style="width: 50px">{{ $r->score7 }}</td>
-                                <td class="text-center" style="width: 50px">{{ $r->score8 }}</td>
-                                <td class="text-center" style="width: 50px">{{ $r->score9 }}</td>
-                                <td class="text-center" style="width: 50px">{{ $r->score10 }}</td>
-                                <td class="text-center" style="width: 50px">{{ $r->score11 }}</td>
+                                <td class="text-center" style="width: 45px">{{ $r->score1 }}</td>
+                                <td class="text-center" style="width: 45px">{{ $r->score2 }}</td>
+                                <td class="text-center" style="width: 45px">{{ $r->score3 }}</td>
+                                <td class="text-center" style="width: 45px">{{ $r->score4 }}</td>
+                                <td class="text-center" style="width: 45px">{{ $r->score5 }}</td>
+                                <td class="text-center" style="width: 45px">{{ $r->score6 }}</td>
+                                <td class="text-center" style="width: 45px">{{ $r->score7 }}</td>
+                                <td class="text-center" style="width: 45px">{{ $r->score8 }}</td>
+                                <td class="text-center" style="width: 45px">{{ $r->score9 }}</td>
+                                <td class="text-center" style="width: 45px">{{ $r->score10 }}</td>
+                                <td class="text-center" style="width: 45px">{{ $r->score11 }}</td>
                             </tr>
 
                         </table>
@@ -272,8 +267,10 @@
                     <td class="text-center">{{ count($remarks) < 1 ? '-' : count($remarks) }}</td> <!--removed tce-->
                     <td class="text-center">{{ array_sum($cuf) < 1 ? '-' : array_sum($cuf) }}</td>
                     <td class="text-center">{{ (count($remarks)/count($courses) * 100) == 0 ? '-' : count($remarks)/count($courses) * 100 }}</td>
-                    <td class="text-center">{{ $r->tgp }}</td>
+                    @if($semester == 'First')<td class="text-center">{{ $r->tgp }}</td>@endif
                     <td class="text-center">{{ $r->gpa }}</td>
+                    @if($semester == 'Second') <td class="text-center">{{$r->pgpa}}</td> @endif
+                    @if($semester == 'Second') <td class="text-center">{{$r->cgpa}}</td> @endif
 
                     <td scope="col" class="text-center" style="padding: 0!important">
                         <table border="1" style="width:100%;border-collapse:collapse" cellpadding="1">

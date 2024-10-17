@@ -13,6 +13,7 @@ use App\Models\Grade;
 use App\Models\Carryover;
 use App\Models\CarryOverResult;
 use App\Models\ExamOfficer;
+use App\Models\SecondCarryOverResult;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
@@ -578,7 +579,10 @@ class ResultController extends Controller
 
     private function gp($cu, $g)
     {
-        return ($g == "F") ? ($cu * 0) : (($g == "D") ? ($cu * 1) : (($g == "C") ? ($cu * 2) : (($g == "B") ? ($cu * 3) : ($cu * 4))));
+        $grade = Grade::where('_type', $g)->first();
+        $weight = $grade->weight;
+
+        return $cu * $weight;
     }
 
     private function getCU($cc)
@@ -632,7 +636,6 @@ class ResultController extends Controller
                 'level_id'=> $level_id,
                 'department_id'=> $department_id
             ])->get();
-            return view('results.displaySecondSemesterResults', compact('session', 'semester', 'level', 'results', 'account', 'department', 'exam_officer', 'courses'));
         }else{
             $results = Result::where([
                 'academic_session_id' => $session_id,
@@ -640,8 +643,9 @@ class ResultController extends Controller
                 'level_id'=> $level_id,
                 'department_id'=> $department_id
             ])->get();
-            return view('results.displayResults', compact('session', 'semester', 'level', 'results', 'account', 'department', 'exam_officer', 'courses'));
         }
+
+        return view('results.displayResults', compact('session', 'semester', 'level', 'results', 'account', 'department', 'exam_officer', 'courses'));
 
     }
 
