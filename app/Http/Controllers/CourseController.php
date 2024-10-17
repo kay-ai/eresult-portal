@@ -12,7 +12,7 @@ class CourseController extends Controller
     public function index()
     {
 		$levels = Level::all();
-		$courses = Course::all();
+		$courses = Course::latest()->get();
 		$departments = Department::all();
 		return view('superAdmin.courses', compact('levels', 'courses', 'departments'));
     }

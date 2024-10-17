@@ -63,6 +63,23 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-3">
+                                    <label for="session" class="form-label">Academic Session: </label>
+                                    <select name="session_id" class="form-control @error('session') is-invalid @enderror" id=""required autocomplete="session" autofocus>
+                                        <option>- Select an Option -</option>
+                                        @if ($sessions)
+                                            @foreach ($sessions as $session)
+                                                <option value="{{$session->id}}">{{$session->title}}</option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+
+                                    @error('session')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                                <div class="col-md-3">
                                 <button type="submit" class="btn d-block btn-second" style="width: 100%; margin-top:20px">
                                     {{ __('Download') }}
                                 </button>

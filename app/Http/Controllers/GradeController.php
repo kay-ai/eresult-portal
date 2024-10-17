@@ -21,6 +21,7 @@ class GradeController extends Controller
 		$grade->_from = $request->from;
 		$grade->_to = $request->to;
 		$grade->rmk = $request->rmk;
+		$grade->weight = $request->weight;
 
         $check = Grade::where('_type', $request->type)->count();
 
@@ -46,6 +47,7 @@ class GradeController extends Controller
 		$grade->from = $request->from;
 		$grade->to = $request->to;
 		$grade->rmk = $request->rmk;
+		$grade->weight = $request->weight;
 
         if($grade->save())
         {
