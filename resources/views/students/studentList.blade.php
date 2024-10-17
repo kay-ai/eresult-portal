@@ -100,6 +100,7 @@
                                 <th>Last Name</th>
                                 <th>Gender</th>
                                 <th>Level</th>
+                                <th>Department</th>
                                 <th>Session</th>
                                 <th>Action</th>
                             </tr>
@@ -115,6 +116,7 @@
                                     <td>{{$student->lname}}</td>
                                     <td>{{$student->gender}}</td>
                                     <td>{{$student->level->name}}</td>
+                                    <td>{{$student->department->name}}</td>
                                     <td>{{$student->academicSession->title}}</td>
                                     <td>
                                         <div class="btn-group btn-group-sm" role="group" aria-label="">
@@ -134,6 +136,7 @@
                                 <th>Last Name</th>
                                 <th>Gender</th>
                                 <th>Level</th>
+                                <th>Department</th>
                                 <th>Session</th>
                                 <th>Action</th>
                             </tr>

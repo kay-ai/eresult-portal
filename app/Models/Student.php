@@ -14,6 +14,11 @@ class Student extends Model
         return $this->belongsTo(Level::class);
     }
 
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
+    }
+
     public function academicSession()
     {
         return $this->belongsTo(AcademicSession::class);

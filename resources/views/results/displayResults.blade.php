@@ -175,20 +175,20 @@
                         @endphp
                         @if($courses)
                             @foreach($courses as $key => $course)
-                            <th scope="col" style="width: 9%">{{strtoupper($course->code)}}</th>
+                            <th scope="col" style="width: 50px">{{strtoupper($course->code)}}</th>
                             @endforeach
                             @for($c = 0; $c < $cells; $c++)
-                            <th scope="col"></th>
+                            <th scope="col" style="width: 50px"></th>
                             @endfor
                         @endif
                     </tr>
                     <tr>
                     @if($courses)
                         @foreach($courses as $key => $course)
-                        <td style="width: 9%">{{$course->unit}}</td>
+                        <td style="width: 50px">{{$course->unit}}</td>
                         @endforeach
                         @for($c = 0; $c < $cells; $c++)
-                            <td scope="col" style="width: 9%"></td>
+                            <td scope="col" style="width: 50px"></td>
                         @endfor
                     @endif
                     </tr>
@@ -250,19 +250,18 @@
                     <td scope="col" style="padding: 0!important">
 
                         <table border="1" style="width:100%;border-collapse:collapse" cellpadding="1">
-
                             <tr>
-                                <td class="text-center" style="width: 9%">{{ $r->score1 }}</td>
-                                <td class="text-center" style="width: 9%">{{ $r->score2 }}</td>
-                                <td class="text-center" style="width: 9%">{{ $r->score3 }}</td>
-                                <td class="text-center" style="width: 9%">{{ $r->score4 }}</td>
-                                <td class="text-center" style="width: 9%">{{ $r->score5 }}</td>
-                                <td class="text-center" style="width: 9%">{{ $r->score6 }}</td>
-                                <td class="text-center" style="width: 9%">{{ $r->score7 }}</td>
-                                <td class="text-center" style="width: 9%">{{ $r->score8 }}</td>
-                                <td class="text-center" style="width: 9%">{{ $r->score9 }}</td>
-                                <td class="text-center" style="width: 9%">{{ $r->score10 }}</td>
-                                <td class="text-center" style="width: 9%">{{ $r->score11 }}</td>
+                                <td class="text-center" style="width: 50px">{{ $r->score1 }}</td>
+                                <td class="text-center" style="width: 50px">{{ $r->score2 }}</td>
+                                <td class="text-center" style="width: 50px">{{ $r->score3 }}</td>
+                                <td class="text-center" style="width: 50px">{{ $r->score4 }}</td>
+                                <td class="text-center" style="width: 50px">{{ $r->score5 }}</td>
+                                <td class="text-center" style="width: 50px">{{ $r->score6 }}</td>
+                                <td class="text-center" style="width: 50px">{{ $r->score7 }}</td>
+                                <td class="text-center" style="width: 50px">{{ $r->score8 }}</td>
+                                <td class="text-center" style="width: 50px">{{ $r->score9 }}</td>
+                                <td class="text-center" style="width: 50px">{{ $r->score10 }}</td>
+                                <td class="text-center" style="width: 50px">{{ $r->score11 }}</td>
                             </tr>
 
                         </table>
@@ -294,11 +293,11 @@
 
     </table>
 
-    <table width="100%" style="text-align: center">
+    <table width="100%" style="text-align: center; margin-top: 50px;">
         <tr>
-            <th style="width: 33%"></th>
-            <th style="width: 33%"></th>
-            <th style="width: 33%"></th>
+            <th style="width: 33%">{{$exam_officer ? $exam_officer->user->first_name. ' ' . $exam_officer->user->last_name : 'Not Found'}}</th>
+            <th style="width: 33%">{{$department->hod ?? 'Not Found'}}</th>
+            <th style="width: 33%">{{$department->faculty->dean ?? 'Not Found'}}</th>
         </tr>
         <tr>
             <td>EXAM SUPERVISOR</td>
