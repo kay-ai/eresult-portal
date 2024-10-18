@@ -116,7 +116,7 @@
                                     <td>{{$student->lname}}</td>
                                     <td>{{$student->gender}}</td>
                                     <td>{{$student->level->name}}</td>
-                                    <td>{{$student->department->name}}</td>
+                                    <td>{{$student->department ? $student->department->name : 'nil'}}</td>
                                     <td>{{$student->academicSession->title}}</td>
                                     <td>
                                         <div class="btn-group btn-group-sm" role="group" aria-label="">
