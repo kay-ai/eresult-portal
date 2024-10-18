@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\Result;
+use App\Models\Gpa;
 use App\Models\SecondSemesterResult;
 use App\Models\Level;
 use App\Models\Account;
@@ -387,23 +388,44 @@ class ResultController extends Controller
                             $rset,
                         );
 
+                        $store_gpa = Gpa::updateOrCreate(
+                            [
+                                'mat_num' => $mat_num,
+                                'level_id' => $level_id,
+                                'academic_session' => $session,
+                                'department_id' => $department_id,
+                                'semester' => $semester
+                            ],
+                            [
+                                'gpa' => $gpa,
+                                'tcu' => $tcuSum
+                            ]
+                        );
+
                     }else{
 
-                        $pgpa = $this->prevGpa($mat_num, $level_id);
-                        if($pgpa != null){
-                            $cgpa = round((($gpa + $pgpa)/2),2);
+                        $pgpa = $this->prevGpa($mat_num, $level_id, $session, $department_id);
+                        if(count($pgpa) != 0){
+                            $_tgp_1 =  $pgpa['first'] * $pgpa['tcu'];
+                            $_tgp_2 = $gpa * $tcuSum;
+                            // dd($tcuSum);
+                            $sum_of_gps = $_tgp_1 + $_tgp_2;
+                            $sum_of_credit_points = $pgpa['tcu'] + $tcuSum;
+
+                            $cgpa = ($sum_of_gps/$sum_of_credit_points);
+                            $cgpa = round($cgpa, 2);
                         }else{
                             $cgpa = 0;
                         }
 
-                        $pcgpa = $this->prevCgpa($mat_num, $level_id);
+                        $pcgpa = null;//$this->prevCgpa($mat_num, $level_id, $session, $department_id);
 
                         $rset = array_merge($rset, [
                             'tce' => $tceSum,
                             'tcu' => $tcuSum,
                             'tgp' => $tgpSum,
                             'gpa' => $gpa,
-                            'pgpa' => $pgpa,
+                            'pgpa' => $pgpa['first'],
                             'cgpa' => $cgpa,
                             'pcgpa' => $pcgpa,
                             'remarks' => $remarks,
@@ -413,6 +435,21 @@ class ResultController extends Controller
                             ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'department_id' => $department_id, 'department_id' => $department_id, 'semester' => $semester],
                             $rset,
                         );
+
+                        $store_gpa = Gpa::updateOrCreate(
+                            [
+                                'mat_num' => $mat_num,
+                                'level_id' => $level_id,
+                                'academic_session' => $session,
+                                'department_id' => $department_id,
+                                'semester' => $semester
+                            ],
+                            [
+                                'gpa' => $gpa,
+                                'tcu' => $tcuSum
+                            ]
+                        );
+
                     }
 
                     if ($result) {
@@ -577,23 +614,44 @@ class ResultController extends Controller
                             $rset,
                         );
 
+                        $store_gpa = Gpa::updateOrCreate(
+                            [
+                                'mat_num' => $mat_num,
+                                'level_id' => $level_id,
+                                'academic_session' => $session,
+                                'department_id' => $department_id,
+                                'semester' => $semester
+                            ],
+                            [
+                                'gpa' => $gpa,
+                                'tgp' => $tgpSum
+                            ]
+                        );
+
                     }else{
 
-                        $pgpa = $this->prevGpa($mat_num, $level_id);
-                        if($pgpa != null){
-                            $cgpa = round((($gpa + $pgpa)/2),2);
+                        $pgpa = $this->prevGpa($mat_num, $level_id, $session, $department_id);
+                        if(count($pgpa) != 0){
+                            $_tgp_1 =  $pgpa['first'] * $pgpa['tcu'];
+                            $_tgp_2 = $gpa * $tcuSum;
+                            // dd($tcuSum);
+                            $sum_of_gps = $_tgp_1 + $_tgp_2;
+                            $sum_of_credit_points = $pgpa['tcu'] + $tcuSum;
+
+                            $cgpa = ($sum_of_gps/$sum_of_credit_points);
+                            $cgpa = round($cgpa, 2);
                         }else{
                             $cgpa = 0;
                         }
 
-                        $pcgpa = $this->prevCgpa($mat_num, $level_id);
+                        $pcgpa = null;//$this->prevCgpa($mat_num, $level_id);
 
                         $rset = array_merge($rset, [
                             'tce' => $tceSum,
                             'tcu' => $tcuSum,
                             'tgp' => $tgpSum,
                             'gpa' => $gpa,
-                            'pgpa' => $pgpa,
+                            'pgpa' => $pgpa['first'],
                             'cgpa' => $cgpa,
                             'pcgpa' => $pcgpa,
                             'remarks' => $remarks,
@@ -607,6 +665,20 @@ class ResultController extends Controller
                         $result = SecondSemesterResult::updateOrCreate(
                             ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'department_id' => $department_id, 'department_id' => $department_id, 'semester' => $semester],
                             $rset,
+                        );
+
+                        $store_gpa = Gpa::updateOrCreate(
+                            [
+                                'mat_num' => $mat_num,
+                                'level_id' => $level_id,
+                                'academic_session' => $session,
+                                'department_id' => $department_id,
+                                'semester' => $semester
+                            ],
+                            [
+                                'gpa' => $gpa,
+                                'tgp' => $tgpSum
+                            ]
                         );
                     }
 
@@ -711,10 +783,14 @@ class ResultController extends Controller
 
     private function gp($cu, $g)
     {
-        $grade = Grade::where('_type', $g)->first();
-        $weight = $grade->weight;
+        if($g){
+            $grade = Grade::where('_type', $g)->first();
+            $weight = $grade->weight;
 
-        return $cu * $weight;
+            return $cu * $weight;
+        }
+
+        return null;
     }
 
     private function getCU($cc)
@@ -821,20 +897,38 @@ class ResultController extends Controller
 
     }
 
-    private function prevGpa($mn, $level_id){
+    private function prevGpa($mat_num, $level_id, $session, $department_id){
+        $pgpa = Gpa::where('mat_num', $mat_num)
+        ->where('level_id', $level_id)
+        ->where('academic_session', $session)
+        ->where('semester', 'First')
+        ->where('department_id', $department_id)
+        ->first();
+        // $res = Result::where('mat_num', $mn)->where('level_id', $level_id)->first();
 
-        $res = Result::where('mat_num', $mn)->where('level_id', $level_id)->first();
-        if($res){
-            return $res->gpa;
+        if($pgpa){
+            $data['first'] = $pgpa->gpa;
+            $data['tcu'] = $pgpa->tcu;
+            return $data;
         }
-        return null;
+        return [];
     }
 
-    private function prevCgpa($mn, $level_id){
-
-        $res = SecondSemesterResult::where('mat_num', $mn)->where('level_id', $level_id)->first();
+    //not applicable
+    private function prevCgpa($mat_num, $level_id, $session, $department_id){
+        $res = Gpa::where('mat_num', $mat_num)
+        ->where('session', '<', $session)
+        ->where('department_id', $department_id)
+        ->get();
+        // $res = SecondSemesterResult::where('mat_num', $mn)->where('level_id', $level_id)->first();
+        $gpas = [];
         if($res){
-            return $res->cgpa;
+            foreach($res as $r)
+            {
+                $gpas[] = $r->gpa;
+            }
+            $cgpa = round((array_sum($gpas) / count($gpas)), 2);
+            return $cgpa;
         }
         return null;
 
