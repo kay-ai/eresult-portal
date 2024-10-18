@@ -630,9 +630,16 @@ class ResultController extends Controller
 
                     }else{
 
-                        $pgpa = $this->prevGpa($mat_num, $level_id);
-                        if($pgpa != null){
-                            $cgpa = round((($gpa + $pgpa)/2),2);
+                        $pgpa = $this->prevGpa($mat_num, $level_id, $session, $department_id);
+                        if(count($pgpa) != 0){
+                            $_tgp_1 =  $pgpa['first'] * $pgpa['tcu'];
+                            $_tgp_2 = $gpa * $tcuSum;
+                            // dd($tcuSum);
+                            $sum_of_gps = $_tgp_1 + $_tgp_2;
+                            $sum_of_credit_points = $pgpa['tcu'] + $tcuSum;
+
+                            $cgpa = ($sum_of_gps/$sum_of_credit_points);
+                            $cgpa = round($cgpa, 2);
                         }else{
                             $cgpa = 0;
                         }
@@ -644,7 +651,7 @@ class ResultController extends Controller
                             'tcu' => $tcuSum,
                             'tgp' => $tgpSum,
                             'gpa' => $gpa,
-                            'pgpa' => $pgpa,
+                            'pgpa' => $pgpa['first'],
                             'cgpa' => $cgpa,
                             'pcgpa' => $pcgpa,
                             'remarks' => $remarks,
@@ -776,10 +783,14 @@ class ResultController extends Controller
 
     private function gp($cu, $g)
     {
-        $grade = Grade::where('_type', $g)->first();
-        $weight = $grade->weight;
+        if($g){
+            $grade = Grade::where('_type', $g)->first();
+            $weight = $grade->weight;
 
-        return $cu * $weight;
+            return $cu * $weight;
+        }
+
+        return null;
     }
 
     private function getCU($cc)
