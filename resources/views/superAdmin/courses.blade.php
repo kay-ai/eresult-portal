@@ -29,6 +29,8 @@
                                 <option value="4">4 Units</option>
                                 <option value="5">5 Units</option>
                                 <option value="6">6 Units</option>
+                                <option value="7">7 Units</option>
+                                <option value="8">8 Units</option>
                             </select>
                         </div>
 
@@ -82,7 +84,7 @@
     	</div>
 
 		<div class="col-md-12 mt-4">
-            <div class="card p-3 shadow-sm">
+            <div class="card p-3 shadow-sm table-responsive">
                 <p class="text-kdis-2 mb-3 subheader">Registered Courses</p>
                 <table class="table table-sm datatable-benpoly" style="font-size: 12px">
                     <thead>

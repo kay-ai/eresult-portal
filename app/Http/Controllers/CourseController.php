@@ -22,7 +22,7 @@ class CourseController extends Controller
         $course = new Course();
         $course->title = $request->title;
 		$course->unit = $request->unit;
-		$course->code = $request->code;
+		$course->code = strtoupper($request->code);
 		$course->type = $request->type;
 		$course->level_id = $request->level;
 		$course->department_id = $request->department;
@@ -50,7 +50,7 @@ class CourseController extends Controller
         $course = Course::find($request->course_id);
         $course->name = $request->name;
 		$course->unit = $request->unit;
-		$course->code = $request->code;
+		$course->code = strtoupper($request->code);
 		$course->type = $request->type;
 		$course->level_id = $request->level;
 		$course->semester = $request->semester;
