@@ -125,10 +125,10 @@
                         </a>
                         <div class="dropdown {{in_array($activePage, $statLinks) ? 'open' : '' }}">
                             @can('view sub-menu results')
-                                <a href="{{route('results.courses.stats')}}" class="dropdown-link {{$activePage == 'Results Stats' ? 'active' : '' }}">Results</a>
+                                <a href="{{route('results.stats')}}" class="dropdown-link {{$activePage == 'Results Stats' ? 'active' : '' }}">Results</a>
                             @endcan
                             @can('view sub-menu course-performances')
-                                <a href="#" class="dropdown-link {{$activePage == 'Course Performances' ? 'active' : '' }}">Course Performances</a>
+                                <a href="{{route('results.courses.stats')}}" class="dropdown-link {{$activePage == 'Course Performances' ? 'active' : '' }}">Course Performances</a>
                             @endcan
                         </div>
                     </div>
