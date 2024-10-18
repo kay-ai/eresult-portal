@@ -1,4 +1,4 @@
-@extends('layouts.app', [($activePage = 'Results Stats')])
+@extends('layouts.app', [($activePage = 'Course Performances')])
 
 @section('content')
     <div class="me-2">
@@ -6,7 +6,7 @@
             <div class="col-md-12">
                 <div class="card shadow-sm p-3">
                     <p class="text-kdis-2 mb-3 subheader">Query Statistics</p>
-                    <form method="post" action="{{route('results.stats.view')}}">
+                    <form method="post" action="{{route('course.stats.view')}}">
                         @csrf
                         <div class="row">
                             <div class="col-md-3">

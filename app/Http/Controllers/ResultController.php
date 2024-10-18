@@ -54,7 +54,139 @@ class ResultController extends Controller
 
     public function resultStats()
     {
-        return view('results.index');
+        $levels = Level::all();
+        $departments = Department::all();
+        $sessions = AcademicSession::all();
+        return view('results.resultStats', compact('levels', 'departments', 'sessions'));
+    }
+
+    public function resultStatsView(Request $request)
+    {
+        $semester = $request->semester;
+        $level_id = $request->level_id;
+        $department_id = $request->department_id;
+        $session_id = $request->session_id;
+
+        if($semester == 'First'){
+            $results = Result::where([
+                'level_id' => $level_id,
+                'department_id' => $department_id,
+                'academic_session_id' => $session_id
+            ])->orderBy('mat_num', 'asc')->get();
+        }else{
+            $results = SecondSemesterResult::where([
+                'level_id' => $level_id,
+                'department_id' => $department_id,
+                'academic_session_id' => $session_id
+            ])->orderBy('mat_num', 'asc')->get();
+        }
+
+        $department = Department::where('id', $department_id)->first();
+        $session = AcademicSession::where('id', $session_id)->first();
+        $level = Level::where('id', $level_id)->first();
+
+        $resultStat = [];
+        if ($results) {
+            for ($x = 1; $x <= 12; $x++) {
+                $code = 'cc' . $x;
+                $score = 'score' . $x;
+                foreach ($results as $result) {
+                    if (!$result->mat_num) continue;
+
+                    if (!isset($resultStat[$result->mat_num])) {
+                        $resultStat[$result->mat_num] = [
+                            'mat_num' => '',
+                            'full_name' => '',
+                            'level' => $level->name,
+                            'department' => $department->name,
+                            'no_passed' => 0,
+                            'no_failed' => 0,
+                            'no_absent' => 0,
+                        ];
+                    }
+
+                    $resultStat[$result->mat_num]['mat_num'] = $result->mat_num;
+                    $resultStat[$result->mat_num]['full_name'] = $this->getFullName($result->mat_num);
+
+                    if($result->$code){
+                        if (empty($result->$score)) {
+                            $resultStat[$result->mat_num]['no_absent'] += 1;
+                        } elseif ($result->$score <= 39.9) {
+                            $resultStat[$result->mat_num]['no_failed'] += 1;
+                        } else {
+                            $resultStat[$result->mat_num]['no_passed'] += 1;
+                        }
+                    }
+                }
+            }
+        }
+
+
+        return view('results.resultStatsShow', compact('resultStat', 'semester', 'department', 'level', 'session'));
+    }
+
+    public function courseStatsView(Request $request)
+    {
+        $semester = $request->semester;
+        $level_id = $request->level_id;
+        $department_id = $request->department_id;
+        $session_id = $request->session_id;
+
+        if($semester == 'First'){
+            $results = Result::where([
+                'level_id' => $level_id,
+                'department_id' => $department_id,
+                'academic_session_id' => $session_id
+            ])->orderBy('mat_num', 'asc')->get();
+        }else{
+            $results = SecondSemesterResult::where([
+                'level_id' => $level_id,
+                'department_id' => $department_id,
+                'academic_session_id' => $session_id
+            ])->orderBy('mat_num', 'asc')->get();
+        }
+
+        $courseStat = [];
+        if ($results) {
+            for ($x = 1; $x <= 12; $x++) {
+                $code = 'cc' . $x;
+                $score = 'score' . $x;
+                foreach ($results as $result) {
+                    if (!$result->$code) continue;
+
+                    if (!isset($courseStat[$result->$code])) {
+                        $courseStat[$result->$code] = [
+                            'code' => $result->$code,
+                            'title' => $this->getCourseTitle($result->$code),
+                            'students_no' => 0,
+                            'no_passed' => 0,
+                            'no_failed' => 0,
+                            'no_absent' => 0,
+                            'max' => 0,
+                            'min' => PHP_INT_MAX,
+                        ];
+                    }
+
+                    $courseStat[$result->$code]['students_no'] += 1;
+
+                    if (empty($result->$score)) {
+                        $courseStat[$result->$code]['no_absent'] += 1;
+                    } elseif ($result->$score <= 39.9) {
+                        $courseStat[$result->$code]['no_failed'] += 1;
+                    } else {
+                        $courseStat[$result->$code]['no_passed'] += 1;
+                    }
+
+                    if ($result->$score > $courseStat[$result->$code]['max']) $courseStat[$result->$code]['max'] = $result->$score;
+                    if ($result->$score < $courseStat[$result->$code]['min']) $courseStat[$result->$code]['min'] = $result->$score;
+                }
+            }
+        }
+        $department = Department::where('id', $department_id)->first();
+        $session = AcademicSession::where('id', $session_id)->first();
+        $level = Level::where('id', $level_id)->first();
+
+        return view('results.courseStatsShow', compact('courseStat', 'semester', 'department', 'level', 'session'));
     }
 
     public function courseStats()
@@ -62,7 +194,7 @@ class ResultController extends Controller
         $levels = Level::all();
         $departments = Department::all();
         $sessions = AcademicSession::all();
-        return view('results.resultStats', compact('levels', 'departments', 'sessions'));
+        return view('results.courseStats', compact('levels', 'departments', 'sessions'));
     }
 
     public function downloadTemplate(Request $request)
@@ -590,6 +722,26 @@ class ResultController extends Controller
         $course = Course::where('code', $cc)->first();
         if ($course) {
             return $course->unit;
+        } else {
+            return false;
+        }
+    }
+
+    private function getCourseTitle($code)
+    {
+        $course = Course::where('code', $code)->first();
+        if ($course) {
+            return $course->title;
+        } else {
+            return false;
+        }
+    }
+
+    private function getFullName($mat_num)
+    {
+        $student = Student::where('mat_num', $mat_num)->first();
+        if ($student) {
+            return $student->fname . ' ' . $student->lname;
         } else {
             return false;
         }
