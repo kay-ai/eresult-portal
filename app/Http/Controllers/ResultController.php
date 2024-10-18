@@ -798,7 +798,32 @@ class ResultController extends Controller
         }
 
         return view('results.displayResults', compact('session', 'semester', 'level', 'results', 'account', 'department', 'exam_officer', 'courses'));
+    }
 
+    public function showTranscript(Request $request)
+    {
+        $department_id = $request->department_id;
+        $mat_num = $request->mat_num;
+
+        $department = Department::find($department_id);
+        $student = Student::where('mat_num', $mat_num)->first();
+
+        $firstResults = SecondSemesterResult::where([
+            'mat_num' => $mat_num,
+            'department_id'=> $department_id
+        ])->get();
+
+        $SecondResults = Result::where([
+            'mat_num' => $mat_num,
+            'department_id'=> $department_id
+        ])->get();
+
+        $transcript = [];
+        foreach ($firstResults as $result){
+
+        }
+
+        return view('results.displayResults', compact('session', 'semester', 'level', 'results', 'account', 'department', 'exam_officer', 'courses'));
     }
 
     private function getStdntCGPA($mn, $semester, $level_id, $gp){
