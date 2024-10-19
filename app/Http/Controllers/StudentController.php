@@ -28,7 +28,7 @@ class StudentController extends Controller
         $levels = Level::all();
         $departments = Department::all();
         $sessions = AcademicSession::all();
-        $students = Student::orderBy('mat_num', 'asc')->get();
+        $students = Student::orderBy('mat_num', 'desc')->get();
         return view('students.studentList', compact('levels', 'departments', 'sessions', 'students'));
     }
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\Result;
+use App\Models\Gpa;
 use App\Models\SecondSemesterResult;
 use App\Models\Level;
 use App\Models\Account;
@@ -12,6 +13,9 @@ use App\Models\AcademicSession;
 use App\Models\Grade;
 use App\Models\Carryover;
 use App\Models\CarryOverResult;
+use App\Models\ExamOfficer;
+use App\Models\SecondCarryOverResult;
+use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 
@@ -51,7 +55,139 @@ class ResultController extends Controller
 
     public function resultStats()
     {
-        return view('results.index');
+        $levels = Level::all();
+        $departments = Department::all();
+        $sessions = AcademicSession::all();
+        return view('results.resultStats', compact('levels', 'departments', 'sessions'));
+    }
+
+    public function resultStatsView(Request $request)
+    {
+        $semester = $request->semester;
+        $level_id = $request->level_id;
+        $department_id = $request->department_id;
+        $session_id = $request->session_id;
+
+        if($semester == 'First'){
+            $results = Result::where([
+                'level_id' => $level_id,
+                'department_id' => $department_id,
+                'academic_session_id' => $session_id
+            ])->orderBy('mat_num', 'asc')->get();
+        }else{
+            $results = SecondSemesterResult::where([
+                'level_id' => $level_id,
+                'department_id' => $department_id,
+                'academic_session_id' => $session_id
+            ])->orderBy('mat_num', 'asc')->get();
+        }
+
+        $department = Department::where('id', $department_id)->first();
+        $session = AcademicSession::where('id', $session_id)->first();
+        $level = Level::where('id', $level_id)->first();
+
+        $resultStat = [];
+        if ($results) {
+            for ($x = 1; $x <= 12; $x++) {
+                $code = 'cc' . $x;
+                $score = 'score' . $x;
+                foreach ($results as $result) {
+                    if (!$result->mat_num) continue;
+
+                    if (!isset($resultStat[$result->mat_num])) {
+                        $resultStat[$result->mat_num] = [
+                            'mat_num' => '',
+                            'full_name' => '',
+                            'level' => $level->name,
+                            'department' => $department->name,
+                            'no_passed' => 0,
+                            'no_failed' => 0,
+                            'no_absent' => 0,
+                        ];
+                    }
+
+                    $resultStat[$result->mat_num]['mat_num'] = $result->mat_num;
+                    $resultStat[$result->mat_num]['full_name'] = $this->getFullName($result->mat_num);
+
+                    if($result->$code){
+                        if (empty($result->$score)) {
+                            $resultStat[$result->mat_num]['no_absent'] += 1;
+                        } elseif ($result->$score <= 39.9) {
+                            $resultStat[$result->mat_num]['no_failed'] += 1;
+                        } else {
+                            $resultStat[$result->mat_num]['no_passed'] += 1;
+                        }
+                    }
+                }
+            }
+        }
+
+
+        return view('results.resultStatsShow', compact('resultStat', 'semester', 'department', 'level', 'session'));
+    }
+
+    public function courseStatsView(Request $request)
+    {
+        $semester = $request->semester;
+        $level_id = $request->level_id;
+        $department_id = $request->department_id;
+        $session_id = $request->session_id;
+
+        if($semester == 'First'){
+            $results = Result::where([
+                'level_id' => $level_id,
+                'department_id' => $department_id,
+                'academic_session_id' => $session_id
+            ])->orderBy('mat_num', 'asc')->get();
+        }else{
+            $results = SecondSemesterResult::where([
+                'level_id' => $level_id,
+                'department_id' => $department_id,
+                'academic_session_id' => $session_id
+            ])->orderBy('mat_num', 'asc')->get();
+        }
+
+        $courseStat = [];
+        if ($results) {
+            for ($x = 1; $x <= 12; $x++) {
+                $code = 'cc' . $x;
+                $score = 'score' . $x;
+                foreach ($results as $result) {
+                    if (!$result->$code) continue;
+
+                    if (!isset($courseStat[$result->$code])) {
+                        $courseStat[$result->$code] = [
+                            'code' => $result->$code,
+                            'title' => $this->getCourseTitle($result->$code),
+                            'students_no' => 0,
+                            'no_passed' => 0,
+                            'no_failed' => 0,
+                            'no_absent' => 0,
+                            'max' => 0,
+                            'min' => PHP_INT_MAX,
+                        ];
+                    }
+
+                    $courseStat[$result->$code]['students_no'] += 1;
+
+                    if (empty($result->$score)) {
+                        $courseStat[$result->$code]['no_absent'] += 1;
+                    } elseif ($result->$score <= 39.9) {
+                        $courseStat[$result->$code]['no_failed'] += 1;
+                    } else {
+                        $courseStat[$result->$code]['no_passed'] += 1;
+                    }
+
+                    if ($result->$score > $courseStat[$result->$code]['max']) $courseStat[$result->$code]['max'] = $result->$score;
+                    if ($result->$score < $courseStat[$result->$code]['min']) $courseStat[$result->$code]['min'] = $result->$score;
+                }
+            }
+        }
+        $department = Department::where('id', $department_id)->first();
+        $session = AcademicSession::where('id', $session_id)->first();
+        $level = Level::where('id', $level_id)->first();
+
+        return view('results.courseStatsShow', compact('courseStat', 'semester', 'department', 'level', 'session'));
     }
 
     public function courseStats()
@@ -59,7 +195,7 @@ class ResultController extends Controller
         $levels = Level::all();
         $departments = Department::all();
         $sessions = AcademicSession::all();
-        return view('results.resultStats', compact('levels', 'departments', 'sessions'));
+        return view('results.courseStats', compact('levels', 'departments', 'sessions'));
     }
 
     public function downloadTemplate(Request $request)
@@ -67,17 +203,27 @@ class ResultController extends Controller
         $semester = $request->semester;
         $level_id = $request->level_id;
         $department_id = $request->department_id;
+        $session_id = $request->session_id;
 
         $courses = Course::where([
             'semester' => $semester,
             'level_id' => $level_id,
             'department_id' => $department_id
-        ])->orderBy('id', 'asc')->get();
+        ])->orderBy('id', 'desc')->get();
+
+        $students = Student::where([
+            'level_id' => $level_id,
+            'department_id' => $department_id,
+            'academic_session_id' => $session_id
+        ])->orderBy('mat_num', 'asc')->get();
+
+        // dd($students);
 
         $department = Department::where('id', $department_id)->first();
+        $session = AcademicSession::where('id', $session_id)->first();
         $level = Level::where('id', $level_id)->first();
 
-        $csvFileName = "course_template.csv";
+        $csvFileName = "result_template.csv";
         $filePath = storage_path('app/public/templates' . $csvFileName);
 
         $file = fopen($filePath, 'w');
@@ -88,20 +234,23 @@ class ResultController extends Controller
 
         $row = array_fill(0, count($header), '');
 
-        $row[0] = '';
-        $row[1] = '';
-        $row[26] = $department->name;
-        $row[27] = $semester;
-        $row[28] = $level->name;
-        $row[29] = '';
+        foreach($students as $key=> $student){
+            $row[0] = $key+1;
+            $row[1] = $student->mat_num;
+            $row[26] = $department->name;
+            $row[27] = $semester;
+            $row[28] = $level->name;
+            $row[29] = $session->title;
 
-        foreach ($courses as $index => $course) {
-            if ($index < 12) {
-                $row[2 + $index * 2] = $course->code;
+            foreach ($courses as $index => $course) {
+                if ($index < 12) {
+                    $row[2 + $index * 2] = $course->code;
+                }
             }
+
+            fputcsv($file, $row);
         }
 
-        fputcsv($file, $row);
 
         // Close the files
         fclose($file);
@@ -112,6 +261,11 @@ class ResultController extends Controller
 
     public function store(Request $request)
     {
+        $form_semester = $request->semester;
+        $form_level_id = $request->level_id;
+        $form_department_id = $request->department_id;
+        $form_session_id = $request->session_id;
+
         if ($request->hasFile('csv')) {
             $file = $request->file('csv');
             $fileExtension = $file->getClientOriginalExtension();
@@ -125,8 +279,31 @@ class ResultController extends Controller
                     if ($key == 0) {
                         continue;
                     }
-
                     $mat_num = trim($row[1]);
+
+                    $dept = trim($row[26]);
+                    $semester = trim($row[27]);
+                    $level = trim($row[28]);
+                    $session = trim($row[29]);
+
+                    $academic_session_id = $this->getSessionId($session);
+                    $level_id = $this->getLevelId($level);
+                    $department_id = $this->getDepartmentId($dept);
+
+                    if($form_semester != $semester){
+                        $details .= "<p style='color: red;'>Failed to compute result for ".$mat_num." Selected Semester does not match</p>";
+                        continue;
+                    }else if($form_level_id != $level_id ){
+                        $details .= "<p style='color: red;'>Failed to compute result for ".$mat_num." Selected Level does not match</p>";
+                        continue;
+                    }else if($form_department_id != $department_id){
+                        $details .= "<p style='color: red;'>Failed to compute result for ".$mat_num." Selected Department does not match</p>";
+                        continue;
+                    }else if($form_session_id != $academic_session_id){
+                        $details .= "<p style='color: red;'>Failed to compute result for ".$mat_num." Selected Session does not match</p>";
+                        continue;
+                    }
+
                     $tce = [];
                     $tgp = [];
                     $tcu = [];
@@ -175,18 +352,6 @@ class ResultController extends Controller
                         $y++;
                     }
 
-                    $dept = trim($row[26]);
-
-                    $semester = trim($row[27]);
-                    $level = trim($row[28]);
-                    $session = trim($row[29]);
-
-                    $academic_session_id = $this->getSessionId($session);
-
-                    $level_id = $this->getLevelId($level);
-
-                    $department_id = $this->getDepartmentId($dept);
-
                     $this->recordCO($remarks, $mat_num, $department_id, $semester, $level_id, $academic_session_id);
 
                     $resolved = $this->resolveCO($mat_num, $cleared, $semester, $level_id, $session);
@@ -223,23 +388,44 @@ class ResultController extends Controller
                             $rset,
                         );
 
+                        $store_gpa = Gpa::updateOrCreate(
+                            [
+                                'mat_num' => $mat_num,
+                                'level_id' => $level_id,
+                                'academic_session' => $session,
+                                'department_id' => $department_id,
+                                'semester' => $semester
+                            ],
+                            [
+                                'gpa' => $gpa,
+                                'tcu' => $tcuSum
+                            ]
+                        );
+
                     }else{
 
-                        $pgpa = $this->prevGpa($mat_num, $level_id);
-                        if($pgpa != null){
-                            $cgpa = round((($gpa + $pgpa)/2),2);
+                        $pgpa = $this->prevGpa($mat_num, $level_id, $session, $department_id);
+                        if(count($pgpa) != 0){
+                            $_tgp_1 =  $pgpa['first'] * $pgpa['tcu'];
+                            $_tgp_2 = $gpa * $tcuSum;
+                            // dd($tcuSum);
+                            $sum_of_gps = $_tgp_1 + $_tgp_2;
+                            $sum_of_credit_points = $pgpa['tcu'] + $tcuSum;
+
+                            $cgpa = ($sum_of_gps/$sum_of_credit_points);
+                            $cgpa = round($cgpa, 2);
                         }else{
                             $cgpa = 0;
                         }
 
-                        $pcgpa = $this->prevCgpa($mat_num, $level_id);
+                        $pcgpa = null;//$this->prevCgpa($mat_num, $level_id, $session, $department_id);
 
                         $rset = array_merge($rset, [
                             'tce' => $tceSum,
                             'tcu' => $tcuSum,
                             'tgp' => $tgpSum,
                             'gpa' => $gpa,
-                            'pgpa' => $pgpa,
+                            'pgpa' => $pgpa['first'],
                             'cgpa' => $cgpa,
                             'pcgpa' => $pcgpa,
                             'remarks' => $remarks,
@@ -249,12 +435,27 @@ class ResultController extends Controller
                             ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'department_id' => $department_id, 'department_id' => $department_id, 'semester' => $semester],
                             $rset,
                         );
+
+                        $store_gpa = Gpa::updateOrCreate(
+                            [
+                                'mat_num' => $mat_num,
+                                'level_id' => $level_id,
+                                'academic_session' => $session,
+                                'department_id' => $department_id,
+                                'semester' => $semester
+                            ],
+                            [
+                                'gpa' => $gpa,
+                                'tcu' => $tcuSum
+                            ]
+                        );
+
                     }
 
                     if ($result) {
-                        $details .= '<p>'.$mat_num .' result computed successfully!</p>';
+                        $details .= '<p style="color: green;">'.$mat_num .' result computed successfully!</p>';
                     } else {
-                        $details .= "<p>Failed to compute result for ".$mat_num."</p>";
+                        $details .= "<p style='color: red;'>Failed to compute result for ".$mat_num."</p>";
                     }
                 }
 
@@ -413,23 +614,44 @@ class ResultController extends Controller
                             $rset,
                         );
 
+                        $store_gpa = Gpa::updateOrCreate(
+                            [
+                                'mat_num' => $mat_num,
+                                'level_id' => $level_id,
+                                'academic_session' => $session,
+                                'department_id' => $department_id,
+                                'semester' => $semester
+                            ],
+                            [
+                                'gpa' => $gpa,
+                                'tgp' => $tgpSum
+                            ]
+                        );
+
                     }else{
 
-                        $pgpa = $this->prevGpa($mat_num, $level_id);
-                        if($pgpa != null){
-                            $cgpa = round((($gpa + $pgpa)/2),2);
+                        $pgpa = $this->prevGpa($mat_num, $level_id, $session, $department_id);
+                        if(count($pgpa) != 0){
+                            $_tgp_1 =  $pgpa['first'] * $pgpa['tcu'];
+                            $_tgp_2 = $gpa * $tcuSum;
+                            // dd($tcuSum);
+                            $sum_of_gps = $_tgp_1 + $_tgp_2;
+                            $sum_of_credit_points = $pgpa['tcu'] + $tcuSum;
+
+                            $cgpa = ($sum_of_credit_points > 0) ? ($sum_of_gps / $sum_of_credit_points) : 0;
+                            $cgpa = round($cgpa, 2);
                         }else{
                             $cgpa = 0;
                         }
 
-                        $pcgpa = $this->prevCgpa($mat_num, $level_id);
+                        $pcgpa = null;//$this->prevCgpa($mat_num, $level_id);
 
                         $rset = array_merge($rset, [
                             'tce' => $tceSum,
                             'tcu' => $tcuSum,
                             'tgp' => $tgpSum,
                             'gpa' => $gpa,
-                            'pgpa' => $pgpa,
+                            'pgpa' => $pgpa['first'],
                             'cgpa' => $cgpa,
                             'pcgpa' => $pcgpa,
                             'remarks' => $remarks,
@@ -443,6 +665,20 @@ class ResultController extends Controller
                         $result = SecondSemesterResult::updateOrCreate(
                             ['mat_num' => $mat_num, 'level_id' => $level_id, 'academic_session_id' => $academic_session_id, 'department_id' => $department_id, 'department_id' => $department_id, 'semester' => $semester],
                             $rset,
+                        );
+
+                        $store_gpa = Gpa::updateOrCreate(
+                            [
+                                'mat_num' => $mat_num,
+                                'level_id' => $level_id,
+                                'academic_session' => $session,
+                                'department_id' => $department_id,
+                                'semester' => $semester
+                            ],
+                            [
+                                'gpa' => $gpa,
+                                'tgp' => $tgpSum
+                            ]
                         );
                     }
 
@@ -547,7 +783,14 @@ class ResultController extends Controller
 
     private function gp($cu, $g)
     {
-        return ($g == "F") ? ($cu * 0) : (($g == "D") ? ($cu * 1) : (($g == "C") ? ($cu * 2) : (($g == "B") ? ($cu * 3) : ($cu * 4))));
+        if($g){
+            $grade = Grade::where('_type', $g)->first();
+            $weight = $grade->weight;
+
+            return $cu * $weight;
+        }
+
+        return null;
     }
 
     private function getCU($cc)
@@ -555,6 +798,26 @@ class ResultController extends Controller
         $course = Course::where('code', $cc)->first();
         if ($course) {
             return $course->unit;
+        } else {
+            return false;
+        }
+    }
+
+    private function getCourseTitle($code)
+    {
+        $course = Course::where('code', $code)->first();
+        if ($course) {
+            return $course->title;
+        } else {
+            return false;
+        }
+    }
+
+    private function getFullName($mat_num)
+    {
+        $student = Student::where('mat_num', $mat_num)->first();
+        if ($student) {
+            return $student->fname . ' ' . $student->lname;
         } else {
             return false;
         }
@@ -585,17 +848,152 @@ class ResultController extends Controller
 
         $account = Account::first();
 
-        $courses = Course::where('semester', $semester)->orderBy('id', 'desc')->get();
+        $courses = Course::where([
+            'semester' => $semester,
+            'level_id' => $level_id,
+            'department_id' => $department_id
+        ])->orderBy('id', 'desc')->get();
 
         $department = Department::find($department_id);
+        $exam_officer = ExamOfficer::where('department_id', $department_id)->first();
+
         if($semester == 'Second'){
-            $results = SecondSemesterResult::where('academic_session_id', $session_id)->where('semester', $semester)->where('level_id', $level_id)->where('department_id', $department_id)->get();
-            return view('results.displaySecondSemesterResults', compact('session', 'semester', 'level', 'results', 'account', 'department', 'courses'));
+            $results = SecondSemesterResult::where([
+                'academic_session_id' => $session_id,
+                'semester'=> $semester,
+                'level_id'=> $level_id,
+                'department_id'=> $department_id
+            ])->get();
         }else{
-            $results = Result::where('academic_session_id', $session_id)->where('semester', $semester)->where('level_id', $level_id)->where('department_id', $department_id)->get();
-            return view('results.displayResults', compact('session', 'semester', 'level', 'results', 'account', 'department', 'courses'));
+            $results = Result::where([
+                'academic_session_id' => $session_id,
+                'semester'=> $semester,
+                'level_id'=> $level_id,
+                'department_id'=> $department_id
+            ])->get();
         }
 
+        return view('results.displayResults', compact('session', 'semester', 'level', 'results', 'account', 'department', 'exam_officer', 'courses'));
+    }
+
+    public function showTranscript(Request $request)
+    {
+        $department_id = $request->department_id;
+        $mat_num = $request->mat_num;
+
+        $student = Student::where(['mat_num'=> $mat_num, 'department_id' => $department_id])->first();
+
+        if($student){
+            $department = Department::find($department_id);
+            $account = Account::first();
+
+            $firstResults = Result::where([
+                'mat_num' => $mat_num,
+                'department_id' => $department_id
+            ])->get();
+
+            $secondResults = SecondSemesterResult::where([
+                'mat_num' => $mat_num,
+                'department_id' => $department_id
+            ])->get();
+
+
+            $transcript = [];
+
+            foreach ($firstResults as $result) {
+                $courses = [];
+
+                for ($x = 1; $x <= 12; $x++) {
+                    $code = 'cc' . $x;
+                    $unit = 'cu' . $x;
+                    $score = 'score' . $x;
+                    $grade = 'grade' . $x;
+
+                    if (!$result->$code) continue;
+
+                    $courses[] = [
+                        'code' => $result->$code,
+                        'title' => $this->getCourseTitle($result->$code),
+                        'cu' => $result->$unit,
+                        'score' => $result->$score,
+                        'grade' => $result->$grade
+                    ];
+                }
+
+                $totalCu = array_sum(array_column($courses, 'cu'));
+
+                $transcript[] = [
+                    'session' => $this->getSession($result->academic_session_id),
+                    'semester' => 'First Semester',
+                    'level' => $this->getLevel($result->level_id),
+                    'courses' => $courses,
+                    'tcu' => $totalCu,
+                    'gpa' => $result->gpa
+                ];
+            }
+
+
+            // Process Second Semester Results
+            foreach ($secondResults as $result) {
+                $courses = [];
+
+                for ($x = 1; $x <= 12; $x++) {
+                    $code = 'cc' . $x;
+                    $unit = 'cu' . $x;
+                    $score = 'score' . $x;
+                    $grade = 'grade' . $x;
+
+                    if (!$result->$code) continue;
+
+                    $courses[] = [
+                        'code' => $result->$code,
+                        'title' => $this->getCourseTitle($result->$code),
+                        'cu' => $result->$unit,
+                        'score' => $result->$score,
+                        'grade' => $result->$grade
+                    ];
+                }
+
+                $totalCu = array_sum(array_column($courses, 'cu'));
+
+                $transcript[] = [
+                    'session' => $this->getSession($result->academic_session_id),
+                    'semester' => 'Second Semester',
+                    'level' => $this->getLevel($result->level_id),
+                    'courses' => $courses,
+                    'tcu' => $totalCu,
+                    'gpa' => $result->gpa
+                ];
+            }
+
+            usort($transcript, function ($a, $b) {
+                return strcmp($a['session'], $b['session']);
+            });
+
+            $cgpa = $this->calculateCGPA($mat_num);
+
+
+            return view('results.displayTranscript', compact('department', 'account', 'student', 'transcript', 'cgpa'));
+        }
+
+        return redirect()->back()->with('error', 'Student not found');
+    }
+
+    private function calculateCGPA($mat_num)
+    {
+        $gpas = Gpa::where('mat_num', $mat_num)->get();
+
+        $totalGP = 0;
+        $totalCU = 0;
+
+        foreach ($gpas as $gpa) {
+            $totalGP += $gpa->gpa * $gpa->tcu;
+            $totalCU += $gpa->tcu;
+        }
+
+        $cgpa = ($totalCU > 0) ? ($totalGP / $totalCU) : 0;
+
+        return round($cgpa, 2);
     }
 
     private function getStdntCGPA($mn, $semester, $level_id, $gp){
@@ -618,20 +1016,38 @@ class ResultController extends Controller
 
     }
 
-    private function prevGpa($mn, $level_id){
+    private function prevGpa($mat_num, $level_id, $session, $department_id){
+        $pgpa = Gpa::where('mat_num', $mat_num)
+        ->where('level_id', $level_id)
+        ->where('academic_session', $session)
+        ->where('semester', 'First')
+        ->where('department_id', $department_id)
+        ->first();
+        // $res = Result::where('mat_num', $mn)->where('level_id', $level_id)->first();
 
-        $res = Result::where('mat_num', $mn)->where('level_id', $level_id)->first();
-        if($res){
-            return $res->gpa;
+        if($pgpa){
+            $data['first'] = $pgpa->gpa;
+            $data['tcu'] = $pgpa->tcu;
+            return $data;
         }
-        return null;
+        return [];
     }
 
-    private function prevCgpa($mn, $level_id){
-
-        $res = SecondSemesterResult::where('mat_num', $mn)->where('level_id', $level_id)->first();
+    //not applicable
+    private function prevCgpa($mat_num, $level_id, $session, $department_id){
+        $res = Gpa::where('mat_num', $mat_num)
+        ->where('session', '<', $session)
+        ->where('department_id', $department_id)
+        ->get();
+        // $res = SecondSemesterResult::where('mat_num', $mn)->where('level_id', $level_id)->first();
+        $gpas = [];
         if($res){
-            return $res->cgpa;
+            foreach($res as $r)
+            {
+                $gpas[] = $r->gpa;
+            }
+            $cgpa = round((array_sum($gpas) / count($gpas)), 2);
+            return $cgpa;
         }
         return null;
 

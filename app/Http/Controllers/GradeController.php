@@ -17,10 +17,11 @@ class GradeController extends Controller
     public function store(Request $request)
     {
         $grade = new Grade();
-        $grade->_type = $request->type;
+        $grade->_type = strtoupper($request->type);
 		$grade->_from = $request->from;
 		$grade->_to = $request->to;
 		$grade->rmk = $request->rmk;
+		$grade->weight = $request->weight;
 
         $check = Grade::where('_type', $request->type)->count();
 
@@ -42,10 +43,11 @@ class GradeController extends Controller
     public function update(Request $request)
     {
         $grade = Grade::find($request->grade_id);
-        $grade->type = $request->type;
+        $grade->type = strtoupper($request->type);
 		$grade->from = $request->from;
 		$grade->to = $request->to;
 		$grade->rmk = $request->rmk;
+		$grade->weight = $request->weight;
 
         if($grade->save())
         {
