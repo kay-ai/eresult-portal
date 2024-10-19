@@ -638,7 +638,7 @@ class ResultController extends Controller
                             $sum_of_gps = $_tgp_1 + $_tgp_2;
                             $sum_of_credit_points = $pgpa['tcu'] + $tcuSum;
 
-                            $cgpa = ($sum_of_gps/$sum_of_credit_points);
+                            $cgpa = ($sum_of_credit_points > 0) ? ($sum_of_gps / $sum_of_credit_points) : 0;
                             $cgpa = round($cgpa, 2);
                         }else{
                             $cgpa = 0;
@@ -881,25 +881,119 @@ class ResultController extends Controller
         $department_id = $request->department_id;
         $mat_num = $request->mat_num;
 
-        $department = Department::find($department_id);
-        $student = Student::where('mat_num', $mat_num)->first();
+        $student = Student::where(['mat_num'=> $mat_num, 'department_id' => $department_id])->first();
 
-        $firstResults = SecondSemesterResult::where([
-            'mat_num' => $mat_num,
-            'department_id'=> $department_id
-        ])->get();
+        if($student){
+            $department = Department::find($department_id);
+            $account = Account::first();
 
-        $SecondResults = Result::where([
-            'mat_num' => $mat_num,
-            'department_id'=> $department_id
-        ])->get();
+            $firstResults = Result::where([
+                'mat_num' => $mat_num,
+                'department_id' => $department_id
+            ])->get();
 
-        $transcript = [];
-        foreach ($firstResults as $result){
+            $secondResults = SecondSemesterResult::where([
+                'mat_num' => $mat_num,
+                'department_id' => $department_id
+            ])->get();
 
+
+            $transcript = [];
+
+            foreach ($firstResults as $result) {
+                $courses = [];
+
+                for ($x = 1; $x <= 12; $x++) {
+                    $code = 'cc' . $x;
+                    $unit = 'cu' . $x;
+                    $score = 'score' . $x;
+                    $grade = 'grade' . $x;
+
+                    if (!$result->$code) continue;
+
+                    $courses[] = [
+                        'code' => $result->$code,
+                        'title' => $this->getCourseTitle($result->$code),
+                        'cu' => $result->$unit,
+                        'score' => $result->$score,
+                        'grade' => $result->$grade
+                    ];
+                }
+
+                $totalCu = array_sum(array_column($courses, 'cu'));
+
+                $transcript[] = [
+                    'session' => $this->getSession($result->academic_session_id),
+                    'semester' => 'First Semester',
+                    'level' => $this->getLevel($result->level_id),
+                    'courses' => $courses,
+                    'tcu' => $totalCu,
+                    'gpa' => $result->gpa
+                ];
+            }
+
+
+            // Process Second Semester Results
+            foreach ($secondResults as $result) {
+                $courses = [];
+
+                for ($x = 1; $x <= 12; $x++) {
+                    $code = 'cc' . $x;
+                    $unit = 'cu' . $x;
+                    $score = 'score' . $x;
+                    $grade = 'grade' . $x;
+
+                    if (!$result->$code) continue;
+
+                    $courses[] = [
+                        'code' => $result->$code,
+                        'title' => $this->getCourseTitle($result->$code),
+                        'cu' => $result->$unit,
+                        'score' => $result->$score,
+                        'grade' => $result->$grade
+                    ];
+                }
+
+                $totalCu = array_sum(array_column($courses, 'cu'));
+
+                $transcript[] = [
+                    'session' => $this->getSession($result->academic_session_id),
+                    'semester' => 'Second Semester',
+                    'level' => $this->getLevel($result->level_id),
+                    'courses' => $courses,
+                    'tcu' => $totalCu,
+                    'gpa' => $result->gpa
+                ];
+            }
+
+            usort($transcript, function ($a, $b) {
+                return strcmp($a['session'], $b['session']);
+            });
+
+            $cgpa = $this->calculateCGPA($mat_num);
+
+
+            return view('results.displayTranscript', compact('department', 'account', 'student', 'transcript', 'cgpa'));
         }
 
-        return view('results.displayResults', compact('session', 'semester', 'level', 'results', 'account', 'department', 'exam_officer', 'courses'));
+        return redirect()->back()->with('error', 'Student not found');
+    }
+
+    private function calculateCGPA($mat_num)
+    {
+        $gpas = Gpa::where('mat_num', $mat_num)->get();
+
+        $totalGP = 0;
+        $totalCU = 0;
+
+        foreach ($gpas as $gpa) {
+            $totalGP += $gpa->gpa * $gpa->tcu;
+            $totalCU += $gpa->tcu;
+        }
+
+        $cgpa = ($totalCU > 0) ? ($totalGP / $totalCU) : 0;
+
+        return round($cgpa, 2);
     }
 
     private function getStdntCGPA($mn, $semester, $level_id, $gp){
